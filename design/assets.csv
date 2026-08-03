@@ -1,0 +1,17 @@
+id,role,type,description,size_ratio,style_ref,source
+hero_survivor,player character sprite,sprite,lone survivor in cobalt-blue jacket holding a pistol,1:1,FORMULA,generate
+zombie_walker,basic slow enemy sprite,sprite,shambling toxic-green walker zombie in torn clothes,1:1,FORMULA,generate
+zombie_runner,fast enemy sprite,sprite,lean sprinting zombie with clawed arms,1:1,FORMULA,generate
+zombie_spitter,ranged enemy sprite,sprite,bloated zombie with a glowing acid sac,1:1,FORMULA,generate
+zombie_brute,boss enemy sprite,sprite,hulking oversized tank zombie with thick hide,1:1,FORMULA,generate
+pickup_weapon_crate,weapon pickup sprite,sprite,military supply crate with a stenciled gun icon,1:1,FORMULA,generate
+pickup_health,health pickup sprite,sprite,red cross medkit case,1:1,FORMULA,generate
+pickup_coin,currency pickup sprite,sprite,glowing scrap-metal coin,1:1,FORMULA,generate
+ground_tile,arena floor texture,tile,cracked wasteland concrete with dirt and rubble,1:1,FORMULA,generate
+title_background,menu screen backdrop,background,ruined city skyline at dusk with smoke plumes,16:9,FORMULA,generate
+music_combat,looping background music,audio-music,tense apocalyptic synth-and-percussion combat loop,30s,-,generate
+sfx_gunshot,pistol/smg fire sound,audio-sfx,sharp pistol gunshot crack,1s,-,generate
+sfx_shotgun,shotgun fire sound,audio-sfx,heavy shotgun blast,1s,-,generate
+sfx_zombie_hit,zombie damaged/death sound,audio-sfx,wet zombie flesh impact growl,1s,-,generate
+sfx_player_hurt,player damaged sound,audio-sfx,pained human grunt,1s,-,generate
+sfx_pickup,coin/item pickup sound,audio-sfx,bright pickup chime,1s,-,generate
