@@ -29,6 +29,44 @@ From the Expo CLI output you can:
 - Press `i` to launch the iOS simulator (macOS + Xcode required), or scan the QR code with the **Expo Go** app on a physical iPhone.
 - Press `a` to launch an Android emulator (Android Studio required), or scan the QR code with **Expo Go** on a physical Android device.
 
+## Installing on your phone (no Xcode/Android Studio required)
+
+### Fastest: Expo Go (live preview)
+
+```bash
+npm install
+npx expo start
+```
+
+Scan the QR code with the **Expo Go** app (App Store / Play Store) on your phone. The app runs live — no separate install step, but your computer needs to keep `expo start` running and your phone needs to be on the same network.
+
+### Real installable app: EAS Build (free cloud build)
+
+This produces an actual `.apk` (Android) or a simulator/TestFlight build (iOS) without needing a Mac or local Android SDK.
+
+```bash
+npm install -g eas-cli
+eas login                 # create a free account at expo.dev if you don't have one
+eas build:configure       # links this project to your Expo account (writes extra.eas.projectId into app.json)
+
+# Android — installable .apk, download link when the build finishes
+eas build --platform android --profile preview
+
+# iOS — requires an Apple Developer account for a real device;
+# use the simulator profile if you just want to try it in the iOS Simulator
+eas build --platform ios --profile preview-device   # real device (needs Apple Developer account, $99/yr)
+eas build --platform ios --profile preview           # iOS Simulator only (free, no device install)
+```
+
+Build profiles are already defined in `eas.json`:
+
+- `development` — dev client build for iterating with `expo start`
+- `preview` — Android APK + iOS Simulator build, for quick sharing/testing
+- `preview-device` — Android APK + iOS build installable on a real iPhone (needs the device registered with your Apple Developer account)
+- `production` — store-ready builds for App Store / Play Store submission
+
+When an Android build finishes, `eas build` prints a URL — open it on your phone's browser and tap to install (you may need to allow "install unknown apps" the first time). iOS real-device builds are installed via TestFlight or by registering the device's UDID with `eas device:create` before building.
+
 ## Project structure
 
 ```
@@ -71,4 +109,4 @@ Every action creates a `LogEntry`:
 ## Notes
 
 - `assets/icon.png`, `assets/adaptive-icon.png`, `assets/splash.png`, and `assets/favicon.png` are simple placeholder graphics — swap them for real branded artwork before shipping to the App Store / Play Store.
-- To build production binaries for the app stores, use [EAS Build](https://docs.expo.dev/build/introduction/) (`npx eas build --platform ios` / `--platform android`).
+- To build production binaries for the app stores, use [EAS Build](https://docs.expo.dev/build/introduction/) (`npx eas build --platform ios` / `--platform android`). Build profiles live in `eas.json`.
