@@ -87,7 +87,7 @@ export function Family() {
 
       <Card>
         <CardContent className="p-4">
-          <FamilyCompareChart rows={rows} series={series} unit={config?.unit} />
+          <FamilyCompareChart rows={rows} series={series} />
         </CardContent>
       </Card>
 

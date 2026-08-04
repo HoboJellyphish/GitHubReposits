@@ -21,7 +21,7 @@ export function Nav({ current, onNavigate }: { current: PageId; onNavigate: (pag
   return (
     <>
       <nav
-        className="fixed inset-x-0 bottom-0 z-30 flex justify-around border-t border-border bg-card/95 px-1 pt-1 backdrop-blur sm:hidden"
+        className="no-scrollbar fixed inset-x-0 bottom-0 z-30 flex justify-around gap-0.5 overflow-x-auto border-t border-border bg-card/95 px-1 pt-1 backdrop-blur sm:hidden"
         style={{ paddingBottom: "max(0.25rem, env(safe-area-inset-bottom))" }}
       >
         {items.map((item) => (
@@ -32,6 +32,7 @@ export function Nav({ current, onNavigate }: { current: PageId; onNavigate: (pag
             label={item.label}
             active={current === item.id}
             onClick={() => onNavigate(item.id)}
+            className="shrink-0 whitespace-nowrap"
           />
         ))}
       </nav>

@@ -14,6 +14,7 @@ import {
 import { CHART_CONFIG, buildTrendPoints, filterByRange } from "@/lib/chartData";
 import type { AnyLogEntry, TrackerId } from "@/types";
 import { formatDateTime } from "@/lib/format";
+import { YAxisTick } from "./ChartAxisTick";
 
 const PRIMARY_COLOR = "var(--color-primary)";
 const SECONDARY_COLOR = "oklch(0.65 0.16 30)";
@@ -65,13 +66,24 @@ export function TrendChart({
 
   const isBar = config.kind === "bar-sum" || config.kind === "bar-count";
 
-  // Computed explicitly rather than left to Recharts' "auto" domain, which
-  // has proven unreliable (can render a flat 0 axis) for small datasets.
+  // Computed explicitly rather than left to Recharts' "auto" domain/ticks,
+  // which has proven unreliable in this version (can render a flat 0 axis,
+  // or a correct domain with every intermediate tick label misread as 0)
+  // for small or multi-series datasets.
   const allValues = points.flatMap((p) => [p.value, p.value2]).filter((v): v is number => typeof v === "number");
   const dataMin = allValues.length ? Math.min(...allValues, 0) : 0;
   const dataMax = allValues.length ? Math.max(...allValues) : 1;
   const padding = Math.max((dataMax - dataMin) * 0.15, 1);
-  const lineDomain: [number, number] = [Math.floor(dataMin - (dataMin > 0 ? padding : 0)), Math.ceil(dataMax + padding)];
+  const domainMin = Math.floor(dataMin - (dataMin > 0 ? padding : 0));
+  const domainMax = Math.ceil(dataMax + padding);
+  const lineDomain: [number, number] = [domainMin, domainMax];
+  const tickCount = 5;
+  const lineTicks = Array.from({ length: tickCount }, (_, i) => Math.round(domainMin + ((domainMax - domainMin) * i) / (tickCount - 1)));
+
+  const barValues = points.map((p) => p.value).filter((v): v is number => typeof v === "number");
+  const barMax = Math.max(...barValues, 1);
+  const barDomainMax = Math.ceil(barMax * 1.15) || 1;
+  const barTicks = Array.from({ length: tickCount }, (_, i) => Math.round((barDomainMax * i) / (tickCount - 1)));
 
   return (
     <div className="h-64 w-full">
@@ -80,7 +92,14 @@ export function TrendChart({
           <BarChart data={points} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
             <CartesianGrid strokeDasharray="3 3" className="stroke-border" vertical={false} />
             <XAxis dataKey="label" tick={{ fontSize: 11 }} stroke="var(--color-muted-foreground)" />
-            <YAxis tick={{ fontSize: 11 }} stroke="var(--color-muted-foreground)" width={44} allowDecimals={false} />
+            <YAxis
+              tick={(props) => <YAxisTick {...props} unit={config.unit} />}
+              stroke="var(--color-muted-foreground)"
+              width={44}
+              domain={[0, barDomainMax]}
+              ticks={barTicks}
+              allowDecimals={false}
+            />
             <Tooltip content={<ChartTooltip />} />
             <Bar dataKey="value" name={config.primaryLabel} fill={PRIMARY_COLOR} radius={[4, 4, 0, 0]} />
           </BarChart>
@@ -88,7 +107,13 @@ export function TrendChart({
           <LineChart data={points} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
             <CartesianGrid strokeDasharray="3 3" className="stroke-border" vertical={false} />
             <XAxis dataKey="label" tick={{ fontSize: 11 }} stroke="var(--color-muted-foreground)" />
-            <YAxis tick={{ fontSize: 11 }} stroke="var(--color-muted-foreground)" width={44} domain={lineDomain} />
+            <YAxis
+              tick={(props) => <YAxisTick {...props} />}
+              stroke="var(--color-muted-foreground)"
+              width={44}
+              domain={lineDomain}
+              ticks={lineTicks}
+            />
             <Tooltip content={<ChartTooltip />} />
             {config.kind === "dual-line" && <Legend wrapperStyle={{ fontSize: 11 }} />}
             <Line type="monotone" dataKey="value" name={config.primaryLabel} stroke={PRIMARY_COLOR} strokeWidth={2} dot={{ r: 3 }} connectNulls />
