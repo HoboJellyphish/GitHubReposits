@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>CareConnect - Manage Medications</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@100..900&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+                  "outline-variant": "#c4c6d0",
+                  "on-primary-fixed": "#001b3e",
+                  "tertiary-container": "#492400",
+                  "tertiary": "#2b1300",
+                  "outline": "#74777f",
+                  "surface-dim": "#dcd9d9",
+                  "surface-tint": "#455f8a",
+                  "inverse-surface": "#313030",
+                  "background": "#fcf9f8",
+                  "surface-container-highest": "#e5e2e1",
+                  "on-primary": "#ffffff",
+                  "on-secondary-fixed-variant": "#005320",
+                  "surface": "#fcf9f8",
+                  "on-surface-variant": "#44474f",
+                  "error-container": "#ffdad6",
+                  "tertiary-fixed": "#ffdcc3",
+                  "secondary-fixed-dim": "#62df7d",
+                  "primary-container": "#0f2d56",
+                  "on-tertiary": "#ffffff",
+                  "on-primary-fixed-variant": "#2d4771",
+                  "inverse-primary": "#adc7f9",
+                  "primary-fixed": "#d6e3ff",
+                  "on-error-container": "#93000a",
+                  "surface-container-lowest": "#ffffff",
+                  "secondary-fixed": "#7ffc97",
+                  "surface-container-low": "#f6f3f2",
+                  "surface-container": "#f0edec",
+                  "on-secondary": "#ffffff",
+                  "on-primary-container": "#7c95c4",
+                  "on-background": "#1c1b1b",
+                  "error": "#ba1a1a",
+                  "on-secondary-container": "#007230",
+                  "on-tertiary-fixed": "#2f1500",
+                  "on-tertiary-container": "#df7c0f",
+                  "surface-container-high": "#ebe7e7",
+                  "surface-variant": "#e5e2e1",
+                  "on-tertiary-fixed-variant": "#6e3900",
+                  "surface-bright": "#fcf9f8",
+                  "on-surface": "#1c1b1b",
+                  "secondary-container": "#7cf994",
+                  "primary": "#001839",
+                  "primary-fixed-dim": "#adc7f9",
+                  "on-secondary-fixed": "#002109",
+                  "tertiary-fixed-dim": "#ffb77d",
+                  "on-error": "#ffffff",
+                  "secondary": "#006e2d",
+                  "inverse-on-surface": "#f3f0ef"
+          },
+          "borderRadius": {
+                  "DEFAULT": "0.25rem",
+                  "lg": "0.5rem",
+                  "xl": "0.75rem",
+                  "full": "9999px"
+          },
+          "spacing": {
+                  "margin-desktop": "auto",
+                  "gutter": "16px",
+                  "base": "8px",
+                  "margin-mobile": "20px",
+                  "max-width-content": "640px",
+                  "touch-target": "56px"
+          },
+          "fontFamily": {
+                  "label-md": ["Plus Jakarta Sans"],
+                  "button-text": ["Plus Jakarta Sans"],
+                  "body-lg": ["Plus Jakarta Sans"],
+                  "headline-lg-mobile": ["Plus Jakarta Sans"],
+                  "headline-lg": ["Plus Jakarta Sans"],
+                  "headline-md": ["Plus Jakarta Sans"],
+                  "body-md": ["Plus Jakarta Sans"]
+          },
+          "fontSize": {
+                  "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                  "button-text": ["16px", {"lineHeight": "24px", "fontWeight": "600"}],
+                  "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                  "headline-lg-mobile": ["28px", {"lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                  "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                  "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                  "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
+          }
+        },
+      },
+    }
+  </script>
+<style>
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    
+    .active-chip {
+      background-color: #001839;
+      color: #ffffff;
+    }
+
+    /* Custom Toggle Switch */
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 44px;
+      height: 24px;
+    }
+    .switch input { opacity: 0; width: 0; height: 0; }
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: #E2E2E2;
+      transition: .4s;
+      border-radius: 24px;
+    }
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 18px; width: 18px;
+      left: 3px; bottom: 3px;
+      background-color: white;
+      transition: .4s;
+      border-radius: 50%;
+    }
+    input:checked + .slider { background-color: #006e2d; }
+    input:checked + .slider:before { transform: translateX(20px); }
+
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface font-body-md text-body-md min-h-screen flex flex-col items-center">
+<!-- TopAppBar -->
+<header class="bg-surface sticky top-0 z-40 w-full flex justify-between items-center px-margin-mobile h-touch-target max-w-max-width-content mx-auto transition-colors duration-200">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full overflow-hidden bg-surface-container-high flex items-center justify-center">
+<img class="w-full h-full object-cover" data-alt="A warm, professional headshot of a female caregiver smiling kindly at the camera, wearing a soft blue uniform. The background is a gently blurred domestic interior with soft natural lighting, reflecting a sense of reliability and warmth. High-resolution corporate photography style with clean composition." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCg6mDiHBt3e0lDYIthfICEEEYDSRgdAaEjEvB6cL5MdQjB1k2P3gKpdJwod-nOL1Wlfe4L96oBV7bBqFgivTFfg_bUnNSGuE1Q7rFFEPDzS17pnNf8v4RHlBLT1WdprF29Y60ISQc4_teD5dzTRAbfsc5FDiIiRAWGcFR6RYAEH5CvQBxz4ExDROAxNkYCxrxdkXK9N93ir74lljt3sOTwLQ7dMniR_n8WMtGDb1NfAX2aCfFaxZBXg39fQhnmZYYXpO2k7-38Eqw"/>
+</div>
+<h1 class="font-headline-md text-headline-md text-primary tracking-tight">CareConnect</h1>
+</div>
+<div class="flex items-center gap-2">
+<button class="p-2 rounded-full hover:bg-surface-container-low transition-colors">
+<span class="material-symbols-outlined text-primary">notifications</span>
+</button>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="w-full max-w-max-width-content px-margin-mobile pb-32">
+<!-- Header Section -->
+<section class="py-6">
+<h2 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">Medications</h2>
+<p class="text-on-surface-variant mt-1">Manage daily prescriptions and schedules.</p>
+</section>
+<!-- Patient Selector (Horizontal Scroll) -->
+<section class="mb-8 overflow-x-auto no-scrollbar -mx-margin-mobile px-margin-mobile">
+<div class="flex gap-3">
+<button class="flex items-center gap-2 px-6 py-3 rounded-full active-chip shadow-sm transition-transform active:scale-95 whitespace-nowrap">
+<div class="w-6 h-6 rounded-full overflow-hidden bg-white/20">
+<img class="w-full h-full object-cover" data-alt="Close up portrait of a young boy named Alex, with a bright smile and soft lighting, representing a family healthcare patient. Clean, optimistic visual style with natural daylight." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBvCXt7xS1E63OO6y0jDNongrWo4wTdLWXuh6aggNrjqdJeJwust-A0_q8oLNX10y5zrOY5Tyt4hqqPStVk1iCVNKcSpdtsRvXqC3bcUIyhvarpVNwsPAvTuCZBUgBMTEs1mzpk2_S57CYPs6QYA--5atVqd8GjYAx8zBba3ge1WduNFXGpA38PjHz-Y83yeQA2NJUNcOF7wuSAzIoSjntQvODvcZl-Vcnw4tOWPHW0G8IXMCAU-egZAzkkOgNXWMo6MicuJ6jH_KY"/>
+</div>
+<span class="font-label-md text-label-md">Alex</span>
+</button>
+<button class="flex items-center gap-2 px-6 py-3 rounded-full bg-surface-container-lowest text-on-surface-variant border border-outline/10 shadow-sm transition-transform active:scale-95 whitespace-nowrap">
+<div class="w-6 h-6 rounded-full overflow-hidden bg-surface-container-high">
+<img class="w-full h-full object-cover" data-alt="Profile portrait of an elderly woman named Sarah, featuring soft facial features and a calm expression. Warm, domestic lighting creates a comforting atmosphere." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAWuFDguojUu5JRWPx1vIqXs90vIhOQbksTgymLMjR0hzHkuA0suySIOP-MOPiR4eMRbgb3wwZWTYarWANidMPii8nopRRMrIRi-jQcO6Kmnj3yVc3AVMnQcIBzSsUQBF81yaAFtzvCH63WXRMtmUiGAWEeJxgLt63TNCcX0uJLSnmhznB_qdiGGfoPgLEBu6gJR6ravnTRmNHq4FV9l6_BiDfrtSNN3U_SHfI0acsVJ72xk9glbGaoJqEMUFE2zgfm57BuSDvl5xk"/>
+</div>
+<span class="font-label-md text-label-md">Sarah</span>
+</button>
+<button class="flex items-center gap-2 px-6 py-3 rounded-full bg-surface-container-lowest text-on-surface-variant border border-outline/10 shadow-sm transition-transform active:scale-95 whitespace-nowrap">
+<span class="material-symbols-outlined text-[18px]">add</span>
+<span class="font-label-md text-label-md">Add Patient</span>
+</button>
+</div>
+</section>
+<!-- Medication List -->
+<section class="space-y-4">
+<h3 class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider mb-2">Currently Active</h3>
+<!-- Medication Card 1 -->
+<div class="bg-surface-container-lowest rounded-xl p-5 shadow-[0px_4px_20px_rgba(15,45,86,0.08)] flex flex-col gap-4 group hover:shadow-md transition-shadow cursor-pointer" onclick="console.log('Edit Atorvastatin')">
+<div class="flex justify-between items-start">
+<div class="flex gap-4">
+<div class="w-12 h-12 rounded-xl bg-primary-container flex items-center justify-center text-on-primary-container">
+<span class="material-symbols-outlined text-[28px]">pill</span>
+</div>
+<div>
+<h4 class="font-headline-md text-[20px] text-primary">Atorvastatin</h4>
+<p class="text-on-surface-variant">10mg tablet • <span class="text-secondary font-semibold">In Stock</span></p>
+</div>
+</div>
+<label class="switch" onclick="event.stopPropagation()">
+<input checked="" type="checkbox"/>
+<span class="slider"></span>
+</label>
+</div>
+<div class="flex flex-wrap gap-2 pt-2 border-t border-outline-variant/30">
+<div class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-surface-container-low text-on-surface-variant">
+<span class="material-symbols-outlined text-[18px]">light_mode</span>
+<span class="text-[13px] font-semibold">Morning</span>
+</div>
+<div class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-surface-container-low text-on-surface-variant">
+<span class="material-symbols-outlined text-[18px]">dark_mode</span>
+<span class="text-[13px] font-semibold">Evening</span>
+</div>
+</div>
+</div>
+<!-- Medication Card 2 -->
+<div class="bg-surface-container-lowest rounded-xl p-5 shadow-[0px_4px_20px_rgba(15,45,86,0.08)] flex flex-col gap-4 group hover:shadow-md transition-shadow cursor-pointer" onclick="console.log('Edit Amoxicillin')">
+<div class="flex justify-between items-start">
+<div class="flex gap-4">
+<div class="w-12 h-12 rounded-xl bg-tertiary-container flex items-center justify-center text-on-tertiary-container">
+<span class="material-symbols-outlined text-[28px]">medication</span>
+</div>
+<div>
+<h4 class="font-headline-md text-[20px] text-primary">Amoxicillin</h4>
+<p class="text-on-surface-variant">500mg capsule • <span class="text-error font-semibold">Low Stock</span></p>
+</div>
+</div>
+<label class="switch" onclick="event.stopPropagation()">
+<input checked="" type="checkbox"/>
+<span class="slider"></span>
+</label>
+</div>
+<div class="flex flex-wrap gap-2 pt-2 border-t border-outline-variant/30">
+<div class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-surface-container-low text-on-surface-variant">
+<span class="material-symbols-outlined text-[18px]">wb_twilight</span>
+<span class="text-[13px] font-semibold">Lunch</span>
+</div>
+</div>
+</div>
+<!-- Inactive Header -->
+<h3 class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider mb-2 pt-4">Paused / Completed</h3>
+<!-- Medication Card 3 (Inactive) -->
+<div class="bg-surface-container-low/50 border border-dashed border-outline-variant rounded-xl p-5 flex flex-col gap-4 grayscale opacity-70 cursor-pointer" onclick="console.log('Edit Vitamin D')">
+<div class="flex justify-between items-start">
+<div class="flex gap-4">
+<div class="w-12 h-12 rounded-xl bg-surface-variant flex items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined text-[28px]">water_drop</span>
+</div>
+<div>
+<h4 class="font-headline-md text-[20px] text-primary">Vitamin D3</h4>
+<p class="text-on-surface-variant">1000 IU liquid drops</p>
+</div>
+</div>
+<label class="switch" onclick="event.stopPropagation()">
+<input type="checkbox"/>
+<span class="slider"></span>
+</label>
+</div>
+</div>
+</section>
+</main>
+<!-- Floating Action Button -->
+<button class="fixed bottom-24 right-6 w-14 h-14 bg-primary text-on-primary rounded-2xl shadow-xl flex items-center justify-center active:scale-95 transition-transform duration-150 z-50">
+<span class="material-symbols-outlined text-[32px]">add</span>
+</button>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center px-margin-mobile pb-4 pt-2 bg-surface shadow-[0px_-4px_20px_rgba(15,45,86,0.08)] z-50">
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-4 py-1 hover:bg-surface-container-low rounded-xl transition-colors" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-md text-label-md">Overview</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-4 py-1 hover:bg-surface-container-low rounded-xl transition-colors" href="#">
+<span class="material-symbols-outlined">group</span>
+<span class="font-label-md text-label-md">Patients</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-xl px-4 py-1 active:scale-95 transition-transform duration-150" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">inventory_2</span>
+<span class="font-label-md text-label-md">Inventory</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-4 py-1 hover:bg-surface-container-low rounded-xl transition-colors" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-md text-label-md">Settings</span>
+</a>
+</nav>
+<!-- Micro-interaction for chips -->
+<script>
+    document.querySelectorAll('section button').forEach(button => {
+      button.addEventListener('click', function() {
+        if (this.parentElement.classList.contains('flex')) {
+          this.parentElement.querySelectorAll('button').forEach(b => {
+            b.classList.remove('active-chip');
+            b.classList.add('bg-surface-container-lowest', 'text-on-surface-variant');
+          });
+          this.classList.add('active-chip');
+          this.classList.remove('bg-surface-container-lowest', 'text-on-surface-variant');
+        }
+      });
+    });
+  </script>
+</body></html>

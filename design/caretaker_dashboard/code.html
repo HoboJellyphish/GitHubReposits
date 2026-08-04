@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>CareConnect - Caretaker Dashboard</title>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "outline-variant": "#c4c6d0",
+                    "on-primary-fixed": "#001b3e",
+                    "tertiary-container": "#492400",
+                    "tertiary": "#2b1300",
+                    "outline": "#74777f",
+                    "surface-dim": "#dcd9d9",
+                    "surface-tint": "#455f8a",
+                    "inverse-surface": "#313030",
+                    "background": "#fcf9f8",
+                    "surface-container-highest": "#e5e2e1",
+                    "on-primary": "#ffffff",
+                    "on-secondary-fixed-variant": "#005320",
+                    "surface": "#fcf9f8",
+                    "on-surface-variant": "#44474f",
+                    "error-container": "#ffdad6",
+                    "tertiary-fixed": "#ffdcc3",
+                    "secondary-fixed-dim": "#62df7d",
+                    "primary-container": "#0f2d56",
+                    "on-tertiary": "#ffffff",
+                    "on-primary-fixed-variant": "#2d4771",
+                    "inverse-primary": "#adc7f9",
+                    "primary-fixed": "#d6e3ff",
+                    "on-error-container": "#93000a",
+                    "surface-container-lowest": "#ffffff",
+                    "secondary-fixed": "#7ffc97",
+                    "surface-container-low": "#f6f3f2",
+                    "surface-container": "#f0edec",
+                    "on-secondary": "#ffffff",
+                    "on-primary-container": "#7c95c4",
+                    "on-background": "#1c1b1b",
+                    "error": "#ba1a1a",
+                    "on-secondary-container": "#007230",
+                    "on-tertiary-fixed": "#2f1500",
+                    "on-tertiary-container": "#df7c0f",
+                    "surface-container-high": "#ebe7e7",
+                    "surface-variant": "#e5e2e1",
+                    "on-tertiary-fixed-variant": "#6e3900",
+                    "surface-bright": "#fcf9f8",
+                    "on-surface": "#1c1b1b",
+                    "secondary-container": "#7cf994",
+                    "primary": "#001839",
+                    "primary-fixed-dim": "#adc7f9",
+                    "on-secondary-fixed": "#002109",
+                    "tertiary-fixed-dim": "#ffb77d",
+                    "on-error": "#ffffff",
+                    "secondary": "#006e2d",
+                    "inverse-on-surface": "#f3f0ef"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "margin-desktop": "auto",
+                    "gutter": "16px",
+                    "base": "8px",
+                    "margin-mobile": "20px",
+                    "max-width-content": "640px",
+                    "touch-target": "56px"
+            },
+            "fontFamily": {
+                    "label-md": ["Plus Jakarta Sans"],
+                    "button-text": ["Plus Jakarta Sans"],
+                    "body-lg": ["Plus Jakarta Sans"],
+                    "headline-lg-mobile": ["Plus Jakarta Sans"],
+                    "headline-lg": ["Plus Jakarta Sans"],
+                    "headline-md": ["Plus Jakarta Sans"],
+                    "body-md": ["Plus Jakarta Sans"]
+            },
+            "fontSize": {
+                    "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "button-text": ["16px", {"lineHeight": "24px", "fontWeight": "600"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                    "headline-lg-mobile": ["28px", {"lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #fcf9f8; /* background from theme */
+            -webkit-tap-highlight-color: transparent;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .scroll-hide::-webkit-scrollbar {
+            display: none;
+        }
+        .card-shadow {
+            box-shadow: 0px 4px 20px rgba(15, 45, 86, 0.08);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background min-h-screen pb-24">
+<!-- Red Alert Banner (Low Stock) -->
+<div class="bg-error text-on-error px-margin-mobile py-3 flex items-center justify-between sticky top-0 z-[60] cursor-pointer active:opacity-90 transition-opacity">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-[20px]">warning</span>
+<span class="font-label-md text-label-md">2 medications running low — tap to review</span>
+</div>
+<span class="material-symbols-outlined">chevron_right</span>
+</div>
+<!-- Top AppBar (from JSON blueprint) -->
+<header class="bg-surface dark:bg-surface flex justify-between items-center px-margin-mobile w-full max-w-max-width-content mx-auto h-touch-target">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full overflow-hidden bg-primary-container flex items-center justify-center text-on-primary-container font-bold text-xs">
+                CP
+            </div>
+<h1 class="font-headline-md text-headline-md text-primary dark:text-primary-fixed">CareConnect</h1>
+</div>
+<div class="p-2 hover:bg-surface-container-low dark:hover:bg-surface-container-high rounded-full transition-colors duration-200">
+<span class="material-symbols-outlined text-primary dark:text-primary-fixed" data-icon="notifications">notifications</span>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="max-w-max-width-content mx-auto px-margin-mobile mt-6 space-y-6">
+<!-- Today's Overview Header -->
+<div class="flex flex-col gap-1">
+<h2 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">Today's Overview</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">Track your patients' daily adherence</p>
+</div>
+<!-- Bento Grid / Cards Section -->
+<div class="grid grid-cols-1 gap-gutter">
+<!-- Alex's Patient Card -->
+<div class="bg-surface-container-lowest card-shadow rounded-xl p-6 transition-transform active:scale-[0.98]">
+<div class="flex justify-between items-start mb-4">
+<div class="flex items-center gap-4">
+<div class="w-14 h-14 rounded-full bg-primary-container flex items-center justify-center text-on-primary-container font-bold text-xl">
+                            AL
+                        </div>
+<div class="flex flex-col">
+<h3 class="font-headline-md text-headline-md text-on-surface leading-tight">Alex</h3>
+<span class="font-body-md text-body-md text-on-surface-variant">Monday, May 22</span>
+</div>
+</div>
+<!-- Status Chip: On Track -->
+<div class="bg-secondary-container text-on-secondary-container px-3 py-1 rounded-full flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<span class="font-label-md text-label-md">On Track</span>
+</div>
+</div>
+<div class="space-y-3">
+<div class="flex justify-between items-end">
+<span class="font-label-md text-label-md text-on-surface">3 of 5 taken</span>
+<span class="font-label-md text-label-md text-on-surface-variant">60%</span>
+</div>
+<!-- Progress Bar -->
+<div class="w-full bg-surface-container h-3 rounded-full overflow-hidden">
+<div class="bg-secondary h-full rounded-full transition-all duration-700" style="width: 60%;"></div>
+</div>
+</div>
+<div class="mt-6 flex gap-2">
+<button class="flex-1 h-touch-target bg-primary text-on-primary font-button-text text-button-text rounded-lg hover:opacity-90 transition-opacity">
+                        Log Dose
+                    </button>
+<button class="w-touch-target h-touch-target flex items-center justify-center border border-outline rounded-lg text-primary hover:bg-surface-container-low transition-colors">
+<span class="material-symbols-outlined">more_horiz</span>
+</button>
+</div>
+</div>
+<!-- Sarah's Patient Card -->
+<div class="bg-surface-container-lowest card-shadow rounded-xl p-6 transition-transform active:scale-[0.98]">
+<div class="flex justify-between items-start mb-4">
+<div class="flex items-center gap-4">
+<div class="w-14 h-14 rounded-full bg-tertiary-fixed-dim flex items-center justify-center text-on-tertiary-fixed font-bold text-xl">
+                            SA
+                        </div>
+<div class="flex flex-col">
+<h3 class="font-headline-md text-headline-md text-on-surface leading-tight">Sarah</h3>
+<span class="font-body-md text-body-md text-on-surface-variant">Monday, May 22</span>
+</div>
+</div>
+<!-- Status Chip: Attention -->
+<div class="bg-tertiary-fixed text-on-tertiary-fixed px-3 py-1 rounded-full flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">priority_high</span>
+<span class="font-label-md text-label-md">Attention</span>
+</div>
+</div>
+<div class="space-y-3">
+<div class="flex justify-between items-end">
+<span class="font-label-md text-label-md text-on-surface">1 of 4 taken</span>
+<span class="font-label-md text-label-md text-on-surface-variant">25%</span>
+</div>
+<!-- Progress Bar -->
+<div class="w-full bg-surface-container h-3 rounded-full overflow-hidden">
+<div class="bg-on-tertiary-container h-full rounded-full transition-all duration-700" style="width: 25%;"></div>
+</div>
+</div>
+<div class="mt-6 flex gap-2">
+<button class="flex-1 h-touch-target bg-primary text-on-primary font-button-text text-button-text rounded-lg hover:opacity-90 transition-opacity">
+                        Review Plan
+                    </button>
+<button class="w-touch-target h-touch-target flex items-center justify-center border border-outline rounded-lg text-primary hover:bg-surface-container-low transition-colors">
+<span class="material-symbols-outlined">more_horiz</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Visual Anchor: Atmospheric Decorative Graphic -->
+<div class="relative w-full h-48 rounded-2xl overflow-hidden mt-8">
+<div class="w-full h-full bg-cover bg-center" data-alt="A warm and professionally lit home interior featuring a sunlit wooden table with a small, neat medicinal organization kit and a glass of water. The scene uses a soft focus background, emphasizing domestic comfort, reliability, and care. The lighting is high-key and airy, fitting a light-mode corporate healthcare application palette of soft creams and deep blues." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuA53XVHTwHUQJPOWZewUiudyGLBNQek1PxuFlBjmOG_NO-_O06sV6zjasRsIERf7Rj0StA9qR2GfVwVov12idXW2GiS6V_HCigKm0oAbvYh37A94e2Y4hu9TXSiQK7-HClgVcANmMDPdkEvuPJudaRKvsI3dxeiR3E8Om4Wp0fKI0S70tMGwSYEav-iJ1ERC0OoGQE0GGv4Oa2LqJxaOzu0q8STV5fub_k_Q4nHEzW3LeItYh5uZt8JkyYhV2qucwEID-ArpvCfoqc')"></div>
+<div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent flex flex-col justify-end p-6">
+<span class="text-white font-label-md text-label-md opacity-80 uppercase tracking-widest">Tip of the day</span>
+<p class="text-white font-headline-md text-headline-md leading-tight">Setting routines helps adherence by 40%.</p>
+</div>
+</div>
+<!-- Last Updated -->
+<div class="py-8 flex justify-center items-center gap-2 text-on-surface-variant opacity-60">
+<span class="material-symbols-outlined text-[16px]">sync</span>
+<span class="font-body-md text-body-md">Last updated just now</span>
+</div>
+</main>
+<!-- BottomNavBar (from JSON blueprint) -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center px-margin-mobile pb-4 pt-2 bg-surface dark:bg-surface shadow-[0px_-4px_20px_rgba(15,45,86,0.08)] z-50">
+<!-- Overview (Active) -->
+<button class="flex flex-col items-center justify-center bg-primary-container dark:bg-primary-container text-on-primary-container dark:text-on-primary-container rounded-xl px-4 py-1 active:scale-95 transition-transform duration-150">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-label-md text-label-md">Overview</span>
+</button>
+<!-- Patients -->
+<button class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant px-4 py-1 active:scale-95 transition-transform duration-150 hover:bg-surface-container-low">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+<span class="font-label-md text-label-md">Patients</span>
+</button>
+<!-- Inventory -->
+<button class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant px-4 py-1 active:scale-95 transition-transform duration-150 hover:bg-surface-container-low">
+<span class="material-symbols-outlined" data-icon="inventory_2">inventory_2</span>
+<span class="font-label-md text-label-md">Inventory</span>
+</button>
+<!-- Settings -->
+<button class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant px-4 py-1 active:scale-95 transition-transform duration-150 hover:bg-surface-container-low">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-label-md text-label-md">Settings</span>
+</button>
+</nav>
+<!-- Simple Interactivity Script -->
+<script>
+        // Micro-interaction: Update time string dynamically
+        function updateTimestamp() {
+            const span = document.querySelector('.sync-text');
+            if(span) {
+                const now = new Date();
+                span.textContent = `Last updated at ${now.getHours()}:${String(now.getMinutes()).padStart(2, '0')}`;
+            }
+        }
+        
+        // Simulating stock banner dismissal or tap
+        document.querySelector('.bg-error').addEventListener('click', () => {
+            alert("Medication Inventory: 'Metformin' and 'Lisinopril' are low. Redirecting to Inventory...");
+        });
+
+        // Add visual feedback for card taps
+        document.querySelectorAll('.card-shadow').forEach(card => {
+            card.addEventListener('click', () => {
+                card.classList.add('ring-2', 'ring-primary/20');
+                setTimeout(() => card.classList.remove('ring-2', 'ring-primary/20'), 300);
+            });
+        });
+    </script>
+</body></html>

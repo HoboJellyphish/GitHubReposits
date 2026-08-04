@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>MedTrak - Sign In</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-error": "#ffffff",
+                    "tertiary-fixed": "#ffdcc3",
+                    "error-container": "#ffdad6",
+                    "primary-fixed-dim": "#adc7f9",
+                    "surface-container-low": "#f6f3f2",
+                    "tertiary-fixed-dim": "#ffb77d",
+                    "on-primary-fixed": "#001b3e",
+                    "on-primary": "#ffffff",
+                    "surface-container-lowest": "#ffffff",
+                    "secondary-fixed": "#7ffc97",
+                    "on-tertiary-fixed": "#2f1500",
+                    "outline": "#74777f",
+                    "inverse-on-surface": "#f3f0ef",
+                    "on-secondary": "#ffffff",
+                    "surface-variant": "#e5e2e1",
+                    "on-error-container": "#93000a",
+                    "on-background": "#1c1b1b",
+                    "background": "#fcf9f8",
+                    "error": "#ba1a1a",
+                    "inverse-surface": "#313030",
+                    "surface-tint": "#455f8a",
+                    "tertiary": "#2b1300",
+                    "on-surface": "#1c1b1b",
+                    "on-tertiary-fixed-variant": "#6e3900",
+                    "on-tertiary-container": "#df7c0f",
+                    "on-secondary-fixed": "#002109",
+                    "secondary": "#006e2d",
+                    "primary": "#001839",
+                    "tertiary-container": "#492400",
+                    "on-secondary-fixed-variant": "#005320",
+                    "on-secondary-container": "#007230",
+                    "outline-variant": "#c4c6d0",
+                    "primary-fixed": "#d6e3ff",
+                    "on-primary-container": "#7c95c4",
+                    "surface-container-highest": "#e5e2e1",
+                    "on-tertiary": "#ffffff",
+                    "surface-bright": "#fcf9f8",
+                    "surface-container-high": "#ebe7e7",
+                    "secondary-container": "#7cf994",
+                    "surface": "#fcf9f8",
+                    "on-surface-variant": "#44474f",
+                    "surface-container": "#f0edec",
+                    "surface-dim": "#dcd9d9",
+                    "inverse-primary": "#adc7f9",
+                    "primary-container": "#0f2d56",
+                    "on-primary-fixed-variant": "#2d4771",
+                    "secondary-fixed-dim": "#62df7d"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "base": "8px",
+                    "margin-desktop": "auto",
+                    "gutter": "16px",
+                    "max-width-content": "640px",
+                    "touch-target": "56px",
+                    "margin-mobile": "20px"
+            },
+            "fontFamily": {
+                    "body-md": ["Plus Jakarta Sans"],
+                    "label-md": ["Plus Jakarta Sans"],
+                    "body-lg": ["Plus Jakarta Sans"],
+                    "headline-lg": ["Plus Jakarta Sans"],
+                    "headline-md": ["Plus Jakarta Sans"],
+                    "headline-lg-mobile": ["Plus Jakarta Sans"],
+                    "button-text": ["Plus Jakarta Sans"]
+            },
+            "fontSize": {
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "headline-lg-mobile": ["28px", {"lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "button-text": ["16px", {"lineHeight": "24px", "fontWeight": "600"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        
+        .floating-label-input:focus-within label,
+        .floating-label-input input:not(:placeholder-shown) + label {
+            transform: translateY(-20px) scale(0.85);
+            color: #001839;
+            font-weight: 600;
+        }
+
+        .floating-label-input label {
+            transition: all 0.2s ease-out;
+            pointer-events: none;
+        }
+
+        body {
+            background-color: #f8f7f4;
+        }
+
+        .soft-elevation {
+            box-shadow: 0px 4px 20px rgba(15, 45, 86, 0.08);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col font-body-md text-on-surface">
+<!-- Top Navigation Bar (Branding only for login) -->
+<header class="w-full top-0 bg-background transition-colors duration-200">
+<div class="flex items-center justify-center h-14 px-margin-mobile w-full max-w-max-width-content mx-auto">
+<div class="flex items-center gap-2 text-headline-md font-headline-md text-primary">
+<span class="material-symbols-outlined" data-icon="pill">pill</span>
+<span class="font-headline-md text-headline-md">MedTrak</span>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-grow flex flex-col items-center justify-center px-margin-mobile pb-12">
+<!-- Animated Background Element (Subtle atmosphere) -->
+<div class="fixed inset-0 pointer-events-none opacity-40 z-0">
+
+</div>
+<div class="relative z-10 w-full max-w-max-width-content">
+<!-- Hero Illustration/Visual -->
+<div class="mb-10 text-center">
+<div class="inline-block p-4 bg-white rounded-full soft-elevation mb-6">
+<span class="material-symbols-outlined text-primary text-[48px]" style="font-variation-settings: 'wght' 300;">shield_person</span>
+</div>
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile md:font-headline-lg md:text-headline-lg text-primary mb-2">Welcome back</h1>
+<p class="text-on-surface-variant font-body-md text-body-md">Sign in to manage your family's health.</p>
+</div>
+<!-- Sign In Card -->
+<div class="bg-white rounded-xl soft-elevation p-8 w-full">
+<form class="flex flex-col gap-6" onsubmit="return false;">
+<!-- Email Field -->
+<div class="relative flex flex-col floating-label-input">
+<div class="h-touch-target w-full rounded-lg border border-outline-variant flex items-center px-4 focus-within:border-primary focus-within:border-2 transition-all group">
+<input class="w-full h-full bg-transparent border-none outline-none focus:ring-0 text-on-surface text-body-md peer" id="email" placeholder=" " required="" type="email"/>
+<label class="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant text-body-md bg-white px-1" for="email">Email Address</label>
+</div>
+</div>
+<!-- Password Field -->
+<div class="relative flex flex-col floating-label-input">
+<div class="h-touch-target w-full rounded-lg border border-outline-variant flex items-center px-4 focus-within:border-primary focus-within:border-2 transition-all group">
+<input class="w-full h-full bg-transparent border-none outline-none focus:ring-0 text-on-surface text-body-md peer" id="password" placeholder=" " required="" type="password"/>
+<label class="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant text-body-md bg-white px-1" for="password">Password</label>
+<button class="text-on-surface-variant hover:text-primary transition-colors" type="button">
+<span class="material-symbols-outlined">visibility_off</span>
+</button>
+</div>
+</div>
+<!-- Forgot Password Link -->
+<div class="flex justify-end -mt-2">
+<a class="text-primary font-label-md text-label-md hover:underline" href="#">Forgot password?</a>
+</div>
+<!-- Sign In Button -->
+<button class="h-touch-target w-full bg-primary text-on-primary rounded-lg font-button-text text-button-text active:scale-[0.98] transition-transform flex items-center justify-center gap-2" type="submit">
+                        Sign In
+                    </button>
+<!-- Sign Up Link -->
+<div class="text-center mt-2">
+<p class="text-on-surface-variant font-body-md text-body-md">
+                            Don't have an account? 
+                            <a class="text-primary font-button-text text-button-text hover:underline ml-1" href="#">Sign Up</a>
+</p>
+</div>
+</form>
+</div>
+<!-- Trust Footer -->
+<div class="mt-12 flex flex-col items-center gap-4 text-center">
+<div class="flex items-center gap-4 opacity-50 grayscale">
+<img class="h-8 object-contain" data-alt="A clean, minimalist logo of a health certification board, in professional monochromatic navy tones, centered on a light background, representing reliability and medical trust." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB12uQdXYM5He07ZtyQVluCL-9AaTboWol95hGUooESZ8mAh-S5x-NcLD4Oe3m8_MWJfXEYmGaBr7VR1M8N4oq6EK261_2nMcXYi1CjY0J_SossDHIRZzhWcR7qJcvxdpG3CUi23WrHH2FEqT_T-NWaz6gFDjZbgZqIYqW5RsSw5t25EgEAFWLotttIUpoRvaaEDSMHjvj3pqUZyQvQX9tq93NKjW2nwm485vis7Br7sluKwLBvpeCQFu0grLeYXpd_BZUL4oJtENg"/>
+<img class="h-8 object-contain" data-alt="A small security shield emblem indicating HIPAA compliance, styled in a modern minimalist aesthetic with soft navy outlines and light grays, reflecting safety and privacy." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC2e-wvpcpNygDurVUGGqg1t7u4HvSfLw5271LGKaaywub8toabh8DoRJ2Mm1_3se60zIHK3Gw3GrFb4zTsvGShi9dUmyf_IPUZatBDR1uiCEObC42QIk0SAww6jgPPzSQ-xnUMmQQm1my51FlaMYesBL_3o78lkxyBFu9YFHXADWuidiWop1qWgKjHWySFZm11Puh90bUAGdWPPubZSW7PumF0GwvqlvAkfzUDRHv9m8w6-5WO6QbJ95zTBBdRVZWqWAvWeUWKxKw"/>
+</div>
+<p class="text-[12px] text-on-surface-variant font-label-md uppercase tracking-widest">Secure Healthcare Management</p>
+</div>
+</div>
+</main>
+<!-- Success Feedback Overlay (Hidden by default) -->
+<div class="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm flex items-center justify-center hidden opacity-0 transition-opacity duration-300" id="success-feedback">
+<div class="bg-white p-8 rounded-xl soft-elevation flex flex-col items-center max-w-xs text-center">
+<div class="w-16 h-16 bg-secondary-container rounded-full flex items-center justify-center mb-4">
+<span class="material-symbols-outlined text-on-secondary-container text-4xl" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<h2 class="text-headline-md font-headline-md text-primary mb-2">Authenticating</h2>
+<p class="text-on-surface-variant">Connecting to your secure health profile...</p>
+</div>
+</div>
+<script>
+        // Micro-interactions for form
+        const loginForm = document.querySelector('form');
+        const successFeedback = document.getElementById('success-feedback');
+
+        loginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            // Show feedback
+            successFeedback.classList.remove('hidden');
+            setTimeout(() => {
+                successFeedback.classList.add('opacity-100');
+            }, 10);
+
+            // Simulate redirect after success
+            setTimeout(() => {
+                console.log("Redirecting to dashboard...");
+                // In a real app: window.location.href = '/dashboard';
+            }, 2000);
+        });
+
+        // Add subtle scale animation to labels on focus
+        const inputs = document.querySelectorAll('input');
+        inputs.forEach(input => {
+            input.addEventListener('focus', () => {
+                input.parentElement.classList.add('shadow-sm');
+            });
+            input.addEventListener('blur', () => {
+                input.parentElement.classList.remove('shadow-sm');
+            });
+        });
+    </script>
+</body></html>

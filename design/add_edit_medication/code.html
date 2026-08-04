@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@100..900&display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "outline-variant": "#c4c6d0",
+                    "on-primary-fixed": "#001b3e",
+                    "tertiary-container": "#492400",
+                    "tertiary": "#2b1300",
+                    "outline": "#74777f",
+                    "surface-dim": "#dcd9d9",
+                    "surface-tint": "#455f8a",
+                    "inverse-surface": "#313030",
+                    "background": "#fcf9f8",
+                    "surface-container-highest": "#e5e2e1",
+                    "on-primary": "#ffffff",
+                    "on-secondary-fixed-variant": "#005320",
+                    "surface": "#fcf9f8",
+                    "on-surface-variant": "#44474f",
+                    "error-container": "#ffdad6",
+                    "tertiary-fixed": "#ffdcc3",
+                    "secondary-fixed-dim": "#62df7d",
+                    "primary-container": "#0f2d56",
+                    "on-tertiary": "#ffffff",
+                    "on-primary-fixed-variant": "#2d4771",
+                    "inverse-primary": "#adc7f9",
+                    "primary-fixed": "#d6e3ff",
+                    "on-error-container": "#93000a",
+                    "surface-container-lowest": "#ffffff",
+                    "secondary-fixed": "#7ffc97",
+                    "surface-container-low": "#f6f3f2",
+                    "surface-container": "#f0edec",
+                    "on-secondary": "#ffffff",
+                    "on-primary-container": "#7c95c4",
+                    "on-background": "#1c1b1b",
+                    "error": "#ba1a1a",
+                    "on-secondary-container": "#007230",
+                    "on-tertiary-fixed": "#2f1500",
+                    "on-tertiary-container": "#df7c0f",
+                    "surface-container-high": "#ebe7e7",
+                    "surface-variant": "#e5e2e1",
+                    "on-tertiary-fixed-variant": "#6e3900",
+                    "surface-bright": "#fcf9f8",
+                    "on-surface": "#1c1b1b",
+                    "secondary-container": "#7cf994",
+                    "primary": "#001839",
+                    "primary-fixed-dim": "#adc7f9",
+                    "on-secondary-fixed": "#002109",
+                    "tertiary-fixed-dim": "#ffb77d",
+                    "on-error": "#ffffff",
+                    "secondary": "#006e2d",
+                    "inverse-on-surface": "#f3f0ef"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "margin-desktop": "auto",
+                    "gutter": "16px",
+                    "base": "8px",
+                    "margin-mobile": "20px",
+                    "max-width-content": "640px",
+                    "touch-target": "56px"
+            },
+            "fontFamily": {
+                    "label-md": ["Plus Jakarta Sans"],
+                    "button-text": ["Plus Jakarta Sans"],
+                    "body-lg": ["Plus Jakarta Sans"],
+                    "headline-lg-mobile": ["Plus Jakarta Sans"],
+                    "headline-lg": ["Plus Jakarta Sans"],
+                    "headline-md": ["Plus Jakarta Sans"],
+                    "body-md": ["Plus Jakarta Sans"]
+            },
+            "fontSize": {
+                    "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "button-text": ["16px", {"lineHeight": "24px", "fontWeight": "600"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                    "headline-lg-mobile": ["28px", {"lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #fcf9f8; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .form-input-container { transition: all 0.2s ease-in-out; border: 1px solid #E2E2E2; }
+        .form-input-container:focus-within { border-color: #001839; border-width: 2px; }
+        input:focus, select:focus { outline: none; box-shadow: none; }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        /* Custom Toggle Style */
+        .toggle-checkbox:checked { right: 0; border-color: #001839; }
+        .toggle-checkbox:checked + .toggle-label { background-color: #001839; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface">
+<!-- Header Navigation (Non-Shell Context) -->
+<header class="sticky top-0 z-40 bg-surface flex items-center px-margin-mobile h-touch-target w-full max-w-max-width-content mx-auto">
+<button class="w-10 h-10 flex items-center justify-start text-primary active:scale-90 transition-transform">
+<span class="material-symbols-outlined text-[28px]">arrow_back</span>
+</button>
+<h1 class="font-headline-md text-headline-md text-primary ml-2">Add Medication</h1>
+</header>
+<main class="max-width-content mx-auto px-margin-mobile pb-32 pt-4">
+<!-- Form Section: Basic Info -->
+<div class="space-y-6">
+<!-- Medication Name Input -->
+<div class="relative group">
+<div class="form-input-container h-touch-target rounded-xl px-4 flex items-center bg-surface-container-lowest">
+<div class="flex-1 relative h-full pt-2">
+<input class="peer w-full h-full bg-transparent border-none p-0 font-body-md text-on-surface placeholder-transparent focus:ring-0" id="med-name" placeholder=" " type="text"/>
+<label class="absolute left-0 top-1 text-on-surface-variant font-label-md text-label-md transition-all duration-200 peer-placeholder-shown:top-3 peer-placeholder-shown:text-body-md peer-focus:top-1 peer-focus:text-label-md" for="med-name">Medication name</label>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant">medication</span>
+</div>
+</div>
+<!-- Medication Type Horizontal Selector -->
+<div>
+<label class="block font-label-md text-label-md text-on-surface-variant mb-3">Form type</label>
+<div class="flex gap-3 overflow-x-auto hide-scrollbar pb-1">
+<!-- Tablet (Selected) -->
+<button class="flex-shrink-0 flex items-center gap-2 px-4 py-2 bg-primary text-on-primary rounded-full font-label-md transition-colors shadow-sm">
+<span class="material-symbols-outlined text-[20px]">pill</span>
+                        Tablet
+                    </button>
+<!-- Capsule -->
+<button class="flex-shrink-0 flex items-center gap-2 px-4 py-2 border border-outline-variant text-on-surface-variant rounded-full font-label-md hover:bg-surface-container-low transition-colors">
+<span class="material-symbols-outlined text-[20px]">capture</span>
+                        Capsule
+                    </button>
+<!-- Syrup -->
+<button class="flex-shrink-0 flex items-center gap-2 px-4 py-2 border border-outline-variant text-on-surface-variant rounded-full font-label-md hover:bg-surface-container-low transition-colors">
+<span class="material-symbols-outlined text-[20px]">vaccines</span>
+                        Syrup
+                    </button>
+<!-- Injection -->
+<button class="flex-shrink-0 flex items-center gap-2 px-4 py-2 border border-outline-variant text-on-surface-variant rounded-full font-label-md hover:bg-surface-container-low transition-colors">
+<span class="material-symbols-outlined text-[20px]">colorize</span>
+                        Injection
+                    </button>
+</div>
+</div>
+<!-- Amount and Unit Side-by-Side -->
+<div class="grid grid-cols-2 gap-4">
+<div class="form-input-container h-touch-target rounded-xl px-4 flex items-center bg-surface-container-lowest">
+<div class="flex-1 relative h-full pt-2">
+<input class="peer w-full h-full bg-transparent border-none p-0 font-body-md text-on-surface placeholder-transparent focus:ring-0" id="amount" placeholder=" " type="number"/>
+<label class="absolute left-0 top-1 text-on-surface-variant font-label-md text-label-md transition-all duration-200 peer-placeholder-shown:top-3 peer-placeholder-shown:text-body-md peer-focus:top-1 peer-focus:text-label-md" for="amount">Amount</label>
+</div>
+</div>
+<div class="form-input-container h-touch-target rounded-xl px-4 flex items-center bg-surface-container-lowest">
+<div class="flex-1 relative h-full pt-2">
+<select class="peer w-full h-full bg-transparent border-none p-0 font-body-md text-on-surface focus:ring-0 appearance-none" id="unit">
+<option value="mg">mg</option>
+<option value="ml">ml</option>
+<option value="g">g</option>
+<option value="pills">pills</option>
+</select>
+<label class="absolute left-0 top-1 text-on-surface-variant font-label-md text-label-md" for="unit">Unit</label>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant pointer-events-none">expand_more</span>
+</div>
+</div>
+<!-- Frequency Chips -->
+<div>
+<label class="block font-label-md text-label-md text-on-surface-variant mb-3">Frequency</label>
+<div class="flex flex-wrap gap-2">
+<button class="px-4 py-2 bg-secondary-container text-on-secondary-container rounded-lg font-label-md">Daily</button>
+<button class="px-4 py-2 border border-outline-variant text-on-surface-variant rounded-lg font-label-md">Alternate Days</button>
+<button class="px-4 py-2 border border-outline-variant text-on-surface-variant rounded-lg font-label-md">Weekly</button>
+</div>
+</div>
+<!-- Schedule: Toggle Rows -->
+<div class="space-y-1">
+<label class="block font-label-md text-label-md text-on-surface-variant mb-2">Schedule</label>
+<!-- Morning -->
+<div class="bg-surface-container-lowest rounded-xl px-4 h-[64px] flex items-center justify-between shadow-[0px_4px_20px_rgba(15,45,86,0.04)] mb-2">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-secondary">light_mode</span>
+<span class="font-body-md text-on-surface">Morning</span>
+</div>
+<div class="flex items-center gap-4">
+<input class="border-none bg-surface-container-low rounded-lg px-2 py-1 font-label-md text-primary focus:ring-0" type="time" value="08:00"/>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-outline-variant rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+</div>
+<!-- Afternoon -->
+<div class="bg-surface-container-lowest rounded-xl px-4 h-[64px] flex items-center justify-between shadow-[0px_4px_20px_rgba(15,45,86,0.04)] mb-2">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-secondary">sunny</span>
+<span class="font-body-md text-on-surface">Afternoon</span>
+</div>
+<div class="flex items-center gap-4">
+<input class="border-none bg-surface-container-low rounded-lg px-2 py-1 font-label-md text-primary focus:ring-0" type="time" value="13:00"/>
+<label class="relative inline-flex items-center cursor-pointer">
+<input class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-outline-variant rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+</div>
+<!-- Evening -->
+<div class="bg-surface-container-lowest rounded-xl px-4 h-[64px] flex items-center justify-between shadow-[0px_4px_20px_rgba(15,45,86,0.04)] mb-2">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-secondary">wb_twilight</span>
+<span class="font-body-md text-on-surface">Evening</span>
+</div>
+<div class="flex items-center gap-4">
+<input class="border-none bg-surface-container-low rounded-lg px-2 py-1 font-label-md text-primary focus:ring-0" type="time" value="18:30"/>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-outline-variant rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+</div>
+<!-- Night -->
+<div class="bg-surface-container-lowest rounded-xl px-4 h-[64px] flex items-center justify-between shadow-[0px_4px_20px_rgba(15,45,86,0.04)] mb-2">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-secondary">bedtime</span>
+<span class="font-body-md text-on-surface">Night</span>
+</div>
+<div class="flex items-center gap-4">
+<input class="border-none bg-surface-container-low rounded-lg px-2 py-1 font-label-md text-primary focus:ring-0" type="time" value="22:00"/>
+<label class="relative inline-flex items-center cursor-pointer">
+<input class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-outline-variant rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Full Width Save Button -->
+<div class="fixed bottom-0 left-0 w-full p-margin-mobile bg-gradient-to-t from-background via-background to-transparent z-50">
+<div class="max-w-max-width-content mx-auto">
+<button class="w-full h-touch-target bg-primary text-on-primary rounded-xl font-button-text text-button-text shadow-lg active:scale-95 transition-transform">
+                Save Medication
+            </button>
+</div>
+</div>
+<script>
+        // Simple interactivity for demonstration
+        document.querySelectorAll('button').forEach(btn => {
+            btn.addEventListener('click', function() {
+                if(this.classList.contains('border-outline-variant')) {
+                    // Logic for chip selection would go here
+                    console.log('Chip clicked');
+                }
+            });
+        });
+    </script>
+</body></html>
