@@ -11,9 +11,24 @@ import { ProfileAvatar } from "@/components/ProfileAvatar";
 import { ProfileEditDialog } from "@/components/dialogs/ProfileEditDialog";
 import { WearableConnectDialog } from "@/components/dialogs/WearableConnectDialog";
 import type { ButtonDisplayMode, DashboardItemPref, NavItemPref } from "@/types";
-import { ChevronUp, ChevronDown, Type, Eye as EyeIcon, LayoutGrid, Watch, Plug, RefreshCw, Pencil, Trash2 } from "lucide-react";
+import {
+  ChevronUp,
+  ChevronDown,
+  Type,
+  Eye as EyeIcon,
+  LayoutGrid,
+  Watch,
+  Plug,
+  RefreshCw,
+  Pencil,
+  Trash2,
+  Download,
+  Upload,
+  AlertTriangle,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 import { formatRelative } from "@/lib/format";
+import { backupFileName, BackupParseError } from "@/data/backup";
 
 function reorder<T extends { order: number }>(items: T[], index: number, direction: -1 | 1): T[] {
   const sorted = [...items].sort((a, b) => a.order - b.order);
@@ -41,10 +56,14 @@ export function Settings() {
     listConnections,
     disconnectWearable,
     syncWearable,
+    exportBackup,
+    importBackup,
   } = useAppData();
   const [editProfileOpen, setEditProfileOpen] = React.useState(false);
   const [wearableOpen, setWearableOpen] = React.useState(false);
   const [syncingId, setSyncingId] = React.useState<string | null>(null);
+  const [importError, setImportError] = React.useState<string | null>(null);
+  const importInputRef = React.useRef<HTMLInputElement>(null);
 
   if (!activeProfile) return null;
 
@@ -85,6 +104,39 @@ export function Settings() {
     }
   };
 
+  const handleExport = () => {
+    const json = exportBackup();
+    const blob = new Blob([json], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = backupFileName();
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const handleImportFile = (file: File) => {
+    setImportError(null);
+    const reader = new FileReader();
+    reader.onload = () => {
+      const json = reader.result as string;
+      if (
+        !confirm(
+          "Restoring a backup replaces every profile, entry, and document currently on this device. This can't be undone. Continue?",
+        )
+      ) {
+        return;
+      }
+      try {
+        importBackup(json);
+      } catch (err) {
+        setImportError(err instanceof BackupParseError ? err.message : "Couldn't read that backup file.");
+      }
+    };
+    reader.onerror = () => setImportError("Couldn't read that file.");
+    reader.readAsText(file);
+  };
+
   return (
     <div className="flex flex-col gap-4 p-4 pb-24 sm:p-6">
       <div>
@@ -105,6 +157,9 @@ export function Settings() {
             <Watch className="mr-1.5 h-3.5 w-3.5" /> Wearables
           </TabsTrigger>
           <TabsTrigger value="profiles">Profiles</TabsTrigger>
+          <TabsTrigger value="backup">
+            <Download className="mr-1.5 h-3.5 w-3.5" /> Backup
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="dashboard">
@@ -288,6 +343,53 @@ export function Settings() {
                   >
                     <Trash2 className="h-3.5 w-3.5" />
                   </Button>
+                )}
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
+
+        <TabsContent value="backup">
+          <div className="flex flex-col gap-3">
+            <Card>
+              <CardContent className="flex flex-col gap-2 p-4">
+                <p className="text-sm font-medium">Back up everything</p>
+                <p className="text-xs text-muted-foreground">
+                  Downloads one file with every profile in this household — all entries, medications, and
+                  documents. Nothing here is ever backed up automatically or sent anywhere; this is the only copy
+                  besides what's on this device. Worth doing before uninstalling the app or switching phones.
+                </p>
+                <Button onClick={handleExport} className="self-start">
+                  <Download className="h-4 w-4" /> Export Backup File
+                </Button>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardContent className="flex flex-col gap-2 p-4">
+                <p className="text-sm font-medium">Restore from a backup</p>
+                <p className="text-xs text-muted-foreground">
+                  Replaces everything currently on this device with what's in the backup file. Use this to bring
+                  data back after reinstalling, or to move it to a different phone.
+                </p>
+                <Button variant="outline" onClick={() => importInputRef.current?.click()} className="self-start">
+                  <Upload className="h-4 w-4" /> Choose Backup File
+                </Button>
+                <input
+                  ref={importInputRef}
+                  type="file"
+                  accept="application/json,.json"
+                  className="hidden"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) handleImportFile(file);
+                    e.target.value = "";
+                  }}
+                />
+                {importError && (
+                  <p className="flex items-center gap-1.5 text-xs text-destructive">
+                    <AlertTriangle className="h-3.5 w-3.5 shrink-0" /> {importError}
+                  </p>
                 )}
               </CardContent>
             </Card>

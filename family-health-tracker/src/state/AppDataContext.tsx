@@ -16,6 +16,7 @@ import type {
   WearablePlatform,
 } from "@/types";
 import { loadDatabase, saveDatabase } from "@/data/storage";
+import { serializeBackup, parseBackup } from "@/data/backup";
 import { createDefaultPreferences, randomAvatar } from "@/data/defaults";
 import { ALL_TRACKER_IDS } from "@/lib/trackers";
 import { NAV_ORDER } from "@/lib/nav";
@@ -90,6 +91,9 @@ interface AppDataContextValue {
   deleteDocument: (docId: string) => void;
 
   storageError: boolean;
+
+  exportBackup: () => string;
+  importBackup: (json: string) => void;
 }
 
 const AppDataContext = React.createContext<AppDataContextValue | null>(null);
@@ -286,6 +290,13 @@ export function AppDataProvider({ children }: { children: React.ReactNode }) {
     setDb((prev) => ({ ...prev, documents: prev.documents.filter((d) => d.id !== docId) }));
   };
 
+  const exportBackup: AppDataContextValue["exportBackup"] = () => serializeBackup(db);
+
+  const importBackup: AppDataContextValue["importBackup"] = (json) => {
+    const restored = parseBackup(json);
+    setDb(restored);
+  };
+
   const value: AppDataContextValue = {
     profiles: db.profiles,
     activeProfileId: db.activeProfileId,
@@ -322,6 +333,8 @@ export function AppDataProvider({ children }: { children: React.ReactNode }) {
     updateDocument,
     deleteDocument,
     storageError,
+    exportBackup,
+    importBackup,
   };
 
   return <AppDataContext.Provider value={value}>{children}</AppDataContext.Provider>;
