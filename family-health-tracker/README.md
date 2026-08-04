@@ -31,3 +31,23 @@ npm run dev
 npm run build   # type-check + production build
 npm run lint    # oxlint
 ```
+
+## Android (Google Play)
+
+The app ships as a native Android project via [Capacitor](https://capacitorjs.com/), wrapping the same web build in a thin native shell — same code, same on-device-only data model.
+
+```bash
+npm run android:sync   # build the web app + sync it into android/
+npm run android:open   # ...and open the project in Android Studio
+```
+
+CI builds a signed release App Bundle automatically: pushing to `main` (or running the workflow manually) triggers `.github/workflows/build-android.yml`, which builds, signs with the upload keystore stored in repo secrets, and uploads `app-release.aab` as a workflow artifact ready to upload to Play Console.
+
+Required repository secrets (see the keystore delivery README for the actual values):
+
+- `ANDROID_KEYSTORE_BASE64`
+- `ANDROID_KEYSTORE_PASSWORD`
+- `ANDROID_KEY_ALIAS`
+- `ANDROID_KEY_PASSWORD`
+
+The keystore itself is never committed — `android/.gitignore` excludes `*.jks`, `*.keystore`, and `keystore.properties`.
