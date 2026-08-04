@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Privacy Policy — Family Health Tracker</title>
+<style>
+  :root {
+    color-scheme: light dark;
+    --bg: #ffffff;
+    --fg: #1c1e26;
+    --muted: #5a5f6d;
+    --card: #f4f5fb;
+    --accent: #4f5fd6;
+    --border: #e3e4ec;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #16171d;
+      --fg: #f1f2f6;
+      --muted: #a4a8b6;
+      --card: #1f2028;
+      --accent: #93a1ff;
+      --border: #2e303a;
+    }
+  }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--fg);
+    font: 16px/1.65 -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  main {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 48px 20px 96px;
+  }
+  h1 {
+    font-size: 1.7rem;
+    margin-bottom: 4px;
+  }
+  .updated {
+    color: var(--muted);
+    font-size: 0.9rem;
+    margin-bottom: 32px;
+  }
+  h2 {
+    font-size: 1.15rem;
+    margin-top: 2.2em;
+    border-top: 1px solid var(--border);
+    padding-top: 1.4em;
+  }
+  .callout {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px 20px;
+    margin: 24px 0;
+  }
+  .callout p:first-child { margin-top: 0; }
+  .callout p:last-child { margin-bottom: 0; }
+  ul { padding-left: 1.3em; }
+  li { margin-bottom: 0.5em; }
+  a { color: var(--accent); }
+  code {
+    background: var(--card);
+    padding: 0.1em 0.4em;
+    border-radius: 4px;
+    font-size: 0.9em;
+  }
+</style>
+</head>
+<body>
+<main>
+  <h1>Privacy Policy</h1>
+  <p class="updated">Family Health Tracker · Last updated: August 2026</p>
+
+  <div class="callout">
+    <p><strong>The short version:</strong> Family Health Tracker does not collect, transmit, or share any data.
+    Everything you enter — profiles, health readings, medications, uploaded documents — is stored only on your
+    own device. There is no account, no server, and no analytics of any kind.</p>
+  </div>
+
+  <h2>What data the app stores</h2>
+  <p>The app stores the following types of information, entirely on your device, in order to function:</p>
+  <ul>
+    <li>Profile details you create (name, avatar, date of birth) for each household member</li>
+    <li>Health entries you log or import: heart rate, sleep, meals, medications and doses, weight, blood
+      pressure, glucose, mood, symptoms, and water intake</li>
+    <li>Documents you choose to upload (e.g. lab results, imaging reports, visit summaries), including any photo
+      or PDF file content</li>
+    <li>Your display and layout preferences for each profile</li>
+    <li>Wearable "connection" records — see the note below on wearable data</li>
+  </ul>
+
+  <h2>Where this data lives</h2>
+  <p>All of the above is saved using your device's local browser storage (or, in the installed Android app, the
+    equivalent on-device app storage). It is not uploaded to any server we operate — because we don't operate
+    one. The app has no backend. Android's automatic cloud backup is explicitly disabled for this app, so your
+    data is not copied to Google Drive either. If you uninstall the app or clear its storage, this data is
+    permanently deleted and cannot be recovered by us, because we never had a copy of it.</p>
+
+  <h2>Wearable / health-platform data</h2>
+  <p>The app includes a wearable sync feature intended for platforms like Apple Health, Health Connect, Fitbit,
+    Garmin, Whoop, and Oura. At present this feature uses a <strong>simulated data source</strong> that generates
+    sample data for demonstration purposes — it does not connect to any real third-party account or service, and
+    no data is exchanged with any wearable company. If a future version adds a real connection to one of these
+    platforms, this policy will be updated first to describe exactly what is accessed and how — but any data
+    pulled from a real device will still be stored using the same on-device-only model described above, not sent
+    to us.</p>
+
+  <h2>Analytics, advertising, and tracking</h2>
+  <p>None. The app contains no analytics SDKs, no crash-reporting services, no advertising SDKs, and makes no
+    network requests to any third party. There is nothing to opt out of, because nothing is ever sent.</p>
+
+  <h2>Children's data</h2>
+  <p>Because this app is designed for household/family use, a profile may hold health information about a
+    child. That data is handled exactly like any other profile's data: stored only on the device the app is
+    installed on, under the control of whoever manages that device, and never transmitted anywhere by us.</p>
+
+  <h2>Permissions</h2>
+  <p>The Android app declares the <code>INTERNET</code> permission. This is required by the underlying WebView
+    component the app is built on, not because the app makes outbound network calls — it does not. You can
+    verify this yourself: the app works identically with the device in airplane mode.</p>
+
+  <h2>Changes to this policy</h2>
+  <p>If this policy changes — for example, when real wearable integrations are added — the update will be posted
+    at this same URL with a revised date above.</p>
+
+  <h2>Contact</h2>
+  <p>Questions about this policy or the app can be sent via the project's GitHub repository:
+    <a href="https://github.com/HoboJellyphish/GitHubReposits">github.com/HoboJellyphish/GitHubReposits</a>.</p>
+</main>
+</body>
+</html>
