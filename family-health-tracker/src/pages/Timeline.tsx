@@ -34,6 +34,8 @@ function entrySummary(entry: AnyLogEntry): string {
       return `${d.description} · severity ${d.severity}/5`;
     case "water":
       return `${d.ml} mL`;
+    case "steps":
+      return `${d.count} steps`;
     default:
       return "Entry";
   }

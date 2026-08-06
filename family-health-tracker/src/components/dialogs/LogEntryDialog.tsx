@@ -40,6 +40,8 @@ function buildDefaultData(trackerId: LoggableTrackerId): Record<string, unknown>
       return { description: "", severity: 2 };
     case "water":
       return { ml: 250 };
+    case "steps":
+      return { count: 1000 };
     default:
       return {};
   }
@@ -260,6 +262,13 @@ export function LogEntryDialog({
             <div className="flex flex-col gap-1.5">
               <Label>Amount (mL)</Label>
               <Input type="number" step="50" value={Number(data.ml ?? 0)} onChange={(e) => set("ml", Number(e.target.value))} />
+            </div>
+          )}
+
+          {trackerId === "steps" && (
+            <div className="flex flex-col gap-1.5">
+              <Label>Steps</Label>
+              <Input type="number" step="100" min={0} value={Number(data.count ?? 0)} onChange={(e) => set("count", Number(e.target.value))} />
             </div>
           )}
 

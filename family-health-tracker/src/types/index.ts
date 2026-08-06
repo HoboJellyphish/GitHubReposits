@@ -11,7 +11,8 @@ export type TrackerId =
   | "glucose"
   | "mood"
   | "symptoms"
-  | "water";
+  | "water"
+  | "steps";
 
 export type ButtonDisplayMode = "icon" | "text" | "both";
 
@@ -81,6 +82,10 @@ export interface WaterData {
   ml: number;
 }
 
+export interface StepsData {
+  count: number;
+}
+
 export type TrackerDataMap = {
   heartRate: HeartRateData;
   sleep: SleepData;
@@ -92,6 +97,7 @@ export type TrackerDataMap = {
   mood: MoodData;
   symptoms: SymptomsData;
   water: WaterData;
+  steps: StepsData;
 };
 
 export interface LogEntry<T extends TrackerId = TrackerId> {

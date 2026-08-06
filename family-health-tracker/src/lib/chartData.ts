@@ -26,6 +26,7 @@ export const CHART_CONFIG: Partial<Record<TrackerId, ChartSeriesConfig>> = {
   glucose: { kind: "line", unit: "mg/dL", primaryLabel: "Glucose" },
   mood: { kind: "line", unit: "/5", primaryLabel: "Mood" },
   water: { kind: "bar-sum", unit: "mL", primaryLabel: "Water intake" },
+  steps: { kind: "bar-sum", unit: "steps", primaryLabel: "Steps" },
   meals: { kind: "bar-count", primaryLabel: "Meals logged" },
   symptoms: { kind: "bar-count", primaryLabel: "Symptoms logged" },
 };
@@ -47,6 +48,8 @@ function numericValue(entry: AnyLogEntry): { primary: number | null; secondary?:
       return { primary: Number(d.rating) };
     case "water":
       return { primary: Number(d.ml) };
+    case "steps":
+      return { primary: Number(d.count) };
     default:
       return { primary: 1 };
   }

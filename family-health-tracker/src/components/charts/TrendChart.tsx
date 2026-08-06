@@ -14,7 +14,7 @@ import {
 import { CHART_CONFIG, buildTrendPoints, filterByRange } from "@/lib/chartData";
 import type { AnyLogEntry, TrackerId } from "@/types";
 import { formatDateTime } from "@/lib/format";
-import { YAxisTick } from "./ChartAxisTick";
+import { YAxisTick, estimateYAxisWidth } from "./ChartAxisTick";
 
 const PRIMARY_COLOR = "var(--color-primary)";
 const SECONDARY_COLOR = "oklch(0.65 0.16 30)";
@@ -84,6 +84,8 @@ export function TrendChart({
   const barMax = Math.max(...barValues, 1);
   const barDomainMax = Math.ceil(barMax * 1.15) || 1;
   const barTicks = Array.from({ length: tickCount }, (_, i) => Math.round((barDomainMax * i) / (tickCount - 1)));
+  const lineAxisWidth = estimateYAxisWidth(lineTicks);
+  const barAxisWidth = estimateYAxisWidth(barTicks, config.unit);
 
   return (
     <div className="h-64 w-full">
@@ -95,7 +97,7 @@ export function TrendChart({
             <YAxis
               tick={(props) => <YAxisTick {...props} unit={config.unit} />}
               stroke="var(--color-muted-foreground)"
-              width={44}
+              width={barAxisWidth}
               domain={[0, barDomainMax]}
               ticks={barTicks}
               allowDecimals={false}
@@ -110,7 +112,7 @@ export function TrendChart({
             <YAxis
               tick={(props) => <YAxisTick {...props} />}
               stroke="var(--color-muted-foreground)"
-              width={44}
+              width={lineAxisWidth}
               domain={lineDomain}
               ticks={lineTicks}
             />
