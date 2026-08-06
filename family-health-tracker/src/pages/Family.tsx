@@ -3,6 +3,7 @@ import { useAppData } from "@/state/AppDataContext";
 import { getTracker } from "@/lib/trackers";
 import { CHART_CONFIG, buildFamilyDailySeries, filterByRange, periodAggregate } from "@/lib/chartData";
 import { FamilyCompareChart } from "@/components/charts/FamilyCompareChart";
+import { FamilyCorrelations } from "@/components/charts/FamilyCorrelations";
 import { Card, CardContent } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -90,6 +91,14 @@ export function Family() {
           <FamilyCompareChart rows={rows} series={series} />
         </CardContent>
       </Card>
+
+      {series.length >= 2 && (
+        <Card>
+          <CardContent className="p-4">
+            <FamilyCorrelations rows={rows} series={series} metricLabel={config?.primaryLabel ?? "value"} />
+          </CardContent>
+        </Card>
+      )}
 
       <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 md:grid-cols-3">
         {profiles.map((p) => {

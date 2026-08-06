@@ -139,3 +139,66 @@ export function buildFamilyDailySeries(
   }
   return Array.from(rowsByDay.values()).sort((a, b) => (a.key < b.key ? -1 : 1));
 }
+
+export interface ProfileCorrelation {
+  profileAId: string;
+  profileBId: string;
+  /** Pearson correlation coefficient, -1..1. Null when there isn't enough overlapping data. */
+  r: number | null;
+  /** Number of days where both profiles logged a value for this tracker. */
+  pairedDays: number;
+}
+
+const MIN_PAIRED_DAYS = 3;
+
+/**
+ * Pearson correlation coefficient between two numeric series, using only
+ * the days where both have a logged value (pairwise deletion).
+ */
+function pearson(a: number[], b: number[]): number | null {
+  const n = a.length;
+  if (n < MIN_PAIRED_DAYS) return null;
+  const meanA = a.reduce((s, v) => s + v, 0) / n;
+  const meanB = b.reduce((s, v) => s + v, 0) / n;
+  let cov = 0;
+  let varA = 0;
+  let varB = 0;
+  for (let i = 0; i < n; i++) {
+    const da = a[i] - meanA;
+    const db = b[i] - meanB;
+    cov += da * db;
+    varA += da * da;
+    varB += db * db;
+  }
+  if (varA === 0 || varB === 0) return null;
+  const r = cov / Math.sqrt(varA * varB);
+  return Math.max(-1, Math.min(1, r));
+}
+
+/**
+ * Computes the Pearson correlation between every pair of family members for
+ * a tracker, based on daily-aggregated values. Only days both profiles
+ * logged data are used, so members with mismatched logging habits don't
+ * silently skew the result toward zero.
+ */
+export function computeFamilyCorrelations(rows: FamilySeriesRow[], profileIds: string[]): ProfileCorrelation[] {
+  const results: ProfileCorrelation[] = [];
+  for (let i = 0; i < profileIds.length; i++) {
+    for (let j = i + 1; j < profileIds.length; j++) {
+      const idA = profileIds[i];
+      const idB = profileIds[j];
+      const a: number[] = [];
+      const b: number[] = [];
+      for (const row of rows) {
+        const va = row[idA];
+        const vb = row[idB];
+        if (typeof va === "number" && typeof vb === "number") {
+          a.push(va);
+          b.push(vb);
+        }
+      }
+      results.push({ profileAId: idA, profileBId: idB, r: pearson(a, b), pairedDays: a.length });
+    }
+  }
+  return results;
+}
