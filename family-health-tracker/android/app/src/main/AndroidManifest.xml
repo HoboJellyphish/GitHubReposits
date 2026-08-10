@@ -32,4 +32,10 @@
     <!-- Permissions -->
 
     <uses-permission android:name="android.permission.INTERNET" />
+
+    <!-- Only requested at runtime if the user taps a voice-dictation mic
+         button (an optional alternative to typing values into log entries).
+         The app never listens without that explicit tap, and nothing is
+         recorded to disk — see MainActivity for the permission handoff. -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
 </manifest>

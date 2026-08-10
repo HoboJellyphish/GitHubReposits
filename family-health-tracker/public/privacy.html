@@ -78,7 +78,9 @@
   <div class="callout">
     <p><strong>The short version:</strong> Family Health Tracker does not collect, transmit, or share any data.
     Everything you enter — profiles, health readings, medications, uploaded documents — is stored only on your
-    own device. There is no account, no server, and no analytics of any kind.</p>
+    own device. There is no account, no server, and no analytics of any kind. The one exception is the optional
+    voice-dictation feature, described below, which on some devices uses your operating system's speech
+    recognition rather than staying fully on-device.</p>
   </div>
 
   <h2>What data the app stores</h2>
@@ -109,6 +111,20 @@
     pulled from a real device will still be stored using the same on-device-only model described above, not sent
     to us.</p>
 
+  <h2>Voice input</h2>
+  <p>Every text and number field in the log-entry form has an optional microphone button you can use instead of
+    typing. This is the one feature in the app that is not guaranteed to stay entirely on your device: it uses
+    your browser or operating system's built-in speech recognition, and on many platforms (for example, Chrome on
+    Android) that recognition is performed by a cloud service rather than on the device itself. The app has no
+    control over that — it simply asks the browser to transcribe speech to text, the same way any other page's
+    dictation button would.</p>
+  <p>Voice input is entirely optional and off unless you tap the microphone icon yourself; the app never listens
+    in the background. Whatever is transcribed appears in the field for you to review, edit, or delete before it
+    is saved — nothing is saved automatically from a voice result. If you never use this feature, it makes no
+    difference to how the app behaves: everything else, including the "works the same in airplane mode" guarantee
+    above, still applies. On Android, the app only requests the microphone permission the first time you tap a
+    voice button, not on install or app launch.</p>
+
   <h2>Analytics, advertising, and tracking</h2>
   <p>None. The app contains no analytics SDKs, no crash-reporting services, no advertising SDKs, and makes no
     network requests to any third party. There is nothing to opt out of, because nothing is ever sent.</p>
@@ -119,9 +135,14 @@
     installed on, under the control of whoever manages that device, and never transmitted anywhere by us.</p>
 
   <h2>Permissions</h2>
-  <p>The Android app declares the <code>INTERNET</code> permission. This is required by the underlying WebView
-    component the app is built on, not because the app makes outbound network calls — it does not. You can
-    verify this yourself: the app works identically with the device in airplane mode.</p>
+  <p>The Android app declares the <code>INTERNET</code> permission, required by the underlying WebView component
+    the app is built on. The app itself makes no outbound network calls of its own — you can verify this by using
+    the app in airplane mode, with one exception: if you tap a voice-dictation mic button, the device's speech
+    recognition may briefly need a connection to produce a transcript (see "Voice input" above). Every other
+    feature, including all logging, charts, and document storage, works identically offline.</p>
+  <p>The app also declares the <code>RECORD_AUDIO</code> permission, used solely to let the voice-dictation
+    feature access the microphone. Android asks you to approve this the first time you tap a mic button, not at
+    install time, and you can decline it — declining just means voice input won't work; typing still does.</p>
 
   <h2>Changes to this policy</h2>
   <p>If this policy changes — for example, when real wearable integrations are added — the update will be posted

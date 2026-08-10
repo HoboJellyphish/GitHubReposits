@@ -8,8 +8,18 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useAppData } from "@/state/AppDataContext";
 import { getTracker } from "@/lib/trackers";
 import { fromDatetimeLocalValue, nowIso, toDatetimeLocalValue } from "@/lib/format";
+import { VoiceInputButton } from "@/components/VoiceInputButton";
+import { VoiceNumberInput } from "@/components/VoiceNumberInput";
+import { extractTwoSpokenNumbers } from "@/lib/voiceNumber";
 import type { AnyLogEntry, TrackerId } from "@/types";
 import { Clock } from "lucide-react";
+
+/** Dictated text replaces an empty field, or is appended (with a space) to
+ * whatever's already there — lets someone dictate a note in more than one
+ * take without losing what they already said. */
+function appendDictation(existing: string, spoken: string): string {
+  return existing.trim() ? `${existing.trim()} ${spoken}` : spoken;
+}
 
 type LoggableTrackerId = Exclude<TrackerId, "medications" | "sleep">;
 
@@ -122,12 +132,13 @@ export function LogEntryDialog({
             <div className="grid grid-cols-2 gap-3">
               <div className="flex flex-col gap-1.5">
                 <Label>BPM</Label>
-                <Input
-                  type="number"
+                <VoiceNumberInput
                   value={Number(data.bpm ?? 0)}
-                  onChange={(e) => set("bpm", Number(e.target.value))}
+                  onChange={(n) => set("bpm", n)}
                   min={20}
                   max={260}
+                  voiceLabel="Dictate heart rate"
+                  round
                 />
               </div>
               <div className="flex flex-col gap-1.5">
@@ -165,11 +176,35 @@ export function LogEntryDialog({
               </div>
               <div className="flex flex-col gap-1.5">
                 <Label>Food / category</Label>
-                <Input value={String(data.category ?? "")} onChange={(e) => set("category", e.target.value)} placeholder="e.g. Chicken salad" />
+                <div className="relative">
+                  <Input
+                    value={String(data.category ?? "")}
+                    onChange={(e) => set("category", e.target.value)}
+                    placeholder="e.g. Chicken salad"
+                    className="pr-10"
+                  />
+                  <VoiceInputButton
+                    className="absolute right-1.5 top-1/2 -translate-y-1/2"
+                    label="Dictate food"
+                    onResult={(text) => set("category", appendDictation(String(data.category ?? ""), text))}
+                  />
+                </div>
               </div>
               <div className="flex flex-col gap-1.5">
                 <Label>Portion notes</Label>
-                <Input value={String(data.portion ?? "")} onChange={(e) => set("portion", e.target.value)} placeholder="e.g. one bowl" />
+                <div className="relative">
+                  <Input
+                    value={String(data.portion ?? "")}
+                    onChange={(e) => set("portion", e.target.value)}
+                    placeholder="e.g. one bowl"
+                    className="pr-10"
+                  />
+                  <VoiceInputButton
+                    className="absolute right-1.5 top-1/2 -translate-y-1/2"
+                    label="Dictate portion"
+                    onResult={(text) => set("portion", appendDictation(String(data.portion ?? ""), text))}
+                  />
+                </div>
               </div>
               <div className="flex flex-col gap-1.5">
                 <Label>Photo (optional)</Label>
@@ -194,19 +229,34 @@ export function LogEntryDialog({
           {trackerId === "weight" && (
             <div className="flex flex-col gap-1.5">
               <Label>Weight (kg)</Label>
-              <Input type="number" step="0.1" value={Number(data.kg ?? 0)} onChange={(e) => set("kg", Number(e.target.value))} />
+              <VoiceNumberInput value={Number(data.kg ?? 0)} onChange={(n) => set("kg", n)} step="0.1" voiceLabel="Dictate weight" />
             </div>
           )}
 
           {trackerId === "bloodPressure" && (
-            <div className="grid grid-cols-2 gap-3">
-              <div className="flex flex-col gap-1.5">
-                <Label>Systolic</Label>
-                <Input type="number" value={Number(data.systolic ?? 0)} onChange={(e) => set("systolic", Number(e.target.value))} />
+            <div className="flex flex-col gap-2">
+              <div className="flex items-center justify-between">
+                <Label>Reading</Label>
+                <VoiceInputButton
+                  label={'Dictate both, e.g. "118 over 76"'}
+                  onResult={(text) => {
+                    const pair = extractTwoSpokenNumbers(text);
+                    if (pair) {
+                      set("systolic", pair[0]);
+                      set("diastolic", pair[1]);
+                    }
+                  }}
+                />
               </div>
-              <div className="flex flex-col gap-1.5">
-                <Label>Diastolic</Label>
-                <Input type="number" value={Number(data.diastolic ?? 0)} onChange={(e) => set("diastolic", Number(e.target.value))} />
+              <div className="grid grid-cols-2 gap-3">
+                <div className="flex flex-col gap-1.5">
+                  <Label className="text-xs text-muted-foreground">Systolic</Label>
+                  <VoiceNumberInput value={Number(data.systolic ?? 0)} onChange={(n) => set("systolic", n)} voiceLabel="Dictate systolic" round />
+                </div>
+                <div className="flex flex-col gap-1.5">
+                  <Label className="text-xs text-muted-foreground">Diastolic</Label>
+                  <VoiceNumberInput value={Number(data.diastolic ?? 0)} onChange={(n) => set("diastolic", n)} voiceLabel="Dictate diastolic" round />
+                </div>
               </div>
             </div>
           )}
@@ -214,7 +264,7 @@ export function LogEntryDialog({
           {trackerId === "glucose" && (
             <div className="flex flex-col gap-1.5">
               <Label>Glucose (mg/dL)</Label>
-              <Input type="number" value={Number(data.mgdl ?? 0)} onChange={(e) => set("mgdl", Number(e.target.value))} />
+              <VoiceNumberInput value={Number(data.mgdl ?? 0)} onChange={(n) => set("mgdl", n)} voiceLabel="Dictate glucose" round />
             </div>
           )}
 
@@ -243,16 +293,29 @@ export function LogEntryDialog({
             <>
               <div className="flex flex-col gap-1.5">
                 <Label>Description</Label>
-                <Input value={String(data.description ?? "")} onChange={(e) => set("description", e.target.value)} placeholder="e.g. Headache" />
+                <div className="relative">
+                  <Input
+                    value={String(data.description ?? "")}
+                    onChange={(e) => set("description", e.target.value)}
+                    placeholder="e.g. Headache"
+                    className="pr-10"
+                  />
+                  <VoiceInputButton
+                    className="absolute right-1.5 top-1/2 -translate-y-1/2"
+                    label="Dictate symptom"
+                    onResult={(text) => set("description", appendDictation(String(data.description ?? ""), text))}
+                  />
+                </div>
               </div>
               <div className="flex flex-col gap-1.5">
                 <Label>Severity (1-5)</Label>
-                <Input
-                  type="number"
+                <VoiceNumberInput
+                  value={Number(data.severity ?? 1)}
+                  onChange={(n) => set("severity", n)}
                   min={1}
                   max={5}
-                  value={Number(data.severity ?? 1)}
-                  onChange={(e) => set("severity", Number(e.target.value))}
+                  voiceLabel="Dictate severity"
+                  round
                 />
               </div>
             </>
@@ -261,20 +324,27 @@ export function LogEntryDialog({
           {trackerId === "water" && (
             <div className="flex flex-col gap-1.5">
               <Label>Amount (mL)</Label>
-              <Input type="number" step="50" value={Number(data.ml ?? 0)} onChange={(e) => set("ml", Number(e.target.value))} />
+              <VoiceNumberInput value={Number(data.ml ?? 0)} onChange={(n) => set("ml", n)} step="50" voiceLabel="Dictate water amount" round />
             </div>
           )}
 
           {trackerId === "steps" && (
             <div className="flex flex-col gap-1.5">
               <Label>Steps</Label>
-              <Input type="number" step="100" min={0} value={Number(data.count ?? 0)} onChange={(e) => set("count", Number(e.target.value))} />
+              <VoiceNumberInput value={Number(data.count ?? 0)} onChange={(n) => set("count", n)} step="100" min={0} voiceLabel="Dictate steps" round />
             </div>
           )}
 
           <div className="flex flex-col gap-1.5">
             <Label>Note (optional)</Label>
-            <Textarea value={note} onChange={(e) => setNote(e.target.value)} rows={2} />
+            <div className="relative">
+              <Textarea value={note} onChange={(e) => setNote(e.target.value)} rows={2} className="pr-10" />
+              <VoiceInputButton
+                className="absolute right-1.5 top-2"
+                label="Dictate note"
+                onResult={(text) => setNote((prev) => appendDictation(prev, text))}
+              />
+            </div>
           </div>
 
           {!showBackdate && !existing && (
