@@ -9,8 +9,6 @@ import { getTracker } from "@/lib/trackers";
 import { CHART_CONFIG } from "@/lib/chartData";
 import { READING_TRACKER_IDS, isDualValueReading, buildReadingEntryData } from "@/lib/readings";
 import { id as newId } from "@/lib/format";
-import { VoiceInputButton } from "@/components/VoiceInputButton";
-import { extractSpokenNumber } from "@/lib/voiceNumber";
 import type { MedicalDocument, TrackerId } from "@/types";
 import { Plus, Trash2, FileText } from "lucide-react";
 
@@ -124,64 +122,23 @@ export function DocumentReadingsDialog({
                     <>
                       <div className="flex w-20 flex-col gap-1.5">
                         <Label className="text-xs text-muted-foreground">Systolic</Label>
-                        <div className="relative">
-                          <Input
-                            type="number"
-                            value={row.value}
-                            onChange={(e) => updateRow(row.key, { value: e.target.value })}
-                            className="pr-8"
-                          />
-                          <VoiceInputButton
-                            className="absolute right-0.5 top-1/2 -translate-y-1/2"
-                            label="Dictate systolic"
-                            onResult={(text) => {
-                              const n = extractSpokenNumber(text);
-                              if (n !== null) updateRow(row.key, { value: String(Math.round(n)) });
-                            }}
-                          />
-                        </div>
+                        <Input type="number" value={row.value} onChange={(e) => updateRow(row.key, { value: e.target.value })} />
                       </div>
                       <div className="flex w-20 flex-col gap-1.5">
                         <Label className="text-xs text-muted-foreground">Diastolic</Label>
-                        <div className="relative">
-                          <Input
-                            type="number"
-                            value={row.value2}
-                            onChange={(e) => updateRow(row.key, { value2: e.target.value })}
-                            className="pr-8"
-                          />
-                          <VoiceInputButton
-                            className="absolute right-0.5 top-1/2 -translate-y-1/2"
-                            label="Dictate diastolic"
-                            onResult={(text) => {
-                              const n = extractSpokenNumber(text);
-                              if (n !== null) updateRow(row.key, { value2: String(Math.round(n)) });
-                            }}
-                          />
-                        </div>
+                        <Input type="number" value={row.value2} onChange={(e) => updateRow(row.key, { value2: e.target.value })} />
                       </div>
                     </>
                   ) : (
                     <div className="flex w-28 flex-col gap-1.5">
                       <Label className="text-xs text-muted-foreground">{unit ?? tracker.label}</Label>
-                      <div className="relative">
-                        <Input
-                          type="number"
-                          min={row.trackerId === "mood" ? 1 : undefined}
-                          max={row.trackerId === "mood" ? 5 : undefined}
-                          value={row.value}
-                          onChange={(e) => updateRow(row.key, { value: e.target.value })}
-                          className="pr-8"
-                        />
-                        <VoiceInputButton
-                          className="absolute right-0.5 top-1/2 -translate-y-1/2"
-                          label={`Dictate ${tracker.label.toLowerCase()}`}
-                          onResult={(text) => {
-                            const n = extractSpokenNumber(text);
-                            if (n !== null) updateRow(row.key, { value: String(n) });
-                          }}
-                        />
-                      </div>
+                      <Input
+                        type="number"
+                        min={row.trackerId === "mood" ? 1 : undefined}
+                        max={row.trackerId === "mood" ? 5 : undefined}
+                        value={row.value}
+                        onChange={(e) => updateRow(row.key, { value: e.target.value })}
+                      />
                     </div>
                   )}
 
