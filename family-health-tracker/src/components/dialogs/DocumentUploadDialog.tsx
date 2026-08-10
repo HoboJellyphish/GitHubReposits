@@ -8,17 +8,19 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useAppData } from "@/state/AppDataContext";
 import { DOCUMENT_CATEGORIES, MAX_DOCUMENT_BYTES, formatFileSize } from "@/lib/documents";
 import { nowIso } from "@/lib/format";
-import type { DocumentCategory } from "@/types";
+import type { DocumentCategory, MedicalDocument } from "@/types";
 import { Upload, FileText } from "lucide-react";
 
 export function DocumentUploadDialog({
   open,
   onOpenChange,
   profileId,
+  onUploaded,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   profileId: string;
+  onUploaded?: (doc: MedicalDocument) => void;
 }) {
   const { addDocument } = useAppData();
   const [title, setTitle] = React.useState("");
@@ -66,7 +68,7 @@ export function DocumentUploadDialog({
   const handleSave = () => {
     if (!file || !dataUrl || !title.trim()) return;
     setSaving(true);
-    addDocument({
+    const saved = addDocument({
       profileId,
       title: title.trim(),
       category,
@@ -78,6 +80,7 @@ export function DocumentUploadDialog({
       note: note || undefined,
     });
     onOpenChange(false);
+    onUploaded?.(saved);
   };
 
   return (

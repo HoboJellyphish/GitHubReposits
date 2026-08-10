@@ -1,19 +1,22 @@
 import * as React from "react";
 import { useAppData } from "@/state/AppDataContext";
 import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { AppButton } from "@/components/AppButton";
 import { DocumentUploadDialog } from "@/components/dialogs/DocumentUploadDialog";
 import { DocumentViewerDialog } from "@/components/dialogs/DocumentViewerDialog";
+import { DocumentReadingsDialog } from "@/components/dialogs/DocumentReadingsDialog";
 import { DOCUMENT_CATEGORIES, getCategoryDef, formatFileSize } from "@/lib/documents";
 import { formatDate } from "@/lib/format";
-import { Upload, FileText, AlertTriangle } from "lucide-react";
+import { Upload, FileText, AlertTriangle, ChartLine } from "lucide-react";
 import type { DocumentCategory, MedicalDocument } from "@/types";
 import { cn } from "@/lib/utils";
 
 export function Documents() {
-  const { activeProfile, listDocuments, storageError } = useAppData();
+  const { activeProfile, listDocuments, listLogEntries, storageError } = useAppData();
   const [uploadOpen, setUploadOpen] = React.useState(false);
   const [viewing, setViewing] = React.useState<MedicalDocument | null>(null);
+  const [loggingReadingsFor, setLoggingReadingsFor] = React.useState<MedicalDocument | null>(null);
   const [filter, setFilter] = React.useState<DocumentCategory | "all">("all");
 
   if (!activeProfile) return null;
@@ -21,6 +24,11 @@ export function Documents() {
   const documents = listDocuments(activeProfile.id)
     .filter((d) => filter === "all" || d.category === filter)
     .sort((a, b) => new Date(b.documentDate).getTime() - new Date(a.documentDate).getTime());
+
+  const readingCounts = new Map<string, number>();
+  for (const e of listLogEntries(activeProfile.id)) {
+    if (e.documentId) readingCounts.set(e.documentId, (readingCounts.get(e.documentId) ?? 0) + 1);
+  }
 
   return (
     <div className="flex flex-col gap-4 p-4 pb-24 sm:p-6">
@@ -98,6 +106,12 @@ export function Documents() {
                   <p className="truncate text-xs text-muted-foreground">
                     {category.label} · {formatDate(doc.documentDate)} · {formatFileSize(doc.fileSize)}
                   </p>
+                  {readingCounts.has(doc.id) && (
+                    <Badge variant="success" className="mt-1">
+                      <ChartLine className="h-3 w-3" />
+                      {readingCounts.get(doc.id)} in charts
+                    </Badge>
+                  )}
                 </div>
               </CardContent>
             </Card>
@@ -105,8 +119,16 @@ export function Documents() {
         })}
       </div>
 
-      <DocumentUploadDialog open={uploadOpen} onOpenChange={setUploadOpen} profileId={activeProfile.id} />
+      <DocumentUploadDialog
+        open={uploadOpen}
+        onOpenChange={setUploadOpen}
+        profileId={activeProfile.id}
+        onUploaded={(doc) => setLoggingReadingsFor(doc)}
+      />
       {viewing && <DocumentViewerDialog open onOpenChange={(o) => !o && setViewing(null)} doc={viewing} />}
+      {loggingReadingsFor && (
+        <DocumentReadingsDialog open onOpenChange={(o) => !o && setLoggingReadingsFor(null)} doc={loggingReadingsFor} />
+      )}
     </div>
   );
 }

@@ -16,7 +16,7 @@ export type TrackerId =
 
 export type ButtonDisplayMode = "icon" | "text" | "both";
 
-export type EntrySource = "manual" | "wearable";
+export type EntrySource = "manual" | "wearable" | "document";
 
 export type WearablePlatform =
   | "apple_health"
@@ -107,6 +107,7 @@ export interface LogEntry<T extends TrackerId = TrackerId> {
   timestamp: string;
   source: EntrySource;
   wearablePlatform?: WearablePlatform;
+  documentId?: string;
   note?: string;
   data: TrackerDataMap[T];
   createdAt: string;
