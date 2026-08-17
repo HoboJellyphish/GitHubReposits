@@ -8,7 +8,9 @@ import { Timeline } from "@/pages/Timeline";
 import { Trends } from "@/pages/Trends";
 import { Family } from "@/pages/Family";
 import { Medications } from "@/pages/Medications";
+import { Labs } from "@/pages/Labs";
 import { Documents } from "@/pages/Documents";
+import { Tips } from "@/pages/Tips";
 import { Settings } from "@/pages/Settings";
 import { ProfileEditDialog } from "@/components/dialogs/ProfileEditDialog";
 import { Button } from "@/components/ui/button";
@@ -69,7 +71,9 @@ function AppShell() {
           {page === "trends" && <Trends />}
           {page === "family" && <Family />}
           {page === "medications" && <Medications />}
+          {page === "labs" && <Labs />}
           {page === "documents" && <Documents />}
+          {page === "tips" && <Tips />}
           {page === "settings" && <Settings />}
         </main>
       </div>

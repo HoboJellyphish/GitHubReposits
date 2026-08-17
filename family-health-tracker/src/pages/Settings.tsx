@@ -6,6 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Switch } from "@/components/ui/switch";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { ProfileAvatar } from "@/components/ProfileAvatar";
 import { ProfileEditDialog } from "@/components/dialogs/ProfileEditDialog";
@@ -25,10 +26,20 @@ import {
   Download,
   Upload,
   AlertTriangle,
+  Bell,
+  BellOff,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { formatRelative } from "@/lib/format";
 import { backupFileName, BackupParseError } from "@/data/backup";
+import {
+  requestNotificationPermission,
+  scheduleTipsReminder,
+  cancelTipsReminder,
+  scheduleMedicationReminders,
+  cancelMedicationReminders,
+} from "@/lib/reminders";
+import { ImportDataDialog } from "@/components/dialogs/ImportDataDialog";
 
 function reorder<T extends { order: number }>(items: T[], index: number, direction: -1 | 1): T[] {
   const sorted = [...items].sort((a, b) => a.order - b.order);
@@ -52,17 +63,21 @@ export function Settings() {
     setButtonStyle,
     setDashboardItems,
     setNavItems,
+    updatePreferences,
     deleteProfile,
     listConnections,
     disconnectWearable,
     syncWearable,
+    listMedications,
     exportBackup,
     importBackup,
   } = useAppData();
   const [editProfileOpen, setEditProfileOpen] = React.useState(false);
   const [wearableOpen, setWearableOpen] = React.useState(false);
+  const [importDataOpen, setImportDataOpen] = React.useState(false);
   const [syncingId, setSyncingId] = React.useState<string | null>(null);
   const [importError, setImportError] = React.useState<string | null>(null);
+  const [notifPermissionDenied, setNotifPermissionDenied] = React.useState(false);
   const importInputRef = React.useRef<HTMLInputElement>(null);
 
   if (!activeProfile) return null;
@@ -137,6 +152,42 @@ export function Settings() {
     reader.readAsText(file);
   };
 
+  const handleToggleTipsReminder = async (enabled: boolean) => {
+    if (enabled) {
+      const granted = await requestNotificationPermission();
+      if (!granted) {
+        setNotifPermissionDenied(true);
+        return;
+      }
+      setNotifPermissionDenied(false);
+      await scheduleTipsReminder(prefs.tipsReminderTime);
+    } else {
+      await cancelTipsReminder();
+    }
+    updatePreferences(activeProfile.id, { tipsReminderEnabled: enabled });
+  };
+
+  const handleTipsTimeChange = async (time: string) => {
+    updatePreferences(activeProfile.id, { tipsReminderTime: time });
+    if (prefs.tipsReminderEnabled) await scheduleTipsReminder(time);
+  };
+
+  const handleToggleMedicationReminders = async (enabled: boolean) => {
+    const meds = listMedications(activeProfile.id);
+    if (enabled) {
+      const granted = await requestNotificationPermission();
+      if (!granted) {
+        setNotifPermissionDenied(true);
+        return;
+      }
+      setNotifPermissionDenied(false);
+      await scheduleMedicationReminders(meds);
+    } else {
+      await cancelMedicationReminders(meds);
+    }
+    updatePreferences(activeProfile.id, { medicationRemindersEnabled: enabled });
+  };
+
   return (
     <div className="flex flex-col gap-4 p-4 pb-24 sm:p-6">
       <div>
@@ -155,6 +206,9 @@ export function Settings() {
           </TabsTrigger>
           <TabsTrigger value="wearables">
             <Watch className="mr-1.5 h-3.5 w-3.5" /> Wearables
+          </TabsTrigger>
+          <TabsTrigger value="reminders">
+            <Bell className="mr-1.5 h-3.5 w-3.5" /> Reminders
           </TabsTrigger>
           <TabsTrigger value="profiles">Profiles</TabsTrigger>
           <TabsTrigger value="backup">
@@ -319,6 +373,60 @@ export function Settings() {
           </div>
         </TabsContent>
 
+        <TabsContent value="reminders">
+          <div className="flex flex-col gap-3">
+            <Card>
+              <CardContent className="flex flex-col gap-2 p-4 text-xs text-muted-foreground">
+                <p>
+                  Reminders use this device's own notification system — nothing is scheduled, sent, or logged
+                  anywhere else. Both are off unless you turn them on here.
+                </p>
+                {notifPermissionDenied && (
+                  <p className="flex items-center gap-1.5 text-destructive">
+                    <BellOff className="h-3.5 w-3.5 shrink-0" /> Notification permission was denied. Enable it for
+                    this app in your device settings, then try again.
+                  </p>
+                )}
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardContent className="flex flex-col gap-3 p-4">
+                <div className="flex items-center justify-between gap-3">
+                  <div>
+                    <p className="text-sm font-medium">Daily healthy tip</p>
+                    <p className="text-xs text-muted-foreground">One reminder a day with a wellness tip.</p>
+                  </div>
+                  <Switch checked={prefs.tipsReminderEnabled} onCheckedChange={handleToggleTipsReminder} />
+                </div>
+                {prefs.tipsReminderEnabled && (
+                  <div className="flex items-center gap-2">
+                    <Label className="text-xs text-muted-foreground">Time</Label>
+                    <Input
+                      type="time"
+                      value={prefs.tipsReminderTime}
+                      onChange={(e) => handleTipsTimeChange(e.target.value)}
+                      className="w-32"
+                    />
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardContent className="flex items-center justify-between gap-3 p-4">
+                <div>
+                  <p className="text-sm font-medium">Medication reminders</p>
+                  <p className="text-xs text-muted-foreground">
+                    Uses the reminder time already set on each medication (edit those under Medications).
+                  </p>
+                </div>
+                <Switch checked={prefs.medicationRemindersEnabled} onCheckedChange={handleToggleMedicationReminders} />
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
+
         <TabsContent value="profiles">
           <div className="flex flex-col gap-3">
             <Card>
@@ -393,12 +501,27 @@ export function Settings() {
                 )}
               </CardContent>
             </Card>
+
+            <Card>
+              <CardContent className="flex flex-col gap-2 p-4">
+                <p className="text-sm font-medium">Import from another health app</p>
+                <p className="text-xs text-muted-foreground">
+                  Bring in history from an Apple Health export, or a CSV file exported from another app. This adds
+                  to what's already here — unlike Restore, it doesn't replace anything. Everything is parsed on
+                  this device; the file never goes anywhere else.
+                </p>
+                <Button variant="outline" onClick={() => setImportDataOpen(true)} className="self-start">
+                  <Upload className="h-4 w-4" /> Import Data
+                </Button>
+              </CardContent>
+            </Card>
           </div>
         </TabsContent>
       </Tabs>
 
       <ProfileEditDialog open={editProfileOpen} onOpenChange={setEditProfileOpen} profile={activeProfile} />
       <WearableConnectDialog open={wearableOpen} onOpenChange={setWearableOpen} profileId={activeProfile.id} />
+      <ImportDataDialog open={importDataOpen} onOpenChange={setImportDataOpen} profileId={activeProfile.id} />
     </div>
   );
 }
