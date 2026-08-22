@@ -1,5 +1,6 @@
-import React from 'react';
-import { StyleSheet, View } from 'react-native';
+import * as NavigationBar from 'expo-navigation-bar';
+import React, { useEffect } from 'react';
+import { Platform, StyleSheet, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
@@ -11,6 +12,12 @@ import { RootNavigator } from '@/navigation/RootNavigator';
 import { colors } from '@/theme';
 
 export default function App() {
+  useEffect(() => {
+    if (Platform.OS !== 'android') return;
+    NavigationBar.setBackgroundColorAsync(colors.background).catch(() => {});
+    NavigationBar.setButtonStyleAsync('light').catch(() => {});
+  }, []);
+
   return (
     <GestureHandlerRootView style={styles.flex}>
       <SafeAreaProvider>
