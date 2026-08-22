@@ -45,7 +45,7 @@ export function HistoryScreen() {
   }, [entries]);
 
   return (
-    <SafeAreaView style={styles.safeArea} edges={['top']}>
+    <SafeAreaView style={styles.safeArea} edges={['top', 'bottom']}>
       <Text style={styles.header}>History</Text>
       {sections.length === 0 ? (
         <View style={styles.emptyWrap}>
