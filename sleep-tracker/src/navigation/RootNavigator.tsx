@@ -1,13 +1,14 @@
-import { Ionicons } from '@expo/vector-icons';
-import { NavigationContainer, DarkTheme } from '@react-navigation/native';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { DarkTheme, NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import React from 'react';
 
+import type { RootStackParamList } from '@/navigation/types';
 import { HistoryScreen } from '@/screens/HistoryScreen';
 import { HomeScreen } from '@/screens/HomeScreen';
+import { MedLogScreen } from '@/screens/MedLogScreen';
 import { colors } from '@/theme';
 
-const Tab = createBottomTabNavigator();
+const Stack = createNativeStackNavigator<RootStackParamList>();
 
 const navigationTheme = {
   ...DarkTheme,
@@ -24,31 +25,18 @@ const navigationTheme = {
 export function RootNavigator() {
   return (
     <NavigationContainer theme={navigationTheme}>
-      <Tab.Navigator
-        screenOptions={({ route }) => ({
-          headerShown: false,
-          tabBarActiveTintColor: colors.sleep,
-          tabBarInactiveTintColor: colors.textMuted,
-          tabBarStyle: {
-            backgroundColor: colors.backgroundAlt,
-            borderTopColor: colors.border,
-          },
-          tabBarIcon: ({ color, size, focused }) => {
-            const name =
-              route.name === 'Home'
-                ? focused
-                  ? 'moon'
-                  : 'moon-outline'
-                : focused
-                  ? 'time'
-                  : 'time-outline';
-            return <Ionicons name={name} size={size} color={color} />;
-          },
-        })}
+      <Stack.Navigator
+        initialRouteName="Home"
+        screenOptions={{ headerShown: false }}
       >
-        <Tab.Screen name="Home" component={HomeScreen} />
-        <Tab.Screen name="History" component={HistoryScreen} />
-      </Tab.Navigator>
+        <Stack.Screen name="Home" component={HomeScreen} />
+        <Stack.Screen
+          name="MedLog"
+          component={MedLogScreen}
+          options={{ animation: 'slide_from_bottom' }}
+        />
+        <Stack.Screen name="History" component={HistoryScreen} />
+      </Stack.Navigator>
     </NavigationContainer>
   );
 }

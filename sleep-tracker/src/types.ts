@@ -1,9 +1,4 @@
-export type EntryType =
-  | 'SLEEP_START'
-  | 'SLEEP_END'
-  | 'NAP_START'
-  | 'NAP_END'
-  | 'MEDICATION';
+export type EntryType = 'SLEEP_START' | 'SLEEP_END' | 'MEDICATION';
 
 export interface LogEntry {
   id: string;
@@ -23,3 +18,17 @@ export type NewLogEntry = Pick<
   LogEntry,
   'type' | 'timestamp' | 'medicationName' | 'dosage' | 'notes'
 >;
+
+/** A medication the user takes, added via the Customize screen, used to
+ * populate the picker on the medication log so entries are one tap. */
+export interface Medication {
+  id: string;
+  name: string;
+  defaultDose?: string;
+}
+
+export type NewMedication = Pick<Medication, 'name' | 'defaultDose'>;
+
+export interface UserProfile {
+  name?: string;
+}

@@ -4,18 +4,22 @@ A clean, simple sleep tracker built with [Expo](https://expo.dev) / React Native
 
 ## Features
 
-- **One-tap tracking** — big, obvious buttons for going to sleep, waking up, starting/ending a nap, and logging medication.
-- **Live status** — the home screen always shows whether you're currently asleep, napping, or awake, plus a summary of your last sleep.
-- **Medication log** — record what you took, an optional dosage and notes; every entry is automatically time-stamped.
-- **History & editing** — every logged event (sleep, wake, nap, medication) is listed on the History tab grouped by day. Tap any entry to correct its time, edit medication details, or delete it.
-- **Local persistence** — all data is stored on-device with `AsyncStorage`; no account or network connection required.
+- **One-tap tracking** — three rounded icon buttons on the home screen: an open eye to log waking up, a closed eye to log going to sleep, and a two-tone pill icon that opens the medication log. Every tap is stamped with the current time automatically.
+- **Medication log with your own list** — tap the pill button, pick a medication from a list you build once (name + usual dose via the "C" customize button), and the dose/time are pre-filled but stay editable before you save.
+- **Recent activity** — the last few logs sit right on the home screen; tap the pencil icon on any entry to fix a time or detail.
+- **Full history & export** — swipe/tap up to the History screen for everything you've ever logged, grouped by day and editable. Download the whole history as an Excel spreadsheet (`.xlsx`), a PDF, or a plain Markdown (`.md`) file from there.
+- **Menu** — the hamburger menu in the corner holds an optional display name and a "Replay tutorial" button.
+- **First-run tutorial** — a short guided tour of the four main areas appears the first time the app opens, and never again unless replayed from the menu.
+- **Local persistence** — all data (logs, your medication list, your name) is stored on-device with `AsyncStorage`; no account or network connection is used at any point.
 
 ## Tech stack
 
 - Expo (React Native, TypeScript)
-- React Navigation (bottom tabs)
+- React Navigation (native stack)
 - `@react-native-async-storage/async-storage` for persistence
 - `@react-native-community/datetimepicker` for editing timestamps
+- `react-native-svg` for the two-tone pill icon
+- `expo-print` + `expo-sharing` + `expo-file-system` + `xlsx` for the PDF/Excel/Markdown export
 
 ## Getting started
 
@@ -70,23 +74,31 @@ When an Android build finishes, `eas build` prints a URL — open it on your pho
 ## Project structure
 
 ```
-App.tsx                      Root component (providers + navigation)
+App.tsx                              Root component (providers + navigation)
 src/
-  types.ts                   LogEntry data model
-  storage/logStorage.ts      AsyncStorage read/write
-  context/LogsContext.tsx    App-wide log state + derived status (asleep/napping/etc.)
-  navigation/RootNavigator.tsx
+  types.ts                           LogEntry, Medication, UserProfile data models
+  storage/                           AsyncStorage read/write per data type
+  context/
+    LogsContext.tsx                  Log entries + derived "currently asleep" state
+    MedicationCatalogContext.tsx     The user's saved medication list
+    PreferencesContext.tsx           Display name + first-run tutorial state
+  navigation/RootNavigator.tsx       Home / MedLog / History stack
   screens/
-    HomeScreen.tsx           Quick-action buttons + current status + recent activity
-    HistoryScreen.tsx        Full log grouped by day, tap to edit/delete
+    HomeScreen.tsx                   Three bubble buttons + recent activity + menu
+    MedLogScreen.tsx                 Pick a medication, confirm dose/time, save
+    HistoryScreen.tsx                Full log grouped by day, edit/delete, export
   components/
-    PrimaryButton.tsx
-    StatusCard.tsx
-    EntryRow.tsx
-    MedicationModal.tsx      "Log medication" form
-    EditEntryModal.tsx       Edit/delete any log entry
-  theme.ts                   Colors, spacing, typography
-  utils/                     Time formatting, id generation
+    IconBubble.tsx                   The rounded icon-button used everywhere
+    PillIcon.tsx                     Custom two-tone capsule graphic (react-native-svg)
+    EntryRow.tsx / EditEntryModal.tsx
+    CustomizeMedicationsModal.tsx    Add/remove medications + default dose
+    MedicationPickerSheet.tsx        Choose a medication when logging one
+    OptionsMenu.tsx                  Name field + replay tutorial
+    TutorialOverlay.tsx              First-run guided tour
+    ExportSheet.tsx                  Excel / PDF / Markdown export choices
+  utils/
+    export.ts                       Builds and shares the .xlsx/.pdf/.md files
+    time.ts, id.ts
 ```
 
 ## Data model
@@ -96,13 +108,23 @@ Every action creates a `LogEntry`:
 ```ts
 {
   id: string;
-  type: 'SLEEP_START' | 'SLEEP_END' | 'NAP_START' | 'NAP_END' | 'MEDICATION';
+  type: 'SLEEP_START' | 'SLEEP_END' | 'MEDICATION';
   timestamp: number;       // editable, when the event happened
   medicationName?: string;
   dosage?: string;
   notes?: string;
   createdAt: number;       // when the record was first logged
   updatedAt: number;       // last edit time
+}
+```
+
+Medications you add via the Customize screen are stored separately as a small catalog so they're one tap to log:
+
+```ts
+{
+  id: string;
+  name: string;
+  defaultDose?: string;
 }
 ```
 

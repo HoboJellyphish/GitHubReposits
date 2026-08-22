@@ -15,9 +15,7 @@ interface LogsContextValue {
   entries: LogEntry[];
   isLoading: boolean;
   isAsleep: boolean;
-  isNapping: boolean;
   currentSleepStart: LogEntry | null;
-  currentNapStart: LogEntry | null;
   lastCompletedSleep: { start: LogEntry; end: LogEntry } | null;
   addEntry: (entry: NewLogEntry) => Promise<LogEntry>;
   updateEntry: (id: string, changes: Partial<NewLogEntry>) => Promise<void>;
@@ -105,10 +103,6 @@ export function LogsProvider({ children }: { children: React.ReactNode }) {
     const isAsleep = lastSleepEvent?.type === 'SLEEP_START';
     const currentSleepStart = isAsleep ? lastSleepEvent : null;
 
-    const lastNapEvent = mostRecentOfTypes(sorted, ['NAP_START', 'NAP_END']);
-    const isNapping = lastNapEvent?.type === 'NAP_START';
-    const currentNapStart = isNapping ? lastNapEvent : null;
-
     let lastCompletedSleep: { start: LogEntry; end: LogEntry } | null = null;
     const sleepEvents = sorted
       .filter((e) => e.type === 'SLEEP_START' || e.type === 'SLEEP_END')
@@ -130,9 +124,7 @@ export function LogsProvider({ children }: { children: React.ReactNode }) {
       entries: sorted,
       isLoading,
       isAsleep,
-      isNapping,
       currentSleepStart,
-      currentNapStart,
       lastCompletedSleep,
       addEntry,
       updateEntry,

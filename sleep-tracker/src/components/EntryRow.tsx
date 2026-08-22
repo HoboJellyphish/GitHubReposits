@@ -36,10 +36,10 @@ export function EntryRow({ entry, onPress }: EntryRowProps) {
       <Text style={styles.time}>{formatTime(entry.timestamp)}</Text>
       {onPress ? (
         <Ionicons
-          name="chevron-forward"
+          name="create-outline"
           size={18}
           color={colors.textMuted}
-          style={styles.chevron}
+          style={styles.editIcon}
         />
       ) : null}
     </View>
@@ -95,7 +95,7 @@ const styles = StyleSheet.create({
     color: colors.textMuted,
     marginLeft: spacing.sm,
   },
-  chevron: {
+  editIcon: {
     marginLeft: spacing.xs,
   },
 });

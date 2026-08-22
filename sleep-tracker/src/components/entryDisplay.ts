@@ -10,14 +10,8 @@ interface EntryDisplay {
 }
 
 export const ENTRY_DISPLAY: Record<EntryType, EntryDisplay> = {
-  SLEEP_START: { label: 'Went to sleep', icon: 'moon', color: colors.sleep },
-  SLEEP_END: { label: 'Woke up', icon: 'sunny', color: colors.sleepAlt },
-  NAP_START: {
-    label: 'Started nap',
-    icon: 'partly-sunny',
-    color: colors.nap,
-  },
-  NAP_END: { label: 'Ended nap', icon: 'partly-sunny', color: colors.nap },
+  SLEEP_START: { label: 'Went to sleep', icon: 'eye-off', color: colors.sleep },
+  SLEEP_END: { label: 'Woke up', icon: 'eye', color: colors.sleepAlt },
   MEDICATION: {
     label: 'Medication',
     icon: 'medical',

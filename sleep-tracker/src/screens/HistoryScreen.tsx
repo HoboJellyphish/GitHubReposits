@@ -1,10 +1,15 @@
+import { useNavigation } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React, { useMemo, useState } from 'react';
 import { SectionList, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { EditEntryModal } from '@/components/EditEntryModal';
 import { EntryRow } from '@/components/EntryRow';
+import { ExportSheet } from '@/components/ExportSheet';
+import { IconBubble } from '@/components/IconBubble';
 import { useLogs } from '@/context/LogsContext';
+import type { RootStackParamList } from '@/navigation/types';
 import { colors, radii, spacing, typography } from '@/theme';
 import type { LogEntry } from '@/types';
 import { dayKey, formatDateLabel } from '@/utils/time';
@@ -16,8 +21,11 @@ interface Section {
 }
 
 export function HistoryScreen() {
+  const navigation =
+    useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const { entries, updateEntry, deleteEntry } = useLogs();
   const [selectedEntry, setSelectedEntry] = useState<LogEntry | null>(null);
+  const [exportVisible, setExportVisible] = useState(false);
 
   const sections = useMemo<Section[]>(() => {
     const groups = new Map<string, LogEntry[]>();
@@ -75,6 +83,26 @@ export function HistoryScreen() {
         />
       )}
 
+      <View style={styles.bottomBar}>
+        <IconBubble
+          accessibilityLabel="Back to home"
+          icon="home"
+          size={52}
+          backgroundColor={colors.card}
+          iconColor={colors.textPrimary}
+          onPress={() => navigation.navigate('Home')}
+        />
+        <IconBubble
+          accessibilityLabel="Download history"
+          icon="download-outline"
+          size={52}
+          backgroundColor={colors.moon}
+          disabled={entries.length === 0}
+          onPress={() => setExportVisible(true)}
+        />
+        <View style={styles.bottomBarSpacer} />
+      </View>
+
       <EditEntryModal
         entry={selectedEntry}
         onClose={() => setSelectedEntry(null)}
@@ -86,6 +114,12 @@ export function HistoryScreen() {
           deleteEntry(id);
           setSelectedEntry(null);
         }}
+      />
+
+      <ExportSheet
+        visible={exportVisible}
+        onClose={() => setExportVisible(false)}
+        entries={entries}
       />
     </SafeAreaView>
   );
@@ -148,5 +182,15 @@ const styles = StyleSheet.create({
     ...typography.body,
     color: colors.textMuted,
     textAlign: 'center',
+  },
+  bottomBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.md,
+  },
+  bottomBarSpacer: {
+    width: 52,
   },
 });

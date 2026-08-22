@@ -11,8 +11,9 @@ Sleep Tracker does not collect, transmit, store, or share any of your data on an
 The app stores the following information, entered directly by you:
 
 - Sleep and wake timestamps
-- Nap start/end timestamps
 - Medication name, dosage, and notes you choose to log, with a timestamp
+- A list of medications you add for quick logging (name and usual dose)
+- Your display name, only if you choose to enter one in the menu
 
 ## Where this data is stored
 

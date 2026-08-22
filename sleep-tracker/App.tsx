@@ -5,6 +5,8 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 
 import { LogsProvider } from '@/context/LogsContext';
+import { MedicationCatalogProvider } from '@/context/MedicationCatalogContext';
+import { PreferencesProvider } from '@/context/PreferencesContext';
 import { RootNavigator } from '@/navigation/RootNavigator';
 import { colors } from '@/theme';
 
@@ -12,12 +14,16 @@ export default function App() {
   return (
     <GestureHandlerRootView style={styles.flex}>
       <SafeAreaProvider>
-        <LogsProvider>
-          <View style={styles.flex}>
-            <StatusBar style="light" />
-            <RootNavigator />
-          </View>
-        </LogsProvider>
+        <PreferencesProvider>
+          <MedicationCatalogProvider>
+            <LogsProvider>
+              <View style={styles.flex}>
+                <StatusBar style="light" />
+                <RootNavigator />
+              </View>
+            </LogsProvider>
+          </MedicationCatalogProvider>
+        </PreferencesProvider>
       </SafeAreaProvider>
     </GestureHandlerRootView>
   );

@@ -9,8 +9,9 @@ export const colors = {
   textMuted: '#6C74A6',
   sleep: '#6C8CFF',
   sleepAlt: '#8FA6FF',
-  nap: '#5FD0C9',
   medication: '#F5A26B',
+  capsuleRed: '#F2647A',
+  capsuleBlue: '#6C8CFF',
   danger: '#F2647A',
   moon: '#F5D67B',
 };
@@ -28,6 +29,11 @@ export const radii = {
   md: 14,
   lg: 20,
   pill: 999,
+};
+
+export const sizes = {
+  bubbleButton: 76,
+  bubbleIcon: 30,
 };
 
 export const typography = {
