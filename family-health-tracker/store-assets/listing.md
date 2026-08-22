@@ -48,7 +48,7 @@ No user-generated content shared with others, no ads, no in-app purchases, no ac
 
 ## Privacy Policy URL
 
-**Not yet live.** `public/privacy.html` is written and ready, but it's only served once this branch is merged to `main` and GitHub Pages deploys (`.github/workflows/deploy-family-health-tracker.yml`, triggered on push to `main`). Also note GitHub Pages requires the repository to be public (or a paid plan) to serve for free — confirm that before relying on the Pages URL for the Play Console submission. Once deployed, the URL will be:
+**Not yet live, but unblocked.** The repository is now public, so GitHub Pages will serve for free once this happens — no paid plan needed. `public/privacy.html` is written and ready; it goes live once this branch merges to `main` and `.github/workflows/deploy-family-health-tracker.yml` runs (it triggers on push to `main`). Once deployed, the URL will be:
 
 `https://hobojellyphish.github.io/GitHubReposits/privacy.html`
 
