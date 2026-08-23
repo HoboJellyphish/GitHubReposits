@@ -35,40 +35,49 @@ export function MedLogScreen() {
   const { medications } = useMedicationCatalog();
 
   const [customizeVisible, setCustomizeVisible] = useState(false);
-  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [counts, setCounts] = useState<Record<string, number>>({});
   const [doses, setDoses] = useState<Record<string, string>>({});
   const [timestamp, setTimestamp] = useState(Date.now());
   const [showTimePicker, setShowTimePicker] = useState(false);
 
-  const canSave = selectedIds.length > 0;
+  const canSave = Object.keys(counts).length > 0;
 
-  const toggleMedication = (id: string, defaultDose?: string) => {
-    setSelectedIds((current) => {
-      if (current.includes(id)) {
-        return current.filter((existingId) => existingId !== id);
-      }
-      setDoses((d) => ({ ...d, [id]: d[id] ?? defaultDose ?? '' }));
-      return [...current, id];
-    });
-    if (selectedIds.length === 0) {
+  const adjustCount = (id: string, delta: number, defaultDose?: string) => {
+    if (delta > 0 && Object.keys(counts).length === 0) {
       setTimestamp(Date.now());
     }
+    setCounts((prev) => {
+      const nextCount = Math.max(0, (prev[id] ?? 0) + delta);
+      if (nextCount === 0) {
+        const { [id]: _removed, ...rest } = prev;
+        return rest;
+      }
+      return { ...prev, [id]: nextCount };
+    });
+    setDoses((prev) =>
+      prev[id] !== undefined ? prev : { ...prev, [id]: defaultDose ?? '' }
+    );
   };
 
   const handleSave = () => {
     if (!canSave) return;
-    for (const id of selectedIds) {
-      const medication = medications.find((m) => m.id === id);
-      if (!medication) continue;
-      addEntry({
-        type: 'MEDICATION',
-        timestamp,
-        medicationName: medication.name,
-        dosage: doses[id]?.trim() || undefined,
-      });
+    for (const medication of medications) {
+      const quantity = counts[medication.id] ?? 0;
+      for (let i = 0; i < quantity; i++) {
+        addEntry({
+          type: 'MEDICATION',
+          timestamp,
+          medicationName: medication.name,
+          dosage: doses[medication.id]?.trim() || undefined,
+        });
+      }
     }
     navigation.navigate('Home');
   };
+
+  const selectedMedications = medications.filter(
+    (m) => (counts[m.id] ?? 0) > 0
+  );
 
   return (
     <SafeAreaView style={styles.safeArea} edges={['top', 'bottom']}>
@@ -93,6 +102,9 @@ export function MedLogScreen() {
           <PillIcon size={20} />
           <Text style={styles.sectionHeading}>Choose medications</Text>
         </View>
+        <Text style={styles.sectionSubheading}>
+          Tap a medication for each pill taken — tap it again to add more.
+        </Text>
 
         {medications.length === 0 ? (
           <View style={styles.emptyWrap}>
@@ -110,15 +122,18 @@ export function MedLogScreen() {
         ) : (
           <View style={styles.chipRow}>
             {medications.map((medication) => {
-              const isSelected = selectedIds.includes(medication.id);
+              const count = counts[medication.id] ?? 0;
+              const isSelected = count > 0;
               return (
                 <Pressable
                   key={medication.id}
                   accessibilityRole="button"
-                  accessibilityLabel={`Toggle ${medication.name}`}
+                  accessibilityLabel={`Log one ${medication.name}${
+                    count > 0 ? `, ${count} logged so far` : ''
+                  }`}
                   style={[styles.chip, isSelected && styles.chipSelected]}
                   onPress={() =>
-                    toggleMedication(medication.id, medication.defaultDose)
+                    adjustCount(medication.id, 1, medication.defaultDose)
                   }
                 >
                   <Text
@@ -130,33 +145,57 @@ export function MedLogScreen() {
                   >
                     {chipLabel(medication.name, medication.defaultDose)}
                   </Text>
+                  {count > 0 ? (
+                    <View style={styles.chipBadge}>
+                      <Text style={styles.chipBadgeText}>×{count}</Text>
+                    </View>
+                  ) : null}
                 </Pressable>
               );
             })}
           </View>
         )}
 
-        {selectedIds.length > 0 ? (
+        {selectedMedications.length > 0 ? (
           <View style={styles.entryCard}>
-            {selectedIds.map((id) => {
-              const medication = medications.find((m) => m.id === id);
-              if (!medication) return null;
-              return (
-                <View key={id} style={styles.medEntry}>
+            {selectedMedications.map((medication) => (
+              <View key={medication.id} style={styles.medEntry}>
+                <View style={styles.medEntryHeader}>
                   <Text style={styles.entryName}>{medication.name}</Text>
-                  <Text style={styles.fieldLabel}>Dose</Text>
-                  <TextInput
-                    style={styles.input}
-                    value={doses[id] ?? ''}
-                    onChangeText={(text) =>
-                      setDoses((d) => ({ ...d, [id]: text }))
-                    }
-                    placeholder="e.g. 5mg"
-                    placeholderTextColor={colors.textMuted}
-                  />
+                  <View style={styles.stepper}>
+                    <Pressable
+                      accessibilityLabel={`Remove one ${medication.name}`}
+                      style={styles.stepperButton}
+                      onPress={() => adjustCount(medication.id, -1)}
+                    >
+                      <Ionicons name="remove" size={16} color={colors.textPrimary} />
+                    </Pressable>
+                    <Text style={styles.stepperCount}>
+                      {counts[medication.id] ?? 0}
+                    </Text>
+                    <Pressable
+                      accessibilityLabel={`Add one more ${medication.name}`}
+                      style={styles.stepperButton}
+                      onPress={() =>
+                        adjustCount(medication.id, 1, medication.defaultDose)
+                      }
+                    >
+                      <Ionicons name="add" size={16} color={colors.textPrimary} />
+                    </Pressable>
+                  </View>
                 </View>
-              );
-            })}
+                <Text style={styles.fieldLabel}>Dose (each)</Text>
+                <TextInput
+                  style={styles.input}
+                  value={doses[medication.id] ?? ''}
+                  onChangeText={(text) =>
+                    setDoses((d) => ({ ...d, [medication.id]: text }))
+                  }
+                  placeholder="e.g. 5mg"
+                  placeholderTextColor={colors.textMuted}
+                />
+              </View>
+            ))}
 
             <Text style={styles.fieldLabel}>Time</Text>
             <Pressable
@@ -243,11 +282,16 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.sm,
-    marginBottom: spacing.md,
+    marginBottom: spacing.xs,
   },
   sectionHeading: {
     ...typography.heading,
     color: colors.textPrimary,
+  },
+  sectionSubheading: {
+    ...typography.caption,
+    color: colors.textMuted,
+    marginBottom: spacing.md,
   },
   emptyWrap: {
     alignItems: 'flex-start',
@@ -277,13 +321,16 @@ const styles = StyleSheet.create({
     gap: spacing.sm,
   },
   chip: {
-    maxWidth: 160,
+    maxWidth: 170,
     backgroundColor: colors.card,
     borderRadius: radii.pill,
     borderWidth: 1,
     borderColor: colors.border,
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.sm,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.xs,
   },
   chipSelected: {
     backgroundColor: colors.moon,
@@ -293,9 +340,21 @@ const styles = StyleSheet.create({
     ...typography.body,
     fontWeight: '600',
     color: colors.textPrimary,
+    flexShrink: 1,
   },
   chipTextSelected: {
     color: colors.background,
+  },
+  chipBadge: {
+    backgroundColor: colors.background,
+    borderRadius: radii.pill,
+    paddingHorizontal: spacing.xs + 2,
+    paddingVertical: 1,
+  },
+  chipBadgeText: {
+    ...typography.caption,
+    fontWeight: '700',
+    color: colors.moon,
   },
   entryCard: {
     width: '100%',
@@ -312,10 +371,37 @@ const styles = StyleSheet.create({
     borderBottomWidth: StyleSheet.hairlineWidth,
     borderBottomColor: colors.border,
   },
+  medEntryHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: spacing.xs,
+  },
+  stepper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+  },
+  stepperButton: {
+    width: 28,
+    height: 28,
+    borderRadius: radii.pill,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: colors.backgroundAlt,
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  stepperCount: {
+    ...typography.body,
+    fontWeight: '700',
+    color: colors.textPrimary,
+    minWidth: 18,
+    textAlign: 'center',
+  },
   entryName: {
     ...typography.heading,
     color: colors.textPrimary,
-    marginBottom: spacing.xs,
   },
   fieldLabel: {
     ...typography.caption,
