@@ -8,6 +8,7 @@ import { EntryRow } from '@/components/EntryRow';
 import { IconBubble } from '@/components/IconBubble';
 import { OptionsMenu } from '@/components/OptionsMenu';
 import { PillIcon } from '@/components/PillIcon';
+import { SleepEyeIcon } from '@/components/SleepEyeIcon';
 import { TutorialOverlay } from '@/components/TutorialOverlay';
 import { useLogs } from '@/context/LogsContext';
 import { usePreferences } from '@/context/PreferencesContext';
@@ -59,10 +60,11 @@ export function HomeScreen() {
           <View style={styles.buttonSlot}>
             <IconBubble
               accessibilityLabel="Log that you're going to sleep"
-              icon="eye-off"
+              customIcon={
+                <SleepEyeIcon size={sizes.bubbleIcon} color={colors.textPrimary} />
+              }
               size={sizes.bubbleButton}
               backgroundColor={colors.sleep}
-              iconColor={colors.textPrimary}
               onPress={() => addEntry({ type: 'SLEEP_START', timestamp: Date.now() })}
             />
             <Text style={styles.buttonCaption}>Sleep</Text>

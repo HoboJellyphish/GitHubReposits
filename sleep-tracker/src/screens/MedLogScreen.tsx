@@ -21,8 +21,12 @@ import { useLogs } from '@/context/LogsContext';
 import { useMedicationCatalog } from '@/context/MedicationCatalogContext';
 import type { RootStackParamList } from '@/navigation/types';
 import { colors, radii, spacing, typography } from '@/theme';
-import type { Medication } from '@/types';
 import { formatDateTime } from '@/utils/time';
+
+function chipLabel(name: string, dose?: string): string {
+  const abbrev = name.trim().slice(0, 3).toUpperCase();
+  return dose ? `${abbrev} ${dose}` : abbrev;
+}
 
 export function MedLogScreen() {
   const navigation =
@@ -31,28 +35,38 @@ export function MedLogScreen() {
   const { medications } = useMedicationCatalog();
 
   const [customizeVisible, setCustomizeVisible] = useState(false);
-  const [selected, setSelected] = useState<Medication | null>(null);
-  const [dose, setDose] = useState('');
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [doses, setDoses] = useState<Record<string, string>>({});
   const [timestamp, setTimestamp] = useState(Date.now());
   const [showTimePicker, setShowTimePicker] = useState(false);
 
-  const canSave = selected !== null;
+  const canSave = selectedIds.length > 0;
 
-  const handleSelectMedication = (medication: Medication) => {
-    setSelected(medication);
-    setDose(medication.defaultDose ?? '');
-    setTimestamp(Date.now());
-    setShowTimePicker(false);
+  const toggleMedication = (id: string, defaultDose?: string) => {
+    setSelectedIds((current) => {
+      if (current.includes(id)) {
+        return current.filter((existingId) => existingId !== id);
+      }
+      setDoses((d) => ({ ...d, [id]: d[id] ?? defaultDose ?? '' }));
+      return [...current, id];
+    });
+    if (selectedIds.length === 0) {
+      setTimestamp(Date.now());
+    }
   };
 
   const handleSave = () => {
-    if (!selected) return;
-    addEntry({
-      type: 'MEDICATION',
-      timestamp,
-      medicationName: selected.name,
-      dosage: dose.trim() || undefined,
-    });
+    if (!canSave) return;
+    for (const id of selectedIds) {
+      const medication = medications.find((m) => m.id === id);
+      if (!medication) continue;
+      addEntry({
+        type: 'MEDICATION',
+        timestamp,
+        medicationName: medication.name,
+        dosage: doses[id]?.trim() || undefined,
+      });
+    }
     navigation.navigate('Home');
   };
 
@@ -77,7 +91,7 @@ export function MedLogScreen() {
       >
         <View style={styles.sectionHeadingRow}>
           <PillIcon size={20} />
-          <Text style={styles.sectionHeading}>Choose a medication</Text>
+          <Text style={styles.sectionHeading}>Choose medications</Text>
         </View>
 
         {medications.length === 0 ? (
@@ -96,14 +110,16 @@ export function MedLogScreen() {
         ) : (
           <View style={styles.chipRow}>
             {medications.map((medication) => {
-              const isSelected = selected?.id === medication.id;
+              const isSelected = selectedIds.includes(medication.id);
               return (
                 <Pressable
                   key={medication.id}
                   accessibilityRole="button"
-                  accessibilityLabel={`Log ${medication.name}`}
+                  accessibilityLabel={`Toggle ${medication.name}`}
                   style={[styles.chip, isSelected && styles.chipSelected]}
-                  onPress={() => handleSelectMedication(medication)}
+                  onPress={() =>
+                    toggleMedication(medication.id, medication.defaultDose)
+                  }
                 >
                   <Text
                     style={[
@@ -112,7 +128,7 @@ export function MedLogScreen() {
                     ]}
                     numberOfLines={1}
                   >
-                    {medication.name}
+                    {chipLabel(medication.name, medication.defaultDose)}
                   </Text>
                 </Pressable>
               );
@@ -120,18 +136,27 @@ export function MedLogScreen() {
           </View>
         )}
 
-        {selected ? (
+        {selectedIds.length > 0 ? (
           <View style={styles.entryCard}>
-            <Text style={styles.entryName}>{selected.name}</Text>
-
-            <Text style={styles.fieldLabel}>Dose</Text>
-            <TextInput
-              style={styles.input}
-              value={dose}
-              onChangeText={setDose}
-              placeholder="e.g. 5mg"
-              placeholderTextColor={colors.textMuted}
-            />
+            {selectedIds.map((id) => {
+              const medication = medications.find((m) => m.id === id);
+              if (!medication) return null;
+              return (
+                <View key={id} style={styles.medEntry}>
+                  <Text style={styles.entryName}>{medication.name}</Text>
+                  <Text style={styles.fieldLabel}>Dose</Text>
+                  <TextInput
+                    style={styles.input}
+                    value={doses[id] ?? ''}
+                    onChangeText={(text) =>
+                      setDoses((d) => ({ ...d, [id]: text }))
+                    }
+                    placeholder="e.g. 5mg"
+                    placeholderTextColor={colors.textMuted}
+                  />
+                </View>
+              );
+            })}
 
             <Text style={styles.fieldLabel}>Time</Text>
             <Pressable
@@ -169,7 +194,7 @@ export function MedLogScreen() {
           onPress={() => navigation.navigate('Home')}
         />
         <IconBubble
-          accessibilityLabel="Save medication entry"
+          accessibilityLabel="Save medication entries"
           icon="checkmark"
           size={60}
           backgroundColor={canSave ? colors.moon : colors.cardAlt}
@@ -281,10 +306,16 @@ const styles = StyleSheet.create({
     borderColor: colors.border,
     padding: spacing.lg,
   },
+  medEntry: {
+    marginBottom: spacing.md,
+    paddingBottom: spacing.md,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: colors.border,
+  },
   entryName: {
     ...typography.heading,
     color: colors.textPrimary,
-    marginBottom: spacing.md,
+    marginBottom: spacing.xs,
   },
   fieldLabel: {
     ...typography.caption,
