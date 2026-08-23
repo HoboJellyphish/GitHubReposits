@@ -1,8 +1,7 @@
-import { Ionicons } from '@expo/vector-icons';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useNavigation } from '@react-navigation/native';
 import React, { useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { EntryRow } from '@/components/EntryRow';
@@ -110,17 +109,14 @@ export function HomeScreen() {
           onPress={() => setMenuVisible(true)}
         />
 
-        <Pressable
-          accessibilityRole="button"
+        <IconBubble
           accessibilityLabel="Open history"
-          style={styles.historyAffordance}
+          icon="time-outline"
+          size={52}
+          backgroundColor={colors.card}
+          iconColor={colors.textPrimary}
           onPress={() => navigation.navigate('History')}
-        >
-          <Ionicons name="chevron-up" size={16} color={colors.textMuted} />
-          <Text style={styles.historyAffordanceText}>History</Text>
-        </Pressable>
-
-        <View style={styles.bottomBarSpacer} />
+        />
       </View>
 
       <OptionsMenu
@@ -198,18 +194,5 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.lg,
     paddingTop: spacing.sm,
     paddingBottom: spacing.md,
-  },
-  bottomBarSpacer: {
-    width: 52,
-  },
-  historyAffordance: {
-    alignItems: 'center',
-    paddingVertical: spacing.xs,
-    paddingHorizontal: spacing.lg,
-  },
-  historyAffordanceText: {
-    ...typography.caption,
-    color: colors.textMuted,
-    marginTop: 2,
   },
 });

@@ -3,14 +3,22 @@ import { Ionicons } from '@expo/vector-icons';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useNavigation } from '@react-navigation/native';
 import React, { useState } from 'react';
-import { Platform, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import {
+  Platform,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { CustomizeMedicationsModal } from '@/components/CustomizeMedicationsModal';
 import { IconBubble } from '@/components/IconBubble';
-import { MedicationPickerSheet } from '@/components/MedicationPickerSheet';
 import { PillIcon } from '@/components/PillIcon';
 import { useLogs } from '@/context/LogsContext';
+import { useMedicationCatalog } from '@/context/MedicationCatalogContext';
 import type { RootStackParamList } from '@/navigation/types';
 import { colors, radii, spacing, typography } from '@/theme';
 import type { Medication } from '@/types';
@@ -20,8 +28,8 @@ export function MedLogScreen() {
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const { addEntry } = useLogs();
+  const { medications } = useMedicationCatalog();
 
-  const [pickerVisible, setPickerVisible] = useState(false);
   const [customizeVisible, setCustomizeVisible] = useState(false);
   const [selected, setSelected] = useState<Medication | null>(null);
   const [dose, setDose] = useState('');
@@ -34,7 +42,7 @@ export function MedLogScreen() {
     setSelected(medication);
     setDose(medication.defaultDose ?? '');
     setTimestamp(Date.now());
-    setPickerVisible(false);
+    setShowTimePicker(false);
   };
 
   const handleSave = () => {
@@ -49,7 +57,7 @@ export function MedLogScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <SafeAreaView style={styles.safeArea} edges={['top', 'bottom']}>
       <View style={styles.topBar}>
         <Text style={styles.topBarTitle}>Medication Log</Text>
         <IconBubble
@@ -57,23 +65,60 @@ export function MedLogScreen() {
           size={44}
           backgroundColor={colors.card}
           iconColor={colors.moon}
-          style={styles.customizeButton}
           customIcon={<Text style={styles.customizeLetter}>C</Text>}
           onPress={() => setCustomizeVisible(true)}
         />
       </View>
 
-      <View style={styles.body}>
-        <IconBubble
-          accessibilityLabel="Pick a medication to log"
-          size={96}
-          backgroundColor={colors.card}
-          customIcon={<PillIcon size={40} />}
-          onPress={() => setPickerVisible(true)}
-        />
-        <Text style={styles.pickerCaption}>
-          {selected ? 'Change medication' : 'Tap to choose a medication'}
-        </Text>
+      <ScrollView
+        style={styles.body}
+        contentContainerStyle={styles.bodyContent}
+        keyboardShouldPersistTaps="handled"
+      >
+        <View style={styles.sectionHeadingRow}>
+          <PillIcon size={20} />
+          <Text style={styles.sectionHeading}>Choose a medication</Text>
+        </View>
+
+        {medications.length === 0 ? (
+          <View style={styles.emptyWrap}>
+            <Text style={styles.emptyText}>
+              You haven't added any medications yet.
+            </Text>
+            <Pressable
+              style={styles.addFirstButton}
+              onPress={() => setCustomizeVisible(true)}
+            >
+              <Ionicons name="add-circle-outline" size={18} color={colors.moon} />
+              <Text style={styles.addFirstButtonText}>Add a medication</Text>
+            </Pressable>
+          </View>
+        ) : (
+          <View style={styles.chipRow}>
+            {medications.map((medication) => {
+              const isSelected = selected?.id === medication.id;
+              return (
+                <Pressable
+                  key={medication.id}
+                  accessibilityRole="button"
+                  accessibilityLabel={`Log ${medication.name}`}
+                  style={[styles.chip, isSelected && styles.chipSelected]}
+                  onPress={() => handleSelectMedication(medication)}
+                >
+                  <Text
+                    style={[
+                      styles.chipText,
+                      isSelected && styles.chipTextSelected,
+                    ]}
+                    numberOfLines={1}
+                  >
+                    {medication.name}
+                  </Text>
+                </Pressable>
+              );
+            })}
+          </View>
+        )}
 
         {selected ? (
           <View style={styles.entryCard}>
@@ -112,7 +157,7 @@ export function MedLogScreen() {
             ) : null}
           </View>
         ) : null}
-      </View>
+      </ScrollView>
 
       <View style={styles.bottomBar}>
         <IconBubble
@@ -133,16 +178,6 @@ export function MedLogScreen() {
         />
       </View>
 
-      <MedicationPickerSheet
-        visible={pickerVisible}
-        onClose={() => setPickerVisible(false)}
-        onSelect={handleSelectMedication}
-        onAddNew={() => {
-          setPickerVisible(false);
-          setCustomizeVisible(true);
-        }}
-      />
-
       <CustomizeMedicationsModal
         visible={customizeVisible}
         onClose={() => setCustomizeVisible(false)}
@@ -155,7 +190,6 @@ const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
     backgroundColor: colors.background,
-    justifyContent: 'space-between',
   },
   topBar: {
     flexDirection: 'row',
@@ -168,21 +202,75 @@ const styles = StyleSheet.create({
     ...typography.heading,
     color: colors.textPrimary,
   },
-  customizeButton: {},
   customizeLetter: {
     ...typography.heading,
     color: colors.moon,
   },
   body: {
     flex: 1,
-    alignItems: 'center',
-    paddingTop: spacing.xl,
-    paddingHorizontal: spacing.lg,
   },
-  pickerCaption: {
-    ...typography.caption,
-    color: colors.textSecondary,
-    marginTop: spacing.sm,
+  bodyContent: {
+    paddingHorizontal: spacing.lg,
+    paddingTop: spacing.xl,
+    paddingBottom: spacing.lg,
+  },
+  sectionHeadingRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+    marginBottom: spacing.md,
+  },
+  sectionHeading: {
+    ...typography.heading,
+    color: colors.textPrimary,
+  },
+  emptyWrap: {
+    alignItems: 'flex-start',
+  },
+  emptyText: {
+    ...typography.body,
+    color: colors.textMuted,
+    marginBottom: spacing.md,
+  },
+  addFirstButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.xs,
+    backgroundColor: colors.card,
+    borderRadius: radii.md,
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.sm + 2,
+  },
+  addFirstButtonText: {
+    ...typography.body,
+    color: colors.moon,
+    fontWeight: '600',
+  },
+  chipRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: spacing.sm,
+  },
+  chip: {
+    maxWidth: 160,
+    backgroundColor: colors.card,
+    borderRadius: radii.pill,
+    borderWidth: 1,
+    borderColor: colors.border,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+  },
+  chipSelected: {
+    backgroundColor: colors.moon,
+    borderColor: colors.moon,
+  },
+  chipText: {
+    ...typography.body,
+    fontWeight: '600',
+    color: colors.textPrimary,
+  },
+  chipTextSelected: {
+    color: colors.background,
   },
   entryCard: {
     width: '100%',
@@ -234,6 +322,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: spacing.lg,
+    paddingTop: spacing.sm,
     paddingBottom: spacing.md,
   },
 });

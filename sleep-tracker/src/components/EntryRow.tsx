@@ -37,8 +37,8 @@ export function EntryRow({ entry, onPress }: EntryRowProps) {
       {onPress ? (
         <Ionicons
           name="create-outline"
-          size={18}
-          color={colors.textMuted}
+          size={20}
+          color={colors.moon}
           style={styles.editIcon}
         />
       ) : null}
