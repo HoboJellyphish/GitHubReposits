@@ -55,48 +55,48 @@ export function LogsProvider({ children }: { children: React.ReactNode }) {
     };
   }, []);
 
-  const persist = useCallback((next: LogEntry[]) => {
-    setEntries(next);
-    saveEntries(next).catch(() => {
+  // Persisting from a separate effect (rather than inline in each mutator)
+  // means every mutator can use the functional setState form below, so
+  // several calls fired in the same tick (e.g. saving a batch of
+  // medications) each build on the latest pending state instead of
+  // clobbering one another.
+  useEffect(() => {
+    if (isLoading) return;
+    saveEntries(entries).catch(() => {
       // Best-effort persistence; in-memory state still reflects the change.
     });
-  }, []);
+  }, [entries, isLoading]);
 
-  const addEntry = useCallback(
-    async (entry: NewLogEntry) => {
-      const now = Date.now();
-      const newEntry: LogEntry = {
-        id: generateId(),
-        createdAt: now,
-        updatedAt: now,
-        ...entry,
-      };
-      persist([newEntry, ...entries]);
-      return newEntry;
-    },
-    [entries, persist]
-  );
+  const addEntry = useCallback(async (entry: NewLogEntry) => {
+    const now = Date.now();
+    const newEntry: LogEntry = {
+      id: generateId(),
+      createdAt: now,
+      updatedAt: now,
+      ...entry,
+    };
+    setEntries((prev) => [newEntry, ...prev]);
+    return newEntry;
+  }, []);
 
   const updateEntry = useCallback(
     async (id: string, changes: Partial<NewLogEntry>) => {
-      const next = entries.map((e) =>
-        e.id === id ? { ...e, ...changes, updatedAt: Date.now() } : e
+      setEntries((prev) =>
+        prev.map((e) =>
+          e.id === id ? { ...e, ...changes, updatedAt: Date.now() } : e
+        )
       );
-      persist(next);
     },
-    [entries, persist]
+    []
   );
 
-  const deleteEntry = useCallback(
-    async (id: string) => {
-      persist(entries.filter((e) => e.id !== id));
-    },
-    [entries, persist]
-  );
+  const deleteEntry = useCallback(async (id: string) => {
+    setEntries((prev) => prev.filter((e) => e.id !== id));
+  }, []);
 
   const clearAllEntries = useCallback(async () => {
-    persist([]);
-  }, [persist]);
+    setEntries([]);
+  }, []);
 
   const value = useMemo<LogsContextValue>(() => {
     const sorted = sortDesc(entries);

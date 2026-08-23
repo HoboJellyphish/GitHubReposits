@@ -50,37 +50,35 @@ export function MedicationCatalogProvider({
     };
   }, []);
 
-  const persist = useCallback((next: Medication[]) => {
-    setMedications(next);
-    saveMedications(next).catch(() => {
+  // Persisting from a separate effect lets every mutator below use the
+  // functional setState form, so several calls fired in the same tick
+  // each build on the latest pending state instead of clobbering one
+  // another (see LogsContext for the same fix and why it matters).
+  useEffect(() => {
+    if (isLoading) return;
+    saveMedications(medications).catch(() => {
       // Best-effort persistence; in-memory state still reflects the change.
     });
-  }, []);
+  }, [medications, isLoading]);
 
-  const addMedication = useCallback(
-    async (medication: NewMedication) => {
-      const newMedication: Medication = { id: generateId(), ...medication };
-      persist([...medications, newMedication]);
-      return newMedication;
-    },
-    [medications, persist]
-  );
+  const addMedication = useCallback(async (medication: NewMedication) => {
+    const newMedication: Medication = { id: generateId(), ...medication };
+    setMedications((prev) => [...prev, newMedication]);
+    return newMedication;
+  }, []);
 
   const updateMedication = useCallback(
     async (id: string, changes: Partial<NewMedication>) => {
-      persist(
-        medications.map((m) => (m.id === id ? { ...m, ...changes } : m))
+      setMedications((prev) =>
+        prev.map((m) => (m.id === id ? { ...m, ...changes } : m))
       );
     },
-    [medications, persist]
+    []
   );
 
-  const removeMedication = useCallback(
-    async (id: string) => {
-      persist(medications.filter((m) => m.id !== id));
-    },
-    [medications, persist]
-  );
+  const removeMedication = useCallback(async (id: string) => {
+    setMedications((prev) => prev.filter((m) => m.id !== id));
+  }, []);
 
   const value = useMemo<MedicationCatalogContextValue>(
     () => ({
