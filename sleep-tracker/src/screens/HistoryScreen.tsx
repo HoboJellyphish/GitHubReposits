@@ -1,7 +1,7 @@
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React, { useMemo, useState } from 'react';
-import { SectionList, StyleSheet, Text, View } from 'react-native';
+import { Alert, SectionList, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { EditEntryModal } from '@/components/EditEntryModal';
@@ -23,9 +23,26 @@ interface Section {
 export function HistoryScreen() {
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-  const { entries, updateEntry, deleteEntry } = useLogs();
+  const { entries, updateEntry, deleteEntry, clearAllEntries } = useLogs();
   const [selectedEntry, setSelectedEntry] = useState<LogEntry | null>(null);
   const [exportVisible, setExportVisible] = useState(false);
+
+  const handleClearAll = () => {
+    Alert.alert(
+      'Clear all history?',
+      `This will permanently delete all ${entries.length} logged ${
+        entries.length === 1 ? 'entry' : 'entries'
+      }. This cannot be undone.`,
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Delete All',
+          style: 'destructive',
+          onPress: () => clearAllEntries(),
+        },
+      ]
+    );
+  };
 
   const sections = useMemo<Section[]>(() => {
     const groups = new Map<string, LogEntry[]>();
@@ -100,7 +117,15 @@ export function HistoryScreen() {
           disabled={entries.length === 0}
           onPress={() => setExportVisible(true)}
         />
-        <View style={styles.bottomBarSpacer} />
+        <IconBubble
+          accessibilityLabel="Clear all history"
+          icon="trash-outline"
+          size={52}
+          backgroundColor={colors.card}
+          iconColor={colors.danger}
+          disabled={entries.length === 0}
+          onPress={handleClearAll}
+        />
       </View>
 
       <EditEntryModal
@@ -189,8 +214,5 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: spacing.lg,
     paddingVertical: spacing.md,
-  },
-  bottomBarSpacer: {
-    width: 52,
   },
 });

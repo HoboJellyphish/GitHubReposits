@@ -20,6 +20,7 @@ interface LogsContextValue {
   addEntry: (entry: NewLogEntry) => Promise<LogEntry>;
   updateEntry: (id: string, changes: Partial<NewLogEntry>) => Promise<void>;
   deleteEntry: (id: string) => Promise<void>;
+  clearAllEntries: () => Promise<void>;
 }
 
 const LogsContext = createContext<LogsContextValue | undefined>(undefined);
@@ -93,6 +94,10 @@ export function LogsProvider({ children }: { children: React.ReactNode }) {
     [entries, persist]
   );
 
+  const clearAllEntries = useCallback(async () => {
+    persist([]);
+  }, [persist]);
+
   const value = useMemo<LogsContextValue>(() => {
     const sorted = sortDesc(entries);
 
@@ -129,8 +134,16 @@ export function LogsProvider({ children }: { children: React.ReactNode }) {
       addEntry,
       updateEntry,
       deleteEntry,
+      clearAllEntries,
     };
-  }, [entries, isLoading, addEntry, updateEntry, deleteEntry]);
+  }, [
+    entries,
+    isLoading,
+    addEntry,
+    updateEntry,
+    deleteEntry,
+    clearAllEntries,
+  ]);
 
   return (
     <LogsContext.Provider value={value}>{children}</LogsContext.Provider>
