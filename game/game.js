@@ -11,6 +11,7 @@ const CFG = {
   SPAWN_DIST: 620,
   TILE: 256,
   DPR_CAP: 1.5,
+  ANIM_COLS: 2, ANIM_ROWS: 2, ANIM_FRAMES: 4, ANIM_STRIDE: 24,
 };
 
 const WEAPONS = {
@@ -55,11 +56,11 @@ const choice = arr => arr[Math.floor(rng() * arr.length)];
 
 const CDN = "https://d8j0ntlcm91z4.cloudfront.net/user_3HI9gs6RQRwUiu31B6zzxWQryLj/";
 const IMAGE_URLS = {
-  hero_survivor: CDN + "hf_20260803_012127_b20931d3-f77c-40f7-b8ea-5b5944f43c1c.png",
-  zombie_walker: CDN + "hf_20260803_012131_ac8af558-f538-4f3b-b80f-a0aeadf2b0cc.png",
-  zombie_runner: CDN + "hf_20260803_012134_14972b0d-92a8-42b9-8d92-3efd74817a53.png",
-  zombie_spitter: CDN + "hf_20260803_012138_6166002d-8d53-4d22-9fae-78d90a2aa999.png",
-  zombie_brute: CDN + "hf_20260803_012149_2d69fa41-f60b-4c05-a5a8-b0b6e44466d5.png",
+  hero_survivor: CDN + "hf_20260824_180223_964ab4f6-669e-4bc3-bbd5-ead653e5d504.png",
+  zombie_walker: CDN + "hf_20260824_180224_85680e0a-75f5-4936-872d-47235b36cb67.png",
+  zombie_runner: CDN + "hf_20260824_180228_edb1e260-5b54-40ba-b994-7484167b57f5.png",
+  zombie_spitter: CDN + "hf_20260824_180230_b0e3ba88-1e4d-4925-b75b-2acedb67499c.png",
+  zombie_brute: CDN + "hf_20260824_180234_bcd9e99a-4cb4-4851-80ec-932ae0661a62.png",
   pickup_weapon_crate: CDN + "hf_20260803_012151_5e90fe88-4782-4f88-ba8a-7879c84a1af0.png",
   pickup_health: CDN + "hf_20260803_012154_adb6d1e5-8d9f-460e-aa08-aa533f0da88f.png",
   pickup_coin: CDN + "hf_20260803_012157_b0de0b00-868b-4cc1-916d-fbe9b4d471a5.png",
@@ -277,7 +278,7 @@ function dist(x1, y1, x2, y2) { return Math.hypot(x2 - x1, y2 - y1); }
 
 function makePlayer() {
   return {
-    x: CFG.WORLD_W / 2, y: CFG.WORLD_H / 2, px: 0, py: 0,
+    x: CFG.WORLD_W / 2, y: CFG.WORLD_H / 2, px: 0, py: 0, animDist: 0,
     r: CFG.PLAYER_R, hp: CFG.PLAYER_MAXHP,
     maxHpBonus: 0, dmgMult: 1, fireRateMult: 1, speedMult: 1, dashCdMult: 1, pierce: 0, magnetMult: 1,
     weapon: "pistol", fireCd: 0, dashCd: 0, dashing: 0, dashDirX: 1, dashDirY: 0, invuln: 0,
@@ -353,7 +354,7 @@ function spawnZombie(type) {
   let x = clamp(p.x + Math.cos(ang) * CFG.SPAWN_DIST, def.r, CFG.WORLD_W - def.r);
   let y = clamp(p.y + Math.sin(ang) * CFG.SPAWN_DIST, def.r, CFG.WORLD_H - def.r);
   world.zombies.push({
-    type, x, y, px: x, py: y, r: def.r,
+    type, x, y, px: x, py: y, animDist: 0, r: def.r,
     hp: def.hp * (def.boss ? 1 : scale), maxHp: def.hp * (def.boss ? 1 : scale),
     speed: def.speed, dmg: def.dmg * (1 + (wv - 1) * 0.03), atkCd: def.atkCd, atkTimer: rand(def.atkCd),
     ranged: !!def.ranged, range: def.range, projSpeed: def.projSpeed, coin: def.coin, boss: !!def.boss,
@@ -466,6 +467,7 @@ function updatePlaying(dt, cmd) {
       spawnParticles(p.x, p.y, 8, "#e8b93a");
     }
   }
+  p.animDist += dist(p.x, p.y, p.px, p.py);
   if (p.dashCd > 0) p.dashCd -= dt;
   if (p.invuln > 0) p.invuln -= dt;
   if (p.fireCd > 0) p.fireCd -= dt;
@@ -538,6 +540,7 @@ function updateZombies(dt, p) {
         damagePlayer(p, z.dmg);
       }
     }
+    z.animDist += dist(z.x, z.y, z.px, z.py);
   }
   world.zombies = world.zombies.filter(z => !z.dead);
 }
@@ -665,7 +668,13 @@ function drawGround(ctx) {
 
 function worldToScreen(x, y) { return [x - world.camX + vw / 2, y - world.camY + vh / 2]; }
 
-function drawSprite(img, x, y, size, angle, alpha = 1, flash = 0) {
+function frameSrcRect(img, frame) {
+  const fw = img.width / CFG.ANIM_COLS, fh = img.height / CFG.ANIM_ROWS;
+  const col = frame % CFG.ANIM_COLS, row = Math.floor(frame / CFG.ANIM_COLS) % CFG.ANIM_ROWS;
+  return [col * fw, row * fh, fw, fh];
+}
+
+function drawSprite(img, x, y, size, angle, alpha = 1, flash = 0, frame = null) {
   if (!img) return;
   const [sx, sy] = worldToScreen(x, y);
   if (sx < -size || sx > vw + size || sy < -size || sy > vh + size) return;
@@ -673,11 +682,21 @@ function drawSprite(img, x, y, size, angle, alpha = 1, flash = 0) {
   ctx.globalAlpha = alpha;
   ctx.translate(sx, sy);
   if (angle !== null) ctx.rotate(angle + Math.PI / 2);
-  ctx.drawImage(img, -size / 2, -size / 2, size, size);
+  if (frame === null) {
+    ctx.drawImage(img, -size / 2, -size / 2, size, size);
+  } else {
+    const [fx, fy, fw, fh] = frameSrcRect(img, frame);
+    ctx.drawImage(img, fx, fy, fw, fh, -size / 2, -size / 2, size, size);
+  }
   if (flash > 0) {
     ctx.globalAlpha = Math.min(1, flash * 3);
     ctx.globalCompositeOperation = "lighter";
-    ctx.drawImage(img, -size / 2, -size / 2, size, size);
+    if (frame === null) {
+      ctx.drawImage(img, -size / 2, -size / 2, size, size);
+    } else {
+      const [fx, fy, fw, fh] = frameSrcRect(img, frame);
+      ctx.drawImage(img, fx, fy, fw, fh, -size / 2, -size / 2, size, size);
+    }
   }
   ctx.restore();
 }
@@ -697,7 +716,8 @@ function drawScene() {
     const img = images[ZTYPES[z.type].img];
     const size = z.boss ? 84 : 46;
     const ang = Math.atan2(p.y - z.y, p.x - z.x);
-    drawSprite(img, z.x, z.y, size, ang, 1, z.hitFlash);
+    const zframe = Math.floor(z.animDist / CFG.ANIM_STRIDE) % CFG.ANIM_FRAMES;
+    drawSprite(img, z.x, z.y, size, ang, 1, z.hitFlash, zframe);
     if (z.boss) drawHpBar(z.x, z.y - size / 2 - 10, size, z.hp / z.maxHp);
   }
 
@@ -720,7 +740,8 @@ function drawScene() {
   }
 
   const alpha = p.invuln > 0 ? (Math.sin(world.time * 40) > 0 ? 0.4 : 1) : 1;
-  drawSprite(images.hero_survivor, p.x, p.y, 48, p.facing, alpha);
+  const pframe = Math.floor(p.animDist / CFG.ANIM_STRIDE) % CFG.ANIM_FRAMES;
+  drawSprite(images.hero_survivor, p.x, p.y, 48, p.facing, alpha, 0, pframe);
 
   drawOffscreenIndicators(p);
 
