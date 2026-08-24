@@ -3,7 +3,7 @@ export const STR = {
   subtitle: "Top-down zombie survival",
   tapToStart: "TAP TO START",
   hintMove: "Drag left side to move",
-  hintAim: "Drag right side to aim · auto-fires at nearest zombie",
+  hintAim: "Drag right side to aim & fire",
   hintDash: "Tap DASH to dodge",
   wave: "WAVE",
   score: "SCORE",

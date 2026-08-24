@@ -59,21 +59,21 @@ const choice = arr => arr[Math.floor(rng() * arr.length)];
 
 const CDN = "https://d8j0ntlcm91z4.cloudfront.net/user_3HI9gs6RQRwUiu31B6zzxWQryLj/";
 const IMAGE_URLS = {
-  hero_survivor: CDN + "hf_20260824_180223_964ab4f6-669e-4bc3-bbd5-ead653e5d504.png",
-  zombie_walker: CDN + "hf_20260824_180224_85680e0a-75f5-4936-872d-47235b36cb67.png",
-  zombie_runner: CDN + "hf_20260824_180228_edb1e260-5b54-40ba-b994-7484167b57f5.png",
-  zombie_spitter: CDN + "hf_20260824_180230_b0e3ba88-1e4d-4925-b75b-2acedb67499c.png",
-  zombie_brute: CDN + "hf_20260824_180234_bcd9e99a-4cb4-4851-80ec-932ae0661a62.png",
-  pickup_weapon_crate: CDN + "hf_20260803_012151_5e90fe88-4782-4f88-ba8a-7879c84a1af0.png",
-  pickup_health: CDN + "hf_20260803_012154_adb6d1e5-8d9f-460e-aa08-aa533f0da88f.png",
-  pickup_coin: CDN + "hf_20260803_012157_b0de0b00-868b-4cc1-916d-fbe9b4d471a5.png",
+  hero_survivor: CDN + "hf_20260824_214407_7e1b9282-647b-4851-a168-a9ff888267d7.png",
+  zombie_walker: CDN + "hf_20260824_214410_c99c8695-cfe9-49dc-9c24-ce0d295f4327.png",
+  zombie_runner: CDN + "hf_20260824_214419_50f6f963-b79a-4c5f-977a-4485bab723ad.png",
+  zombie_spitter: CDN + "hf_20260824_214421_e3f514a0-8047-494c-b383-88e5639873c5.png",
+  zombie_brute: CDN + "hf_20260824_214424_5542e44c-bcae-4879-b018-7bd9fc6252cf.png",
+  pickup_weapon_crate: CDN + "hf_20260824_214427_79dbaf12-6917-4b92-b915-7cd1a28d94b9.png",
+  pickup_health: CDN + "hf_20260824_214430_1062c1b6-f9bc-40b4-91d8-0c4783571809.png",
+  pickup_coin: CDN + "hf_20260824_214433_45b321b6-7f84-42dc-b0c8-097c0a6a6f1e.png",
   ground_tile: CDN + "hf_20260803_012159_d040ab55-f23e-4c2a-88b1-e4fd41ce8028.png",
   title_background: CDN + "hf_20260803_012201_0e24b347-5a57-4fb2-878f-2a51764f5386.png",
-  keycard: CDN + "hf_20260824_183305_0da66156-df09-417c-ba0b-440a9665fc63.png",
-  gate: CDN + "hf_20260824_183310_722db1a7-0a99-481d-b9e8-e88fbbeb1005.png",
-  station: CDN + "hf_20260824_183314_fc3ad18c-348c-4ddd-a6f4-f44ff6857ca5.png",
-  generator: CDN + "hf_20260824_183329_ddbd5ab8-1d27-4efe-8670-747a7c2be553.png",
-  fuel_canister: CDN + "hf_20260824_183333_c196facf-d036-44e4-9cef-559da8d4978a.png",
+  keycard: CDN + "hf_20260824_214436_86fad537-a672-49ae-a0b7-d88bfde5f98f.png",
+  gate: CDN + "hf_20260824_214438_6beed375-9d8c-491d-9f01-b9c618bbef82.png",
+  station: CDN + "hf_20260824_214442_dd8b5961-700a-4ae3-90b2-23c489193c30.png",
+  generator: CDN + "hf_20260824_214446_d6997d0f-9614-4105-a333-026a4445e46c.png",
+  fuel_canister: CDN + "hf_20260824_214449_6e28f7fe-1580-429a-87cd-a8fb6407a393.png",
 };
 
 const LEVELS = [
@@ -121,53 +121,6 @@ function withTimeout(promise, ms) {
   return Promise.race([promise, new Promise(r => setTimeout(r, ms))]);
 }
 
-// character/pickup/icon art is generated on a flat background instead of true
-// transparency; these get chroma-keyed at load time so the solid color doesn't
-// render as a visible square. Level backgrounds and the ground tile are full-bleed
-// art and must NOT be keyed.
-const CUTOUT_NAMES = new Set([
-  "hero_survivor", "zombie_walker", "zombie_runner", "zombie_spitter", "zombie_brute",
-  "pickup_weapon_crate", "pickup_health", "pickup_coin",
-  "keycard", "gate", "station", "generator", "fuel_canister",
-]);
-
-function detectBgColor(px, w, h) {
-  const counts = new Map();
-  const sample = (x, y) => {
-    const i = (y * w + x) * 4;
-    const key = (px[i] >> 4) + "," + (px[i + 1] >> 4) + "," + (px[i + 2] >> 4);
-    counts.set(key, (counts.get(key) || 0) + 1);
-  };
-  for (let x = 0; x < w; x += 3) { sample(x, 0); sample(x, h - 1); }
-  for (let y = 0; y < h; y += 3) { sample(0, y); sample(w - 1, y); }
-  let best = null, bestCount = 0;
-  for (const [key, count] of counts) if (count > bestCount) { bestCount = count; best = key; }
-  return best.split(",").map(n => parseInt(n, 10) << 4);
-}
-
-function stripBackground(img) {
-  const w = img.naturalWidth || img.width, h = img.naturalHeight || img.height;
-  const c = document.createElement("canvas");
-  c.width = w; c.height = h;
-  const cctx = c.getContext("2d");
-  cctx.drawImage(img, 0, 0);
-  try {
-    const data = cctx.getImageData(0, 0, w, h);
-    const px = data.data;
-    const [bgR, bgG, bgB] = detectBgColor(px, w, h);
-    const tol = 42;
-    for (let i = 0; i < px.length; i += 4) {
-      const dr = px[i] - bgR, dg = px[i + 1] - bgG, db = px[i + 2] - bgB;
-      if (dr * dr + dg * dg + db * db < tol * tol) px[i + 3] = 0;
-    }
-    cctx.putImageData(data, 0, 0);
-  } catch (e) {
-    // canvas tainted by cross-origin response without CORS headers; fall back to raw image
-    return img;
-  }
-  return c;
-}
-
 async function loadAssets(onProgress) {
   const imgNames = Object.keys(IMAGE_URLS);
   const sfxNames = Object.keys(AUDIO_URLS).filter(n => n !== "music_combat");
@@ -178,7 +131,7 @@ async function loadAssets(onProgress) {
   await Promise.all(imgNames.map(name => withTimeout(new Promise(resolve => {
     const img = new Image();
     img.crossOrigin = "anonymous";
-    img.onload = () => { images[name] = CUTOUT_NAMES.has(name) ? stripBackground(img) : img; resolve(); };
+    img.onload = () => { images[name] = img; resolve(); };
     img.onerror = () => resolve();
     img.src = IMAGE_URLS[name];
   }), ASSET_TIMEOUT_MS).then(bump)));
@@ -576,16 +529,6 @@ function fireWeapon(p, dirX, dirY) {
   }
 }
 
-function nearestZombie(x, y, maxRange) {
-  let best = null, bd = maxRange;
-  for (const z of world.zombies) {
-    if (z.dead) continue;
-    const d = dist(x, y, z.x, z.y);
-    if (d < bd) { bd = d; best = z; }
-  }
-  return best;
-}
-
 function spawnPickup(type, x, y) {
   world.pickups.push({ type, x, y, born: world.time });
 }
@@ -668,19 +611,11 @@ function updatePlaying(dt, cmd) {
   if (p.invuln > 0) p.invuln -= dt;
   if (p.fireCd > 0) p.fireCd -= dt;
 
-  // aiming / auto target
+  // aiming / firing — only fires while the player is actively aiming
   let aimX = 0, aimY = 0, hasAim = false;
   if (cmd.aiming) {
     const alen = Math.hypot(cmd.ax, cmd.ay);
     if (alen > 0.1) { aimX = cmd.ax / alen; aimY = cmd.ay / alen; hasAim = true; p.facing = Math.atan2(aimY, aimX); }
-  }
-  if (!hasAim) {
-    const target = nearestZombie(p.x, p.y, WEAPONS[p.weapon].range);
-    if (target) {
-      const d = dist(p.x, p.y, target.x, target.y) || 1;
-      aimX = (target.x - p.x) / d; aimY = (target.y - p.y) / d;
-      hasAim = true; p.facing = Math.atan2(aimY, aimX);
-    }
   }
   if (hasAim) fireWeapon(p, aimX, aimY);
 
