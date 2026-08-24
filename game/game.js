@@ -12,6 +12,9 @@ const CFG = {
   TILE: 256,
   DPR_CAP: 1.5,
   ANIM_COLS: 2, ANIM_ROWS: 2, ANIM_FRAMES: 4, ANIM_STRIDE: 24,
+  KEYCARD_R: 40, GATE_R: 60, REPAIR_R: 70, REPAIR_TIME: 12,
+  GENERATOR_R: 50, GENERATOR_HP: 260, CANISTER_R: 36, EXTRACTION_R: 70,
+  DEFEND_AGGRO_CHANCE: 0.3,
 };
 
 const WEAPONS = {
@@ -66,7 +69,40 @@ const IMAGE_URLS = {
   pickup_coin: CDN + "hf_20260803_012157_b0de0b00-868b-4cc1-916d-fbe9b4d471a5.png",
   ground_tile: CDN + "hf_20260803_012159_d040ab55-f23e-4c2a-88b1-e4fd41ce8028.png",
   title_background: CDN + "hf_20260803_012201_0e24b347-5a57-4fb2-878f-2a51764f5386.png",
+  keycard: CDN + "hf_20260824_183305_0da66156-df09-417c-ba0b-440a9665fc63.png",
+  gate: CDN + "hf_20260824_183310_722db1a7-0a99-481d-b9e8-e88fbbeb1005.png",
+  station: CDN + "hf_20260824_183314_fc3ad18c-348c-4ddd-a6f4-f44ff6857ca5.png",
+  generator: CDN + "hf_20260824_183329_ddbd5ab8-1d27-4efe-8670-747a7c2be553.png",
+  fuel_canister: CDN + "hf_20260824_183333_c196facf-d036-44e4-9cef-559da8d4978a.png",
 };
+
+const LEVELS = [
+  { name: "Downtown Plaza",        img: CDN + "hf_20260824_180236_e1f7048f-908c-40d6-9a4a-11844df6bfca.png", obj: "survive" },
+  { name: "Warehouse District",    img: CDN + "hf_20260824_180238_474c7c19-9436-42a1-abaa-a871d60747bb.png", obj: "keycard" },
+  { name: "Highway Overpass",      img: CDN + "hf_20260824_180240_48ab8d00-298a-48ae-9c2a-3264d70f3c2f.png", obj: "repair" },
+  { name: "Subway Station",        img: CDN + "hf_20260824_180243_781024a3-a30b-46c4-8c5b-a649112f648f.png", obj: "defend" },
+  { name: "Shopping Mall",         img: CDN + "hf_20260824_180245_baba9436-9aaa-4a53-96ae-693e0fb8c9a7.png", obj: "collect" },
+  { name: "Parking Garage",        img: CDN + "hf_20260824_180247_0fa56f61-3e11-41d7-b69c-843d705bfca9.png", obj: "survive" },
+  { name: "Cargo Docks",           img: CDN + "hf_20260824_180250_cffcf28e-38bf-4357-b4df-b034ca085141.png", obj: "keycard" },
+  { name: "Hospital Courtyard",    img: CDN + "hf_20260824_180252_bfe83d66-3850-405c-a1e8-cc8dbda124cb.png", obj: "repair" },
+  { name: "Stadium",               img: CDN + "hf_20260824_180254_176e5dbe-7922-40b2-8137-f6ced3b205de.png", obj: "defend" },
+  { name: "Junkyard",              img: CDN + "hf_20260824_180256_29672db6-a9da-4ccc-a308-e4d3c72e73eb.png", obj: "collect" },
+  { name: "Rooftop Helipad",       img: CDN + "hf_20260824_183110_b8cc71da-3068-4e40-ab40-45200dc0add7.png", obj: "survive" },
+  { name: "Farmhouse Silo Yard",   img: CDN + "hf_20260824_183125_9b0008d3-d5df-4b4f-acb3-9d624406dd3f.png", obj: "keycard" },
+  { name: "Amusement Park Midway", img: CDN + "hf_20260824_183128_548b6bd1-f15c-44e7-939f-ca994867a613.png", obj: "repair" },
+  { name: "Sewer Tunnels",         img: CDN + "hf_20260824_183130_e0072cc2-bacf-48e1-9588-f2b3e8c86db0.png", obj: "defend" },
+  { name: "Research Lab Atrium",   img: CDN + "hf_20260824_183132_03d7ed06-b5fe-402c-8882-d12f999f1355.png", obj: "collect" },
+  { name: "Prison Cell Block",     img: CDN + "hf_20260824_183141_11024146-0430-4d56-aead-d963ab93bdda.png", obj: "survive" },
+  { name: "Ski Lodge Resort",      img: CDN + "hf_20260824_183144_4062232e-1adb-488b-997c-db4ffe7243d2.png", obj: "keycard" },
+  { name: "Oil Refinery",          img: CDN + "hf_20260824_183146_893e392f-25ae-448a-b297-71ffd83ae5f6.png", obj: "repair" },
+  { name: "Airport Terminal",      img: CDN + "hf_20260824_183202_b1492d78-bb87-458f-8ca0-e0c4b2f2901f.png", obj: "defend" },
+  { name: "Construction Site",     img: CDN + "hf_20260824_183216_923a6e71-fafc-4fd4-a4e9-7d5b7722d58c.png", obj: "collect" },
+  { name: "Cemetery",              img: CDN + "hf_20260824_183238_97652c97-cab6-43f4-9336-7ba9efc46bf8.png", obj: "survive" },
+  { name: "Farmers Market",        img: CDN + "hf_20260824_183240_5697af87-2ee7-40bd-ae0b-2e3c83483278.png", obj: "keycard" },
+  { name: "Power Substation",      img: CDN + "hf_20260824_183248_fb0b694f-3b72-44c0-89aa-65b0cc54e00b.png", obj: "repair" },
+  { name: "Marina Boatyard",       img: CDN + "hf_20260824_183256_f2b75ed4-95d2-4c1c-9825-c49a39a3da91.png", obj: "defend" },
+  { name: "Rail Yard",             img: CDN + "hf_20260824_183301_eb2b9ee5-1f90-4e28-9eca-55879b0efe64.png", obj: "collect" },
+];
 const AUDIO_URLS = {
   music_combat: CDN + "hf_20260803_012204_e98d7f91-5445-48bd-87fb-94887f728f67.m4a",
   sfx_gunshot: CDN + "hf_20260803_012207_3dc07510-a705-4ef2-8068-678f0be05fcb.mp3",
@@ -112,6 +148,18 @@ async function loadAssets(onProgress) {
   musicEl.loop = true;
   musicEl.volume = 0.35;
   bump();
+}
+
+const levelImageCache = {};
+function loadLevelImage(url) {
+  if (levelImageCache[url]) return Promise.resolve(levelImageCache[url]);
+  return new Promise(resolve => {
+    const img = new Image();
+    img.crossOrigin = "anonymous";
+    img.onload = () => { levelImageCache[url] = img; resolve(img); };
+    img.onerror = () => resolve(null);
+    img.src = url;
+  });
 }
 
 let muted = localStorage.getItem("ws_muted") === "1";
@@ -304,7 +352,107 @@ function resetWorld() {
     upgradeChoices: [],
     camX: CFG.WORLD_W / 2, camY: CFG.WORLD_H / 2,
     time: 0,
+    levelIndex: null,
+    objective: null,
+    levelBgImage: null,
+    endReason: null,
   };
+}
+
+/* ------------------------------------------------------------ mission */
+
+function randPointNear(cx, cy, rMin, rMax) {
+  const a = rand(Math.PI * 2), r = rand(rMin, rMax);
+  return [clamp(cx + Math.cos(a) * r, 60, CFG.WORLD_W - 60), clamp(cy + Math.sin(a) * r, 60, CFG.WORLD_H - 60)];
+}
+
+function makeObjective(lvl) {
+  const cx = CFG.WORLD_W / 2, cy = CFG.WORLD_H / 2;
+  if (lvl.obj === "survive") {
+    return { type: "survive", targetWave: 5 };
+  }
+  if (lvl.obj === "keycard") {
+    const [kx, ky] = randPointNear(cx, cy, 300, 650);
+    const [gx, gy] = randPointNear(cx, cy, 300, 650);
+    return { type: "keycard", phase: "find", keyX: kx, keyY: ky, gateX: gx, gateY: gy };
+  }
+  if (lvl.obj === "repair") {
+    const [rx, ry] = randPointNear(cx, cy, 150, 400);
+    return { type: "repair", repairX: rx, repairY: ry, progress: 0 };
+  }
+  if (lvl.obj === "defend") {
+    return { type: "defend", genX: cx, genY: cy, genHp: CFG.GENERATOR_HP, targetWave: 5 };
+  }
+  if (lvl.obj === "collect") {
+    const needed = 3;
+    const canisters = [];
+    for (let i = 0; i < needed; i++) {
+      const [x, y] = randPointNear(cx, cy, 250, 700);
+      canisters.push({ x, y, taken: false });
+    }
+    const [ex, ey] = randPointNear(cx, cy, 500, 750);
+    return { type: "collect", canisters, needed, collected: 0, extractX: ex, extractY: ey, extractReady: false };
+  }
+}
+
+function updateObjective(dt, p) {
+  const obj = world.objective;
+  if (!obj || obj.done) return;
+  if (obj.type === "keycard") {
+    if (obj.phase === "find") {
+      if (dist(p.x, p.y, obj.keyX, obj.keyY) < CFG.KEYCARD_R) {
+        obj.phase = "gate";
+        toast(STR.keycardFound);
+        spawnParticles(obj.keyX, obj.keyY, 12, "#7ad1ff");
+      }
+    } else if (obj.phase === "gate") {
+      if (dist(p.x, p.y, obj.gateX, obj.gateY) < CFG.GATE_R) {
+        obj.done = true;
+        enterEnd("complete");
+      }
+    }
+  } else if (obj.type === "repair") {
+    if (dist(p.x, p.y, obj.repairX, obj.repairY) < CFG.REPAIR_R) {
+      obj.progress += dt;
+      if (rng() < dt * 6) spawnParticles(obj.repairX, obj.repairY, 1, "#7ad1ff");
+      if (obj.progress >= CFG.REPAIR_TIME) {
+        obj.done = true;
+        enterEnd("complete");
+      }
+    }
+  } else if (obj.type === "collect") {
+    for (const c of obj.canisters) {
+      if (!c.taken && dist(p.x, p.y, c.x, c.y) < CFG.CANISTER_R) {
+        c.taken = true;
+        obj.collected++;
+        playSfx("sfx_pickup", 0.5);
+        if (obj.collected >= obj.needed) { obj.extractReady = true; toast(STR.extractionReady); }
+      }
+    }
+    if (obj.extractReady && dist(p.x, p.y, obj.extractX, obj.extractY) < CFG.EXTRACTION_R) {
+      obj.done = true;
+      enterEnd("complete");
+    }
+  }
+  // survive & defend objectives are resolved by wave-clear detection in updateSpawning
+}
+
+function damageGenerator(amt) {
+  const obj = world.objective;
+  if (!obj || obj.genHp <= 0) return;
+  obj.genHp = Math.max(0, obj.genHp - amt);
+  spawnParticles(obj.genX, obj.genY, 4, "#7ad1ff");
+  if (obj.genHp <= 0) enterEnd("failed");
+}
+
+function getCompletedSet() {
+  try { return new Set(JSON.parse(localStorage.getItem("ws_completed") || "[]")); }
+  catch { return new Set(); }
+}
+function markLevelComplete(idx) {
+  const s = getCompletedSet();
+  s.add(idx);
+  localStorage.setItem("ws_completed", JSON.stringify([...s]));
 }
 
 /* ---------------------------------------------------------- wave logic */
@@ -358,6 +506,7 @@ function spawnZombie(type) {
     hp: def.hp * (def.boss ? 1 : scale), maxHp: def.hp * (def.boss ? 1 : scale),
     speed: def.speed, dmg: def.dmg * (1 + (wv - 1) * 0.03), atkCd: def.atkCd, atkTimer: rand(def.atkCd),
     ranged: !!def.ranged, range: def.range, projSpeed: def.projSpeed, coin: def.coin, boss: !!def.boss,
+    aggroGen: !def.ranged && world.objective && world.objective.type === "defend" && rng() < CFG.DEFEND_AGGRO_CHANCE,
     hitFlash: 0, dead: false,
   });
 }
@@ -497,8 +646,9 @@ function updatePlaying(dt, cmd) {
   updateBullets(dt);
   updateEnemyProjectiles(dt, p);
   updatePickups(dt, p);
+  if (world.objective) updateObjective(dt, p);
 
-  if (p.hp <= 0) { p.alive = false; enterGameOver(); }
+  if (p.hp <= 0 && p.alive) { p.alive = false; enterEnd(world.objective ? "failed" : "died"); }
 }
 
 function updateSpawning(dt) {
@@ -510,19 +660,26 @@ function updateSpawning(dt) {
     world.spawnTimer = interval;
   }
   if (!world.spawnQueue.length && world.zombies.every(z => z.dead)) {
-    enterBreak();
+    const obj = world.objective;
+    if (obj && (obj.type === "survive" || obj.type === "defend") && world.wave >= obj.targetWave) {
+      enterEnd("complete");
+    } else {
+      enterBreak();
+    }
   }
 }
 
 function updateZombies(dt, p) {
+  const obj = world.objective;
+  const genActive = obj && obj.type === "defend" && obj.genHp > 0;
   for (const z of world.zombies) {
     if (z.dead) continue;
     z.px = z.x; z.py = z.y;
     if (z.hitFlash > 0) z.hitFlash -= dt;
     z.atkTimer -= dt;
 
-    const d = dist(z.x, z.y, p.x, p.y) || 1;
     if (z.ranged) {
+      const d = dist(z.x, z.y, p.x, p.y) || 1;
       if (d > z.range * 0.6) {
         z.x = clamp(z.x + (p.x - z.x) / d * z.speed * dt, z.r, CFG.WORLD_W - z.r);
         z.y = clamp(z.y + (p.y - z.y) / d * z.speed * dt, z.r, CFG.WORLD_H - z.r);
@@ -533,9 +690,14 @@ function updateZombies(dt, p) {
         world.enemyProjectiles.push({ x: z.x, y: z.y, vx: dx * z.projSpeed, vy: dy * z.projSpeed, dmg: z.dmg, life: 2 });
       }
     } else {
-      z.x = clamp(z.x + (p.x - z.x) / d * z.speed * dt, z.r, CFG.WORLD_W - z.r);
-      z.y = clamp(z.y + (p.y - z.y) / d * z.speed * dt, z.r, CFG.WORLD_H - z.r);
-      if (d < z.r + p.r && z.atkTimer <= 0) {
+      const targetGen = z.aggroGen && genActive;
+      const tx = targetGen ? obj.genX : p.x, ty = targetGen ? obj.genY : p.y;
+      const d = dist(z.x, z.y, tx, ty) || 1;
+      z.x = clamp(z.x + (tx - z.x) / d * z.speed * dt, z.r, CFG.WORLD_W - z.r);
+      z.y = clamp(z.y + (ty - z.y) / d * z.speed * dt, z.r, CFG.WORLD_H - z.r);
+      if (targetGen) {
+        if (d < z.r + CFG.GENERATOR_R && z.atkTimer <= 0) { z.atkTimer = z.atkCd; damageGenerator(z.dmg); }
+      } else if (d < z.r + p.r && z.atkTimer <= 0) {
         z.atkTimer = z.atkCd;
         damagePlayer(p, z.dmg);
       }
@@ -634,20 +796,27 @@ function applyUpgrade(idx) {
 
 let best = parseInt(localStorage.getItem("ws_best") || "0", 10);
 
-function enterGameOver() {
+function enterEnd(reason) {
   state = STATE.GAMEOVER;
-  spawnParticles(world.player.x, world.player.y, 20, "#e35b4a");
-  const isNew = world.score > best;
-  if (isNew) { best = world.score; localStorage.setItem("ws_best", String(best)); }
-  showGameOver(isNew);
+  world.endReason = reason;
+  spawnParticles(world.player.x, world.player.y, 20, reason === "complete" ? "#8fae5a" : "#e35b4a");
+  let isNew = false;
+  if (!world.objective) {
+    isNew = world.score > best;
+    if (isNew) { best = world.score; localStorage.setItem("ws_best", String(best)); }
+  } else if (reason === "complete" && world.levelIndex != null) {
+    markLevelComplete(world.levelIndex);
+  }
+  showEndScreen(reason, isNew);
 }
 
 /* ------------------------------------------------------------ render */
 
 function drawGround(ctx) {
-  const img = images.ground_tile;
   const camX = world.camX, camY = world.camY;
   const left = camX - vw / 2, top = camY - vh / 2;
+  if (world.levelBgImage) { drawLevelBackground(world.levelBgImage, left, top); return; }
+  const img = images.ground_tile;
   ctx.fillStyle = "#2b2a22";
   ctx.fillRect(0, 0, vw, vh);
   if (img) {
@@ -661,6 +830,19 @@ function drawGround(ctx) {
     }
   }
   // arena bounds vignette
+  ctx.strokeStyle = "rgba(0,0,0,0.5)";
+  ctx.lineWidth = 8;
+  ctx.strokeRect(-left, -top, CFG.WORLD_W, CFG.WORLD_H);
+}
+
+function drawLevelBackground(img, left, top) {
+  ctx.fillStyle = "#2b2a22";
+  ctx.fillRect(0, 0, vw, vh);
+  const scale = Math.max(CFG.WORLD_W / img.width, CFG.WORLD_H / img.height);
+  const dw = img.width * scale, dh = img.height * scale;
+  const dx = (CFG.WORLD_W - dw) / 2 - left;
+  const dy = (CFG.WORLD_H - dh) / 2 - top;
+  ctx.drawImage(img, dx, dy, dw, dh);
   ctx.strokeStyle = "rgba(0,0,0,0.5)";
   ctx.lineWidth = 8;
   ctx.strokeRect(-left, -top, CFG.WORLD_W, CFG.WORLD_H);
@@ -711,6 +893,8 @@ function drawScene() {
     drawSprite(img, pk.x, pk.y + bob, 30, null);
   }
 
+  drawObjectiveMarkers(p);
+
   for (const z of world.zombies) {
     if (z.dead) continue;
     const img = images[ZTYPES[z.type].img];
@@ -755,6 +939,36 @@ function drawScene() {
   }
 }
 
+function drawObjectiveMarkers(p) {
+  const obj = world.objective;
+  if (!obj) return;
+  if (obj.type === "keycard") {
+    if (obj.phase === "find") drawMarker(images.keycard, obj.keyX, obj.keyY, 34, "#7ad1ff");
+    else drawMarker(images.gate, obj.gateX, obj.gateY, 46, "#7ad1ff");
+  } else if (obj.type === "repair") {
+    drawMarker(images.station, obj.repairX, obj.repairY, 44, "#7ad1ff");
+    if (obj.progress > 0) drawHpBar(obj.repairX, obj.repairY - 40, 50, obj.progress / CFG.REPAIR_TIME);
+  } else if (obj.type === "defend") {
+    drawMarker(images.generator, obj.genX, obj.genY, 56, "#7ad1ff");
+    drawHpBar(obj.genX, obj.genY - 44, 60, obj.genHp / CFG.GENERATOR_HP);
+  } else if (obj.type === "collect") {
+    for (const c of obj.canisters) if (!c.taken) drawMarker(images.fuel_canister, c.x, c.y, 30, "#e8b93a");
+    if (obj.extractReady) drawMarker(null, obj.extractX, obj.extractY, 60, "#8fae5a");
+  }
+}
+
+function drawMarker(img, x, y, size, glowColor) {
+  const [sx, sy] = worldToScreen(x, y);
+  if (sx < -80 || sx > vw + 80 || sy < -80 || sy > vh + 80) return;
+  ctx.save();
+  ctx.globalAlpha = 0.55 + Math.sin(world.time * 4) * 0.2;
+  ctx.strokeStyle = glowColor;
+  ctx.lineWidth = 3;
+  ctx.beginPath(); ctx.arc(sx, sy, size / 2 + 6, 0, 7); ctx.stroke();
+  ctx.restore();
+  if (img) drawSprite(img, x, y, size, null);
+}
+
 function drawHpBar(x, y, w, frac) {
   const [sx, sy] = worldToScreen(x, y);
   ctx.fillStyle = "#241f1a";
@@ -790,6 +1004,7 @@ const hpLabel = document.getElementById("hplabel");
 const waveLabel = document.getElementById("wavelabel");
 const topRight = document.getElementById("topright");
 const dashBtn = document.getElementById("dashbtn");
+const objHud = document.getElementById("objhud");
 
 function renderHud() {
   const p = world.player;
@@ -800,6 +1015,20 @@ function renderHud() {
   topRight.innerHTML = `${STR.coins}: ${world.coins}<br>${STR.score}: ${world.score}`;
   dashBtn.textContent = STR.dash;
   dashBtn.classList.toggle("cd", p.dashCd > 0);
+  renderObjectiveHud();
+}
+
+function renderObjectiveHud() {
+  const obj = world.objective;
+  if (!obj) { objHud.style.display = "none"; return; }
+  objHud.style.display = "block";
+  let text = "";
+  if (obj.type === "survive") text = `${STR.objSurvive} ${world.wave} / ${obj.targetWave}`;
+  else if (obj.type === "keycard") text = obj.phase === "find" ? STR.objFindKey : STR.objBringGate;
+  else if (obj.type === "repair") text = `${STR.objRepair} ${Math.min(100, Math.round(obj.progress / CFG.REPAIR_TIME * 100))}%`;
+  else if (obj.type === "defend") text = `${STR.objDefend} ${world.wave} / ${obj.targetWave}`;
+  else if (obj.type === "collect") text = obj.extractReady ? STR.objExtract : `${STR.objCollect} ${obj.collected}/${obj.needed}`;
+  objHud.textContent = text;
 }
 
 /* --------------------------------------------------------- overlays */
@@ -816,22 +1045,68 @@ function showMenu() {
     <div class="panel">
       <h1>${STR.title}</h1>
       <h2>${STR.subtitle}</h2>
-      <div class="btn" id="btn-start">${STR.tapToStart}</div>
+      <div class="btn" id="btn-start">${STR.play}</div>
       <div class="small">${STR.best}: ${best}</div>
     </div>`);
-  document.getElementById("btn-start").addEventListener("click", startGame);
+  document.getElementById("btn-start").addEventListener("click", showLevelSelect);
 }
 
-function showGameOver(isNew) {
+function showLevelSelect() {
+  const completed = getCompletedSet();
+  const cards = LEVELS.map((lvl, i) => `
+    <div class="lvlcard${completed.has(i) ? " done" : ""}" data-i="${i}">
+      ${completed.has(i) ? "✓ " : ""}${lvl.name}
+      <span class="lvlobj">${STR["obj_" + lvl.obj]}</span>
+    </div>`).join("");
   setOverlay(`
-    <div class="panel">
-      <h1>${STR.gameOver}</h1>
+    <div class="panel" style="max-width:94vw;">
+      <h1 style="font-size:22px;">${STR.selectMission}</h1>
+      <div class="small">${completed.size} / ${LEVELS.length} ${STR.completedMissions}</div>
+      <div class="btn" id="btn-endless" style="margin:10px 0;">${STR.endlessMode}</div>
+      <div id="lvlgrid">${cards}</div>
+    </div>`);
+  document.getElementById("btn-endless").addEventListener("click", startEndless);
+  overlay.querySelectorAll(".lvlcard").forEach(el => {
+    el.addEventListener("click", () => startMission(parseInt(el.dataset.i, 10)));
+  });
+}
+
+function showEndScreen(reason, isNew) {
+  const mission = !!world.objective;
+  let title;
+  if (reason === "died") title = STR.gameOver;
+  else if (reason === "complete") title = STR.missionComplete;
+  else if (world.objective && world.objective.type === "defend" && world.objective.genHp <= 0) title = STR.stationDestroyed;
+  else title = STR.missionFailed;
+
+  const statsHtml = !mission ? `
       <div class="small" style="font-size:16px;color:#e8e2d6;margin-bottom:4px;">${STR.finalScore}: ${world.score}</div>
       <div class="small" style="font-size:16px;color:#e8e2d6;">${STR.wavesSurvived}: ${world.wave}</div>
-      ${isNew ? `<div class="small" style="color:#e8b93a;font-weight:bold;">${STR.newBest}</div>` : ""}
-      <div class="btn" id="btn-restart">${STR.restart}</div>
-    </div>`);
-  document.getElementById("btn-restart").addEventListener("click", startGame);
+      ${isNew ? `<div class="small" style="color:#e8b93a;font-weight:bold;">${STR.newBest}</div>` : ""}` : "";
+
+  let buttons;
+  if (!mission) {
+    buttons = `<div class="btn" id="btn-restart">${STR.restart}</div>`;
+  } else if (reason === "complete") {
+    const hasNext = world.levelIndex + 1 < LEVELS.length;
+    buttons = (hasNext ? `<div class="btn" id="btn-next">${STR.nextLevel}</div>` : "") +
+      `<div class="btn" id="btn-select" style="margin-left:8px;">${STR.backToSelect}</div>`;
+  } else {
+    buttons = `<div class="btn" id="btn-retry">${STR.retryMission}</div>` +
+      `<div class="btn" id="btn-select" style="margin-left:8px;">${STR.backToSelect}</div>`;
+  }
+
+  setOverlay(`<div class="panel"><h1>${title}</h1>${statsHtml}${buttons}</div>`);
+
+  if (!mission) {
+    document.getElementById("btn-restart").addEventListener("click", startEndless);
+  } else {
+    const nextEl = document.getElementById("btn-next");
+    if (nextEl) nextEl.addEventListener("click", () => startMission(world.levelIndex + 1));
+    const retryEl = document.getElementById("btn-retry");
+    if (retryEl) retryEl.addEventListener("click", () => startMission(world.levelIndex));
+    document.getElementById("btn-select").addEventListener("click", showLevelSelect);
+  }
 }
 
 function renderUpgradeCards() {
@@ -872,9 +1147,21 @@ document.getElementById("pausebtn").addEventListener("click", togglePause);
 document.getElementById("mutebtn").addEventListener("click", () => setMuted(!muted));
 addEventListener("blur", () => { if (state === STATE.PLAYING || state === STATE.BREAK) togglePause(); });
 
-function startGame() {
+function startEndless() {
   rng = mulberry32((Date.now() ^ 0x9e3779b9) & 0xffffffff);
   resetWorld();
+  hideOverlay();
+  if (!muted && musicEl) musicEl.play().catch(() => {});
+  startWave(1);
+}
+
+function startMission(idx) {
+  const lvl = LEVELS[idx];
+  rng = mulberry32((Date.now() ^ 0x9e3779b9 ^ idx) & 0xffffffff);
+  resetWorld();
+  world.levelIndex = idx;
+  world.objective = makeObjective(lvl);
+  loadLevelImage(lvl.img).then(img => { if (world && world.levelIndex === idx) world.levelBgImage = img; });
   hideOverlay();
   if (!muted && musicEl) musicEl.play().catch(() => {});
   startWave(1);
