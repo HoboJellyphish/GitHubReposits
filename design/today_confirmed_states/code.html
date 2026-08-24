@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>CareCycle - Daily Adherence</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@100..900&display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .filled-icon {
+            font-variation-settings: 'FILL' 1;
+        }
+        body {
+            -webkit-tap-highlight-color: transparent;
+            scroll-behavior: smooth;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(8px);
+        }
+    </style>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-container-highest": "#e5e2e1",
+                    "outline": "#74777f",
+                    "tertiary-fixed-dim": "#ffb77d",
+                    "tertiary-container": "#492400",
+                    "surface-container-lowest": "#ffffff",
+                    "outline-variant": "#c4c6d0",
+                    "on-surface-variant": "#44474f",
+                    "on-error": "#ffffff",
+                    "tertiary": "#2b1300",
+                    "surface-dim": "#dcd9d9",
+                    "primary-fixed": "#d6e3ff",
+                    "surface-variant": "#e5e2e1",
+                    "on-surface": "#1c1b1b",
+                    "on-primary-fixed-variant": "#2d4771",
+                    "on-secondary-container": "#007230",
+                    "on-tertiary-container": "#df7c0f",
+                    "secondary-container": "#7cf994",
+                    "on-primary-fixed": "#001b3e",
+                    "on-error-container": "#93000a",
+                    "primary": "#001839",
+                    "on-tertiary-fixed": "#2f1500",
+                    "on-secondary-fixed": "#002109",
+                    "surface-container-low": "#f6f3f2",
+                    "background": "#fcf9f8",
+                    "primary-container": "#0f2d56",
+                    "inverse-surface": "#313030",
+                    "secondary": "#006e2d",
+                    "inverse-on-surface": "#f3f0ef",
+                    "secondary-fixed": "#7ffc97",
+                    "on-secondary": "#ffffff",
+                    "surface-container-high": "#ebe7e7",
+                    "on-tertiary": "#ffffff",
+                    "surface-container": "#f0edec",
+                    "primary-fixed-dim": "#adc7f9",
+                    "surface-bright": "#fcf9f8",
+                    "on-tertiary-fixed-variant": "#6e3900",
+                    "on-primary": "#ffffff",
+                    "on-background": "#1c1b1b",
+                    "error-container": "#ffdad6",
+                    "on-secondary-fixed-variant": "#005320",
+                    "surface-tint": "#455f8a",
+                    "surface": "#fcf9f8",
+                    "tertiary-fixed": "#ffdcc3",
+                    "on-primary-container": "#7c95c4",
+                    "secondary-fixed-dim": "#62df7d",
+                    "inverse-primary": "#adc7f9",
+                    "error": "#ba1a1a"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "max-width-content": "640px",
+                    "gutter": "16px",
+                    "margin-mobile": "20px",
+                    "margin-desktop": "auto",
+                    "touch-target": "56px",
+                    "base": "8px"
+            },
+            "fontFamily": {
+                    "headline-md": ["Plus Jakarta Sans"],
+                    "button-text": ["Plus Jakarta Sans"],
+                    "headline-lg": ["Plus Jakarta Sans"],
+                    "body-md": ["Plus Jakarta Sans"],
+                    "body-lg": ["Plus Jakarta Sans"],
+                    "label-md": ["Plus Jakarta Sans"],
+                    "headline-lg-mobile": ["Plus Jakarta Sans"]
+            },
+            "fontSize": {
+                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "button-text": ["16px", {"lineHeight": "24px", "fontWeight": "600"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                    "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "headline-lg-mobile": ["28px", {"lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface font-body-md min-h-screen pb-32">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-background/80 backdrop-blur-md">
+<div class="flex items-center justify-between px-margin-mobile h-touch-target w-full max-w-max-width-content mx-auto">
+<div class="flex items-center gap-3 active:scale-95 transition-transform duration-200">
+<span class="material-symbols-outlined text-primary text-2xl">spa</span>
+<h1 class="font-headline-md text-headline-md-mobile text-primary tracking-tight">CareCycle</h1>
+</div>
+<div class="w-10 h-10 rounded-full overflow-hidden border-2 border-primary-fixed shadow-sm hover:opacity-80 transition-opacity">
+<img class="w-full h-full object-cover" data-alt="A warm, high-quality portrait of a smiling senior woman with silver hair, lit by soft natural sunlight in a cozy domestic setting. The photographic style is professional with a shallow depth of field, emphasizing a trustworthy and calm personality that aligns with the corporate yet tactile medical app aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCisq2FyCckllDoNXYNvO0sb7Oxm0hbUt8_MASR4tD7GZaC8oT1lHwToTAvjaMUxYn7APZ0wTyOq-6GSjosqvE1O4_WUyKAqbWO7g3qSqX7VGdMJRXUTfG_DzFvtYLG1vcfTgMkiCQBaQb4jK7Wma3t4JNMWd5BXTps5mTJ7i-RTM79njBm-LKFThyXOwfoslxLMbzaKjOltmHeliBYSrQTokQ17ofDsWEsJOgj7jbnfntLSQLM_ig26T5hzzKV2kRVsbWQ3u6tqho"/>
+</div>
+</div>
+</header>
+<main class="pt-24 px-margin-mobile max-w-max-width-content mx-auto">
+<!-- Progress Section (Bento Style) -->
+<section class="grid grid-cols-1 gap-4 mb-8">
+<div class="bg-surface-container-lowest rounded-xl p-6 shadow-[0px_4px_20px_rgba(15,45,86,0.08)] flex items-center justify-between">
+<div>
+<h2 class="font-headline-md text-headline-md text-primary mb-1">Morning Routine</h2>
+<p class="text-on-surface-variant font-label-md">2 of 4 doses completed</p>
+</div>
+<div class="relative w-16 h-16 flex items-center justify-center">
+<svg class="w-full h-full transform -rotate-90">
+<circle class="text-surface-container-highest" cx="32" cy="32" fill="transparent" r="28" stroke="currentColor" stroke-width="6"></circle>
+<circle class="text-secondary transition-all duration-1000" cx="32" cy="32" fill="transparent" r="28" stroke="currentColor" stroke-dasharray="175.9" stroke-dashoffset="87.95" stroke-width="6"></circle>
+</svg>
+<span class="absolute font-label-md text-primary">50%</span>
+</div>
+</div>
+</section>
+<!-- Medication List -->
+<div class="space-y-4">
+<!-- 1. Atorvastatin (Taken) -->
+<div class="bg-surface-container-lowest rounded-xl p-4 shadow-[0px_4px_20px_rgba(15,45,86,0.08)] flex items-center gap-4 min-h-[80px] border-l-4 border-secondary">
+<div class="w-12 h-12 rounded-full bg-secondary-container flex items-center justify-center text-on-secondary-container">
+<span class="material-symbols-outlined filled-icon">pill</span>
+</div>
+<div class="flex-1">
+<h3 class="font-button-text text-primary">Atorvastatin</h3>
+<p class="text-on-surface-variant text-label-md">Taken at 8:32 AM</p>
+</div>
+<div class="flex items-center text-secondary">
+<span class="material-symbols-outlined text-3xl filled-icon">check_circle</span>
+</div>
+</div>
+<!-- 2. Lisinopril (Missed) -->
+<div class="bg-surface-container-lowest rounded-xl p-4 shadow-[0px_4px_20px_rgba(15,45,86,0.08)] flex items-center gap-4 min-h-[80px] border-l-4 border-error">
+<div class="w-12 h-12 rounded-full bg-error-container flex items-center justify-center text-on-error-container">
+<span class="material-symbols-outlined">heart_plus</span>
+</div>
+<div class="flex-1">
+<h3 class="font-button-text text-primary">Lisinopril</h3>
+<p class="text-error text-label-md font-bold">Missed (8:00 AM)</p>
+</div>
+<div class="px-3 py-1 bg-error-container text-on-error-container rounded-full text-label-md font-bold">
+                    Missed
+                </div>
+</div>
+<!-- 3. Metformin (Pending) -->
+<div class="bg-surface-container-lowest rounded-xl p-4 shadow-[0px_4px_20px_rgba(15,45,86,0.08)] flex items-center gap-4 min-h-[80px] border-l-4 border-tertiary-fixed-dim">
+<div class="w-12 h-12 rounded-full bg-tertiary-fixed flex items-center justify-center text-on-tertiary-fixed">
+<span class="material-symbols-outlined">medical_services</span>
+</div>
+<div class="flex-1">
+<div class="flex items-center gap-2">
+<h3 class="font-button-text text-primary">Metformin</h3>
+<span class="w-2 h-2 rounded-full bg-[#df7c0f] animate-pulse"></span>
+</div>
+<p class="text-on-surface-variant text-label-md">Pending • Breakfast</p>
+</div>
+<button class="h-10 px-6 bg-primary text-on-primary rounded-full font-button-text active:scale-95 transition-all shadow-md">
+                    Take
+                </button>
+</div>
+<!-- 4. Vitamin D3 (Upcoming) -->
+<div class="bg-surface-container-low opacity-60 rounded-xl p-4 border border-outline-variant/30 flex items-center gap-4 min-h-[80px]">
+<div class="w-12 h-12 rounded-full bg-surface-container-highest flex items-center justify-center text-outline">
+<span class="material-symbols-outlined">light_mode</span>
+</div>
+<div class="flex-1">
+<h3 class="font-button-text text-on-surface-variant">Vitamin D3</h3>
+<p class="text-outline text-label-md">Upcoming • 4:00 PM</p>
+</div>
+<div class="text-outline">
+<span class="material-symbols-outlined">schedule</span>
+</div>
+</div>
+</div>
+<!-- Adherence Chart Insight -->
+<section class="mt-8 bg-primary-container text-on-primary-container p-6 rounded-2xl relative overflow-hidden">
+<div class="relative z-10">
+<h4 class="font-headline-md text-lg mb-2 text-primary-fixed-dim">Daily Streak: 12 Days</h4>
+<p class="text-body-md opacity-90 mb-4">You're doing great! Keep up the morning routine for better energy levels.</p>
+<div class="flex gap-2">
+<div class="flex-1 h-2 bg-secondary rounded-full"></div>
+<div class="flex-1 h-2 bg-secondary rounded-full"></div>
+<div class="flex-1 h-2 bg-secondary rounded-full"></div>
+<div class="flex-1 h-2 bg-error rounded-full opacity-50"></div>
+<div class="flex-1 h-2 bg-outline-variant rounded-full"></div>
+</div>
+</div>
+<div class="absolute -right-4 -bottom-4 opacity-10">
+<span class="material-symbols-outlined text-[120px]">insights</span>
+</div>
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 right-0 z-50 flex justify-around items-center h-[72px] px-gutter bg-surface-container-lowest shadow-[0px_-4px_20px_rgba(15,45,86,0.08)] max-w-max-width-content mx-auto rounded-t-xl">
+<a class="flex flex-col items-center justify-center text-primary bg-primary-fixed rounded-full px-4 py-1 transition-all duration-300" href="#">
+<span class="material-symbols-outlined filled-icon">today</span>
+<span class="font-label-md text-label-md">Today</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant opacity-70 hover:bg-surface-container-high transition-colors px-4 py-1 rounded-full" href="#">
+<span class="material-symbols-outlined">history</span>
+<span class="font-label-md text-label-md">History</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant opacity-70 hover:bg-surface-container-high transition-colors px-4 py-1 rounded-full" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-md text-label-md">Settings</span>
+</a>
+</nav>
+<!-- Simple Micro-interactions -->
+<script>
+        document.querySelectorAll('button, a').forEach(el => {
+            el.addEventListener('click', () => {
+                if ('vibrate' in navigator) {
+                    navigator.vibrate(10);
+                }
+            });
+        });
+
+        // Simulating the take action
+        const takeBtn = document.querySelector('button');
+        if(takeBtn) {
+            takeBtn.addEventListener('click', function() {
+                this.innerHTML = '<span class="material-symbols-outlined">check</span>';
+                this.classList.remove('bg-primary');
+                this.classList.add('bg-secondary');
+                setTimeout(() => {
+                    this.closest('.border-l-4').style.borderColor = '#006e2d';
+                }, 300);
+            });
+        }
+    </script>
+</body></html>

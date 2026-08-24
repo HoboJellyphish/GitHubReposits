@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>CareCycle - History</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+        }
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "surface-container-highest": "#e5e2e1",
+                      "outline": "#74777f",
+                      "tertiary-fixed-dim": "#ffb77d",
+                      "tertiary-container": "#492400",
+                      "surface-container-lowest": "#ffffff",
+                      "outline-variant": "#c4c6d0",
+                      "on-surface-variant": "#44474f",
+                      "on-error": "#ffffff",
+                      "tertiary": "#2b1300",
+                      "surface-dim": "#dcd9d9",
+                      "primary-fixed": "#d6e3ff",
+                      "surface-variant": "#e5e2e1",
+                      "on-surface": "#1c1b1b",
+                      "on-primary-fixed-variant": "#2d4771",
+                      "on-secondary-container": "#007230",
+                      "on-tertiary-container": "#df7c0f",
+                      "secondary-container": "#7cf994",
+                      "on-primary-fixed": "#001b3e",
+                      "on-error-container": "#93000a",
+                      "primary": "#001839",
+                      "on-tertiary-fixed": "#2f1500",
+                      "on-secondary-fixed": "#002109",
+                      "surface-container-low": "#f6f3f2",
+                      "background": "#fcf9f8",
+                      "primary-container": "#0f2d56",
+                      "inverse-surface": "#313030",
+                      "secondary": "#006e2d",
+                      "inverse-on-surface": "#f3f0ef",
+                      "secondary-fixed": "#7ffc97",
+                      "on-secondary": "#ffffff",
+                      "surface-container-high": "#ebe7e7",
+                      "on-tertiary": "#ffffff",
+                      "surface-container": "#f0edec",
+                      "primary-fixed-dim": "#adc7f9",
+                      "surface-bright": "#fcf9f8",
+                      "on-tertiary-fixed-variant": "#6e3900",
+                      "on-primary": "#ffffff",
+                      "on-background": "#1c1b1b",
+                      "error-container": "#ffdad6",
+                      "on-secondary-fixed-variant": "#005320",
+                      "surface-tint": "#455f8a",
+                      "surface": "#fcf9f8",
+                      "tertiary-fixed": "#ffdcc3",
+                      "on-primary-container": "#7c95c4",
+                      "secondary-fixed-dim": "#62df7d",
+                      "inverse-primary": "#adc7f9",
+                      "error": "#ba1a1a"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "max-width-content": "640px",
+                      "gutter": "16px",
+                      "margin-mobile": "20px",
+                      "margin-desktop": "auto",
+                      "touch-target": "56px",
+                      "base": "8px"
+              },
+              "fontFamily": {
+                      "headline-md": ["Plus Jakarta Sans"],
+                      "button-text": ["Plus Jakarta Sans"],
+                      "headline-lg": ["Plus Jakarta Sans"],
+                      "body-md": ["Plus Jakarta Sans"],
+                      "body-lg": ["Plus Jakarta Sans"],
+                      "label-md": ["Plus Jakarta Sans"],
+                      "headline-lg-mobile": ["Plus Jakarta Sans"]
+              },
+              "fontSize": {
+                      "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                      "button-text": ["16px", {"lineHeight": "24px", "fontWeight": "600"}],
+                      "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                      "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                      "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                      "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                      "headline-lg-mobile": ["28px", {"lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+              }
+            },
+          },
+        }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface font-body-md min-h-screen">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-background dark:bg-background">
+<div class="flex items-center justify-between px-margin-mobile h-touch-target w-full max-w-max-width-content mx-auto">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary dark:text-primary-fixed-dim" style="font-variation-settings: 'FILL' 1;">spa</span>
+<h1 class="font-headline-md text-headline-md-mobile text-primary dark:text-primary-fixed-dim tracking-tight">CareCycle</h1>
+</div>
+<div class="w-10 h-10 rounded-full overflow-hidden border-2 border-primary-fixed cursor-pointer active:scale-95 transition-transform duration-200">
+<img class="w-full h-full object-cover" data-alt="A professional close-up headshot of a friendly user for a healthcare application. The background is a soft, blurred domestic interior with warm sunlight. The aesthetic is clean, modern, and trustworthy, matching a corporate medical UI with high-key lighting and natural colors." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAIYF9oulks0qbr55clztT0s_K8AkzpD20M0PCGmsMz5Ncp_05CaG48WKtLPaszN_-5jknZBE9U1VFQ6rRgx9KLHrbyKmw9oa6tTwGm7TwH2AZfLFB5p0aA81ATtbCOCAp_-Rh05iMCjM3A6IfMC0LuBUSI0FMyZbVJ3uVLkI_eXvsMq_bNgxjJYYlApFvtfEXBZIyfJH6apyeGuI-FraNe1VK-TatfR0f-E_Fuj4RZ-u6jYKrR04KCVxtTl0k8Jk2_PUDfOYz6YCM"/>
+</div>
+</div>
+</header>
+<main class="pt-20 pb-24 px-margin-mobile max-w-max-width-content mx-auto">
+<!-- Calendar Section -->
+<section class="bg-surface-container-lowest rounded-xl p-6 shadow-[0px_4px_20px_rgba(15,45,86,0.08)] mb-8">
+<div class="flex items-center justify-between mb-6">
+<button class="w-12 h-12 flex items-center justify-center rounded-full hover:bg-surface-container-high transition-colors active:scale-90">
+<span class="material-symbols-outlined text-primary">chevron_left</span>
+</button>
+<h2 class="font-headline-md text-primary">October 2024</h2>
+<button class="w-12 h-12 flex items-center justify-center rounded-full hover:bg-surface-container-high transition-colors active:scale-90">
+<span class="material-symbols-outlined text-primary">chevron_right</span>
+</button>
+</div>
+<!-- Days of Week -->
+<div class="calendar-grid text-center mb-2">
+<span class="font-label-md text-outline uppercase">M</span>
+<span class="font-label-md text-outline uppercase">T</span>
+<span class="font-label-md text-outline uppercase">W</span>
+<span class="font-label-md text-outline uppercase">T</span>
+<span class="font-label-md text-outline uppercase">F</span>
+<span class="font-label-md text-outline uppercase">S</span>
+<span class="font-label-md text-outline uppercase">S</span>
+</div>
+<!-- Calendar Days -->
+<div class="calendar-grid gap-y-4">
+<!-- Row 1 (Partial) -->
+<div class="flex flex-col items-center gap-1 opacity-30"><span class="font-body-md">30</span><div class="w-1.5 h-1.5 rounded-full bg-transparent"></div></div>
+<div class="flex flex-col items-center gap-1"><span class="font-body-md text-primary">1</span><div class="w-1.5 h-1.5 rounded-full bg-secondary"></div></div>
+<div class="flex flex-col items-center gap-1"><span class="font-body-md text-primary">2</span><div class="w-1.5 h-1.5 rounded-full bg-secondary"></div></div>
+<div class="flex flex-col items-center gap-1"><span class="font-body-md text-primary">3</span><div class="w-1.5 h-1.5 rounded-full bg-error"></div></div>
+<div class="flex flex-col items-center gap-1"><span class="font-body-md text-primary">4</span><div class="w-1.5 h-1.5 rounded-full bg-tertiary-fixed-dim"></div></div>
+<div class="flex flex-col items-center gap-1"><span class="font-body-md text-primary">5</span><div class="w-1.5 h-1.5 rounded-full bg-outline-variant"></div></div>
+<div class="flex flex-col items-center gap-1"><span class="font-body-md text-primary">6</span><div class="w-1.5 h-1.5 rounded-full bg-secondary"></div></div>
+<!-- Row 2 -->
+<div class="flex flex-col items-center gap-1"><span class="font-body-md text-primary">7</span><div class="w-1.5 h-1.5 rounded-full bg-secondary"></div></div>
+<div class="flex flex-col items-center gap-1"><span class="font-body-md text-primary">8</span><div class="w-1.5 h-1.5 rounded-full bg-secondary"></div></div>
+<div class="flex flex-col items-center gap-1"><span class="font-body-md text-primary">9</span><div class="w-1.5 h-1.5 rounded-full bg-tertiary-fixed-dim"></div></div>
+<div class="flex flex-col items-center gap-1"><span class="font-body-md text-primary">10</span><div class="w-1.5 h-1.5 rounded-full bg-secondary"></div></div>
+<div class="flex flex-col items-center gap-1"><span class="font-body-md text-primary">11</span><div class="w-1.5 h-1.5 rounded-full bg-secondary"></div></div>
+<!-- Selected Day -->
+<div class="flex flex-col items-center gap-1 relative">
+<div class="absolute -inset-2 bg-primary-fixed rounded-xl -z-10"></div>
+<span class="font-body-md text-primary font-bold">12</span>
+<div class="w-1.5 h-1.5 rounded-full bg-secondary"></div>
+</div>
+<div class="flex flex-col items-center gap-1"><span class="font-body-md text-primary">13</span><div class="w-1.5 h-1.5 rounded-full bg-secondary"></div></div>
+<!-- Row 3 -->
+<div class="flex flex-col items-center gap-1"><span class="font-body-md text-primary">14</span><div class="w-1.5 h-1.5 rounded-full bg-secondary"></div></div>
+<div class="flex flex-col items-center gap-1"><span class="font-body-md text-primary">15</span><div class="w-1.5 h-1.5 rounded-full bg-secondary"></div></div>
+<div class="flex flex-col items-center gap-1"><span class="font-body-md text-primary">16</span><div class="w-1.5 h-1.5 rounded-full bg-error"></div></div>
+<div class="flex flex-col items-center gap-1"><span class="font-body-md text-primary">17</span><div class="w-1.5 h-1.5 rounded-full bg-secondary"></div></div>
+<div class="flex flex-col items-center gap-1"><span class="font-body-md text-primary">18</span><div class="w-1.5 h-1.5 rounded-full bg-secondary"></div></div>
+<div class="flex flex-col items-center gap-1"><span class="font-body-md text-primary">19</span><div class="w-1.5 h-1.5 rounded-full bg-tertiary-fixed-dim"></div></div>
+<div class="flex flex-col items-center gap-1"><span class="font-body-md text-primary">20</span><div class="w-1.5 h-1.5 rounded-full bg-secondary"></div></div>
+<!-- Row 4 -->
+<div class="flex flex-col items-center gap-1"><span class="font-body-md text-primary">21</span><div class="w-1.5 h-1.5 rounded-full bg-secondary"></div></div>
+<div class="flex flex-col items-center gap-1"><span class="font-body-md text-primary">22</span><div class="w-1.5 h-1.5 rounded-full bg-secondary"></div></div>
+<div class="flex flex-col items-center gap-1"><span class="font-body-md text-primary">23</span><div class="w-1.5 h-1.5 rounded-full bg-secondary"></div></div>
+<div class="flex flex-col items-center gap-1"><span class="font-body-md text-primary text-opacity-40">24</span><div class="w-1.5 h-1.5 rounded-full bg-transparent"></div></div>
+<div class="flex flex-col items-center gap-1"><span class="font-body-md text-primary text-opacity-40">25</span><div class="w-1.5 h-1.5 rounded-full bg-transparent"></div></div>
+<div class="flex flex-col items-center gap-1"><span class="font-body-md text-primary text-opacity-40">26</span><div class="w-1.5 h-1.5 rounded-full bg-transparent"></div></div>
+<div class="flex flex-col items-center gap-1"><span class="font-body-md text-primary text-opacity-40">27</span><div class="w-1.5 h-1.5 rounded-full bg-transparent"></div></div>
+</div>
+</section>
+<!-- Selected Date Details -->
+<div class="space-y-4">
+<div class="flex items-center justify-between px-2">
+<h3 class="font-headline-md text-primary">Saturday, Oct 12</h3>
+<span class="font-label-md text-secondary">All Taken</span>
+</div>
+<!-- Medication Cards -->
+<div class="grid grid-cols-1 gap-4">
+<!-- Card 1 -->
+<div class="bg-surface-container-lowest rounded-xl p-4 shadow-[0px_4px_20px_rgba(15,45,86,0.08)] flex items-center justify-between min-h-[72px]">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-full bg-primary-fixed flex items-center justify-center">
+<span class="material-symbols-outlined text-primary">pill</span>
+</div>
+<div>
+<p class="font-headline-md text-body-lg text-primary">Atorvastatin</p>
+<p class="font-label-md text-outline">10mg • Daily</p>
+</div>
+</div>
+<div class="flex flex-col items-end gap-1">
+<span class="text-secondary font-label-md bg-secondary-fixed px-3 py-1 rounded-full">Taken</span>
+<span class="font-label-md text-outline">08:15 AM</span>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="bg-surface-container-lowest rounded-xl p-4 shadow-[0px_4px_20px_rgba(15,45,86,0.08)] flex items-center justify-between min-h-[72px]">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-full bg-tertiary-fixed flex items-center justify-center">
+<span class="material-symbols-outlined text-on-tertiary-fixed">medication</span>
+</div>
+<div>
+<p class="font-headline-md text-body-lg text-primary">Metformin</p>
+<p class="font-label-md text-outline">500mg • Twice daily</p>
+</div>
+</div>
+<div class="flex flex-col items-end gap-1">
+<span class="text-secondary font-label-md bg-secondary-fixed px-3 py-1 rounded-full">Taken</span>
+<span class="font-label-md text-outline">12:30 PM</span>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="bg-surface-container-lowest rounded-xl p-4 shadow-[0px_4px_20px_rgba(15,45,86,0.08)] flex items-center justify-between min-h-[72px]">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-full bg-secondary-fixed flex items-center justify-center">
+<span class="material-symbols-outlined text-on-secondary-fixed">vaccines</span>
+</div>
+<div>
+<p class="font-headline-md text-body-lg text-primary">Multivitamin</p>
+<p class="font-label-md text-outline">Gummy • Daily</p>
+</div>
+</div>
+<div class="flex flex-col items-end gap-1">
+<span class="text-on-surface-variant font-label-md bg-surface-container-highest px-3 py-1 rounded-full">Skipped</span>
+<span class="font-label-md text-outline">09:00 PM</span>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 right-0 z-50 flex justify-around items-center h-[72px] px-gutter bg-surface-container-lowest dark:bg-surface-container-low max-w-max-width-content mx-auto shadow-[0px_-4px_20px_rgba(15,45,86,0.08)] rounded-t-xl">
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant opacity-70 hover:bg-surface-container-high dark:hover:bg-surface-container-highest transition-colors active:scale-90 duration-300" href="#">
+<span class="material-symbols-outlined">today</span>
+<span class="font-label-md text-label-md">Today</span>
+</a>
+<a class="flex flex-col items-center justify-center text-primary dark:text-primary-fixed-dim bg-primary-fixed dark:bg-primary-container rounded-full px-4 py-1 transition-all duration-300" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">history</span>
+<span class="font-label-md text-label-md">History</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant opacity-70 hover:bg-surface-container-high dark:hover:bg-surface-container-highest transition-colors active:scale-90 duration-300" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-md text-label-md">Settings</span>
+</a>
+</nav>
+<script>
+        // Simple micro-interaction for calendar days
+        document.querySelectorAll('.calendar-grid > div').forEach(day => {
+            day.addEventListener('click', function() {
+                if(this.classList.contains('opacity-30')) return;
+                
+                // Clear previous selection
+                document.querySelectorAll('.calendar-grid .bg-primary-fixed').forEach(el => el.remove());
+                document.querySelectorAll('.calendar-grid .font-bold').forEach(el => el.classList.remove('font-bold'));
+                
+                // Set new selection
+                const selectionHighlight = document.createElement('div');
+                selectionHighlight.className = 'absolute -inset-2 bg-primary-fixed rounded-xl -z-10';
+                this.classList.add('relative');
+                this.appendChild(selectionHighlight);
+                this.querySelector('span').classList.add('font-bold');
+            });
+        });
+    </script>
+</body></html>

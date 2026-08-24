@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Patient Detail - Alex | CareConnect</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@100..900&display=swap" rel="stylesheet"/>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+    .pill-shadow {
+      box-shadow: 0px 4px 20px rgba(15, 45, 86, 0.08);
+    }
+    body {
+      background-color: #fcf9f8;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 4px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #e2e2e2;
+      border-radius: 10px;
+    }
+  </style>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+                  "outline-variant": "#c4c6d0",
+                  "on-primary-fixed": "#001b3e",
+                  "tertiary-container": "#492400",
+                  "tertiary": "#2b1300",
+                  "outline": "#74777f",
+                  "surface-dim": "#dcd9d9",
+                  "surface-tint": "#455f8a",
+                  "inverse-surface": "#313030",
+                  "background": "#fcf9f8",
+                  "surface-container-highest": "#e5e2e1",
+                  "on-primary": "#ffffff",
+                  "on-secondary-fixed-variant": "#005320",
+                  "surface": "#fcf9f8",
+                  "on-surface-variant": "#44474f",
+                  "error-container": "#ffdad6",
+                  "tertiary-fixed": "#ffdcc3",
+                  "secondary-fixed-dim": "#62df7d",
+                  "primary-container": "#0f2d56",
+                  "on-tertiary": "#ffffff",
+                  "on-primary-fixed-variant": "#2d4771",
+                  "inverse-primary": "#adc7f9",
+                  "primary-fixed": "#d6e3ff",
+                  "on-error-container": "#93000a",
+                  "surface-container-lowest": "#ffffff",
+                  "secondary-fixed": "#7ffc97",
+                  "surface-container-low": "#f6f3f2",
+                  "surface-container": "#f0edec",
+                  "on-secondary": "#ffffff",
+                  "on-primary-container": "#7c95c4",
+                  "on-background": "#1c1b1b",
+                  "error": "#ba1a1a",
+                  "on-secondary-container": "#007230",
+                  "on-tertiary-fixed": "#2f1500",
+                  "on-tertiary-container": "#df7c0f",
+                  "surface-container-high": "#ebe7e7",
+                  "surface-variant": "#e5e2e1",
+                  "on-tertiary-fixed-variant": "#6e3900",
+                  "surface-bright": "#fcf9f8",
+                  "on-surface": "#1c1b1b",
+                  "secondary-container": "#7cf994",
+                  "primary": "#001839",
+                  "primary-fixed-dim": "#adc7f9",
+                  "on-secondary-fixed": "#002109",
+                  "tertiary-fixed-dim": "#ffb77d",
+                  "on-error": "#ffffff",
+                  "secondary": "#006e2d",
+                  "inverse-on-surface": "#f3f0ef"
+          },
+          "borderRadius": {
+                  "DEFAULT": "0.25rem",
+                  "lg": "0.5rem",
+                  "xl": "0.75rem",
+                  "full": "9999px"
+          },
+          "spacing": {
+                  "margin-desktop": "auto",
+                  "gutter": "16px",
+                  "base": "8px",
+                  "margin-mobile": "20px",
+                  "max-width-content": "640px",
+                  "touch-target": "56px"
+          },
+          "fontFamily": {
+                  "label-md": ["Plus Jakarta Sans"],
+                  "button-text": ["Plus Jakarta Sans"],
+                  "body-lg": ["Plus Jakarta Sans"],
+                  "headline-lg-mobile": ["Plus Jakarta Sans"],
+                  "headline-lg": ["Plus Jakarta Sans"],
+                  "headline-md": ["Plus Jakarta Sans"],
+                  "body-md": ["Plus Jakarta Sans"]
+          },
+          "fontSize": {
+                  "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                  "button-text": ["16px", {"lineHeight": "24px", "fontWeight": "600"}],
+                  "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                  "headline-lg-mobile": ["28px", {"lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                  "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                  "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                  "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
+          }
+        },
+      },
+    }
+  </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="font-body-md text-on-surface">
+<!-- Top App Bar (Patient Detail Context) -->
+<header class="sticky top-0 z-50 bg-surface flex items-center justify-between px-margin-mobile h-touch-target w-full max-w-max-width-content mx-auto">
+<div class="flex items-center gap-4">
+<button class="p-2 -ml-2 rounded-full hover:bg-surface-container-low transition-colors">
+<span class="material-symbols-outlined text-primary">arrow_back</span>
+</button>
+<div class="flex flex-col">
+<h1 class="font-headline-md text-headline-md text-primary leading-tight">Alex</h1>
+<span class="font-label-md text-[10px] uppercase tracking-wider text-on-surface-variant">Viewing as caretaker</span>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center text-on-primary-container font-bold overflow-hidden border-2 border-surface-container-high">
+<img class="w-full h-full object-cover" data-alt="A professional headshot of a friendly medical caretaker in a clean white environment. The lighting is soft and natural, emphasizing trust and reliability. The style is modern corporate with a warm, domestic feel, using high-resolution details and a shallow depth of field to focus on the person's approachable expression." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCZJ6cKdL3XjmFjUWLKZYvlutSwwYzcq_FrlF86R5HoN6kOsZJS_R1Z-TgotwnVyO-6mfKk3kEw-ORU7agUBWe6_KW6qembZ5baF4jovxwA3qR2NnELdyJkg9M6SvtSLrc6GQRbfr3HYO8MaDsoaRgFbRTLNl1ejvnbiFHMjItTympCvxkpPVjzzhSEpZaeDG5P0A6eXZAe36XlQgqpRgTjIGZDY6-i2MVwxr_ghpxdYM1UTzLAhGxsEXZywcLS1xHKQZuMCtxcV4Q"/>
+</div>
+</div>
+</header>
+<main class="max-w-max-width-content mx-auto px-margin-mobile pb-32">
+<!-- Patient Overview Card -->
+<section class="mt-4 mb-8">
+<div class="bg-surface-container-lowest pill-shadow rounded-xl p-6 flex items-center justify-between relative overflow-hidden">
+<!-- Visual Accent -->
+<div class="absolute right-0 top-0 w-24 h-full bg-secondary opacity-5 pointer-events-none" style="clip-path: polygon(100% 0, 0 0, 100% 100%);"></div>
+<div class="flex flex-col gap-1">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary text-[20px]" style="font-variation-settings: 'FILL' 1;">verified</span>
+<span class="font-label-md text-secondary">85% Adherence</span>
+</div>
+<p class="text-on-surface-variant font-body-md">Last dose confirmed 2 hours ago</p>
+</div>
+<div class="relative w-16 h-16">
+<svg class="w-full h-full" viewbox="0 0 36 36">
+<path class="text-surface-container-high stroke-current" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke-width="3"></path>
+<path class="text-secondary stroke-current" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke-dasharray="85, 100" stroke-linecap="round" stroke-width="3"></path>
+</svg>
+<div class="absolute inset-0 flex items-center justify-center font-bold text-primary">85%</div>
+</div>
+</div>
+</section>
+<!-- Schedule Header -->
+<div class="flex items-center justify-between mb-4">
+<h2 class="font-headline-md text-primary">Daily Schedule</h2>
+<button class="flex items-center gap-1 text-primary font-label-md">
+<span class="material-symbols-outlined">calendar_today</span>
+        Today
+      </button>
+</div>
+<!-- Group: Morning -->
+<div class="space-y-4 mb-8">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-on-surface-variant">light_mode</span>
+<h3 class="font-label-md text-on-surface-variant uppercase tracking-widest">Morning (8:00 AM - 10:00 AM)</h3>
+</div>
+<!-- Confirmed Item -->
+<div class="bg-surface-container-lowest pill-shadow rounded-xl p-4 flex flex-col gap-4 border-l-4 border-secondary transition-all hover:scale-[1.01]">
+<div class="flex items-start justify-between">
+<div class="flex gap-4">
+<div class="w-12 h-12 rounded-lg bg-secondary-container flex items-center justify-center text-on-secondary-container">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">pill</span>
+</div>
+<div>
+<h4 class="font-headline-md text-body-lg text-primary">Atorvastatin</h4>
+<p class="text-on-surface-variant text-sm">20mg • 1 tablet</p>
+</div>
+</div>
+<button class="p-2 text-on-surface-variant hover:bg-surface-container-low rounded-full transition-colors">
+<span class="material-symbols-outlined">notes</span>
+</button>
+</div>
+<div class="flex items-center gap-2 px-3 py-2 bg-secondary-container/20 rounded-lg">
+<span class="material-symbols-outlined text-secondary text-sm" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<span class="text-secondary font-label-md text-sm">Confirmed by you at 9:14 AM</span>
+</div>
+</div>
+<!-- Missed Item -->
+<div class="bg-surface-container-lowest pill-shadow rounded-xl p-4 flex flex-col gap-4 border-l-4 border-error transition-all hover:scale-[1.01]">
+<div class="flex items-start justify-between">
+<div class="flex gap-4">
+<div class="w-12 h-12 rounded-lg bg-error-container flex items-center justify-center text-on-error-container">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">pill</span>
+</div>
+<div>
+<h4 class="font-headline-md text-body-lg text-primary">Lisinopril</h4>
+<p class="text-on-surface-variant text-sm">10mg • 1 tablet</p>
+</div>
+</div>
+<button class="p-2 text-on-surface-variant hover:bg-surface-container-low rounded-full transition-colors">
+<span class="material-symbols-outlined">notes</span>
+</button>
+</div>
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2 px-3 py-2 bg-error-container/20 rounded-lg">
+<span class="material-symbols-outlined text-error text-sm">error</span>
+<span class="text-error font-label-md text-sm">Missed (Scheduled 8:00 AM)</span>
+</div>
+<button class="text-primary font-label-md underline underline-offset-4">Log manually</button>
+</div>
+</div>
+</div>
+<!-- Group: Afternoon -->
+<div class="space-y-4 mb-8">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-on-surface-variant">sunny</span>
+<h3 class="font-label-md text-on-surface-variant uppercase tracking-widest">Afternoon (1:00 PM - 3:00 PM)</h3>
+</div>
+<!-- Pending Item -->
+<div class="bg-surface-container-lowest pill-shadow rounded-xl p-4 flex flex-col gap-4 transition-all hover:scale-[1.01]">
+<div class="flex items-start justify-between">
+<div class="flex gap-4">
+<div class="w-12 h-12 rounded-lg bg-primary-container flex items-center justify-center text-on-primary-container">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">pill_off</span>
+</div>
+<div>
+<h4 class="font-headline-md text-body-lg text-primary">Vitamin D3</h4>
+<p class="text-on-surface-variant text-sm">2000 IU • Softgel</p>
+</div>
+</div>
+<button class="p-2 text-on-surface-variant hover:bg-surface-container-low rounded-full transition-colors">
+<span class="material-symbols-outlined">notes</span>
+</button>
+</div>
+<button class="w-full h-touch-target bg-primary text-on-primary rounded-xl font-button-text hover:bg-primary/90 active:scale-[0.98] transition-all flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-[20px]">check</span>
+          Confirm for Alex
+        </button>
+</div>
+</div>
+<!-- Authority Indicators / Compliance Section -->
+<section class="mt-12 bg-primary-container p-6 rounded-2xl text-on-primary-container relative overflow-hidden">
+<div class="relative z-10 flex flex-col gap-3">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-on-primary-container">verified_user</span>
+<h4 class="font-label-md uppercase tracking-widest">Compliance Authority</h4>
+</div>
+<p class="text-body-md opacity-80">This schedule is synced with Dr. Miller's clinical portal. All caretaker confirmations are logged with precise timestamps for medical audit.</p>
+<div class="mt-2 flex items-center gap-4">
+<div class="flex -space-x-2">
+<div class="w-8 h-8 rounded-full border-2 border-primary-container bg-surface-container">
+<img class="w-full h-full rounded-full object-cover" data-alt="Close-up portrait of a professional female doctor in a blue scrubs uniform. She has a confident and calm expression, with soft medical-grade lighting. The background is slightly blurred showing a clean clinical environment with warm tones." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDlIDkNszbB5DzRxgBPx3k2GkMi7SXlUAWLpB-N1kvyGNY3SHzV6crrfc9Z1R2XzYBmUvpJ_CmOC1XZ_YdaBsQ59AirOcd_9G64bvfvOoOv1C0bET_Hlp_OZdGZMH-KE8F4f8XlbPy0TQaEfSNdw8LGEPR62oMB0y7-xYG8rNGlSzONoZhV3Hmg1OBvkSlpXncTMnP0tgmaoYFeIU9tga22DjnVZ_II0VsWBdgEi-h2z-1qHzkdRppX83LsGlU_KpfRv9pKAXTEwM8"/>
+</div>
+<div class="w-8 h-8 rounded-full border-2 border-primary-container bg-surface-container flex items-center justify-center text-[10px] font-bold text-primary">
+               MD
+             </div>
+</div>
+<span class="text-sm font-label-md underline underline-offset-2">View Prescribing Info</span>
+</div>
+</div>
+<!-- Background pattern -->
+<div class="absolute top-0 right-0 opacity-10">
+<span class="material-symbols-outlined text-[120px] -mr-10 -mt-10">medical_services</span>
+</div>
+</section>
+</main>
+<!-- Bottom Navigation Bar (Patient-focused Context) -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center px-margin-mobile pb-4 pt-2 bg-surface shadow-[0px_-4px_20px_rgba(15,45,86,0.08)] z-50">
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-4 py-1 active:scale-95 transition-transform duration-150" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-md text-label-md">Overview</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-xl px-4 py-1 active:scale-95 transition-transform duration-150" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">group</span>
+<span class="font-label-md text-label-md">Patients</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-4 py-1 active:scale-95 transition-transform duration-150" href="#">
+<span class="material-symbols-outlined">inventory_2</span>
+<span class="font-label-md text-label-md">Inventory</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-4 py-1 active:scale-95 transition-transform duration-150" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-md text-label-md">Settings</span>
+</a>
+</nav>
+<script>
+    // Micro-interactions for buttons
+    document.querySelectorAll('button').forEach(button => {
+      button.addEventListener('mousedown', () => {
+        button.style.transform = 'scale(0.96)';
+      });
+      button.addEventListener('mouseup', () => {
+        button.style.transform = 'scale(1)';
+      });
+      button.addEventListener('mouseleave', () => {
+        button.style.transform = 'scale(1)';
+      });
+    });
+
+    // Simple scroll behavior for top app bar shadow
+    window.addEventListener('scroll', () => {
+      const header = document.querySelector('header');
+      if (window.scrollY > 10) {
+        header.classList.add('shadow-sm');
+      } else {
+        header.classList.remove('shadow-sm');
+      }
+    });
+  </script>
+</body></html>
