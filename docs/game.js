@@ -121,6 +121,53 @@ function withTimeout(promise, ms) {
   return Promise.race([promise, new Promise(r => setTimeout(r, ms))]);
 }
 
+// character/pickup/icon art is generated on a flat background instead of true
+// transparency; these get chroma-keyed at load time so the solid color doesn't
+// render as a visible square. Level backgrounds and the ground tile are full-bleed
+// art and must NOT be keyed.
+const CUTOUT_NAMES = new Set([
+  "hero_survivor", "zombie_walker", "zombie_runner", "zombie_spitter", "zombie_brute",
+  "pickup_weapon_crate", "pickup_health", "pickup_coin",
+  "keycard", "gate", "station", "generator", "fuel_canister",
+]);
+
+function detectBgColor(px, w, h) {
+  const counts = new Map();
+  const sample = (x, y) => {
+    const i = (y * w + x) * 4;
+    const key = (px[i] >> 4) + "," + (px[i + 1] >> 4) + "," + (px[i + 2] >> 4);
+    counts.set(key, (counts.get(key) || 0) + 1);
+  };
+  for (let x = 0; x < w; x += 3) { sample(x, 0); sample(x, h - 1); }
+  for (let y = 0; y < h; y += 3) { sample(0, y); sample(w - 1, y); }
+  let best = null, bestCount = 0;
+  for (const [key, count] of counts) if (count > bestCount) { bestCount = count; best = key; }
+  return best.split(",").map(n => parseInt(n, 10) << 4);
+}
+
+function stripBackground(img) {
+  const w = img.naturalWidth || img.width, h = img.naturalHeight || img.height;
+  const c = document.createElement("canvas");
+  c.width = w; c.height = h;
+  const cctx = c.getContext("2d");
+  cctx.drawImage(img, 0, 0);
+  try {
+    const data = cctx.getImageData(0, 0, w, h);
+    const px = data.data;
+    const [bgR, bgG, bgB] = detectBgColor(px, w, h);
+    const tol = 42;
+    for (let i = 0; i < px.length; i += 4) {
+      const dr = px[i] - bgR, dg = px[i + 1] - bgG, db = px[i + 2] - bgB;
+      if (dr * dr + dg * dg + db * db < tol * tol) px[i + 3] = 0;
+    }
+    cctx.putImageData(data, 0, 0);
+  } catch (e) {
+    // canvas tainted by cross-origin response without CORS headers; fall back to raw image
+    return img;
+  }
+  return c;
+}
+
 async function loadAssets(onProgress) {
   const imgNames = Object.keys(IMAGE_URLS);
   const sfxNames = Object.keys(AUDIO_URLS).filter(n => n !== "music_combat");
@@ -131,7 +178,7 @@ async function loadAssets(onProgress) {
   await Promise.all(imgNames.map(name => withTimeout(new Promise(resolve => {
     const img = new Image();
     img.crossOrigin = "anonymous";
-    img.onload = () => { images[name] = img; resolve(); };
+    img.onload = () => { images[name] = CUTOUT_NAMES.has(name) ? stripBackground(img) : img; resolve(); };
     img.onerror = () => resolve();
     img.src = IMAGE_URLS[name];
   }), ASSET_TIMEOUT_MS).then(bump)));
