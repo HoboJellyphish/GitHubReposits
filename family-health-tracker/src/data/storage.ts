@@ -14,6 +14,7 @@ export function createEmptyDatabase(): AppDatabase {
     wearableConnections: [],
     profilePreferences: [],
     documents: [],
+    labPanels: [],
     activeProfileId: null,
   };
 }

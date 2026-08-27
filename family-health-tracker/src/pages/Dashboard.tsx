@@ -42,6 +42,8 @@ function summarize(entry: AnyLogEntry | undefined): string {
       return String(d.description);
     case "water":
       return `${d.ml} mL`;
+    case "steps":
+      return `${d.count} steps`;
     default:
       return "Logged";
   }

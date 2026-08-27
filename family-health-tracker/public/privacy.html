@@ -85,11 +85,14 @@
   <p>The app stores the following types of information, entirely on your device, in order to function:</p>
   <ul>
     <li>Profile details you create (name, avatar, date of birth) for each household member</li>
-    <li>Health entries you log or import: heart rate, sleep, meals, medications and doses, weight, blood
-      pressure, glucose, mood, symptoms, and water intake</li>
+    <li>Health entries you log or import: heart rate, sleep, meals (including nutrition facts, entered by hand or
+      via the label scanner), medications and doses, weight, blood pressure, glucose, mood, symptoms, water
+      intake, and steps</li>
+    <li>Lab panel results you enter (e.g. thyroid, vitamin, lipid values) and their reference ranges</li>
     <li>Documents you choose to upload (e.g. lab results, imaging reports, visit summaries), including any photo
       or PDF file content</li>
-    <li>Your display and layout preferences for each profile</li>
+    <li>Data you choose to import from a file (an Apple Health export or a CSV), read directly from that file</li>
+    <li>Your display, layout, and reminder preferences for each profile</li>
     <li>Wearable "connection" records — see the note below on wearable data</li>
   </ul>
 
@@ -109,6 +112,19 @@
     pulled from a real device will still be stored using the same on-device-only model described above, not sent
     to us.</p>
 
+  <h2>Reminders</h2>
+  <p>Daily tip reminders and medication reminders are both off by default. If you turn one on in Settings, the app
+    asks Android for notification permission and schedules the reminder using the device's own on-device
+    notification system — there is no push notification service and no server involved, so nothing about a
+    reminder (that it exists, when it fires, or its content) is ever sent anywhere.</p>
+
+  <h2>Nutrition label scanning</h2>
+  <p>The optional "Scan Nutrition Label" feature reads a photo of a food label using on-device text recognition —
+    the photo and everything the scan reads from it stay entirely on the device and are never uploaded anywhere,
+    including to us. The recognized numbers are shown for you to review, correct, and confirm before anything is
+    saved; nothing is saved automatically from a scan. This feature works fully offline, the same as everything
+    else in the app.</p>
+
   <h2>Analytics, advertising, and tracking</h2>
   <p>None. The app contains no analytics SDKs, no crash-reporting services, no advertising SDKs, and makes no
     network requests to any third party. There is nothing to opt out of, because nothing is ever sent.</p>
@@ -122,6 +138,9 @@
   <p>The Android app declares the <code>INTERNET</code> permission. This is required by the underlying WebView
     component the app is built on, not because the app makes outbound network calls — it does not. You can
     verify this yourself: the app works identically with the device in airplane mode.</p>
+  <p>The app also declares the notification permission, used only for the optional reminders described above.
+    Android asks you to approve this the first time you turn a reminder on in Settings, not at install time, and
+    you can decline it — declining just means that reminder won't fire.</p>
 
   <h2>Changes to this policy</h2>
   <p>If this policy changes — for example, when real wearable integrations are added — the update will be posted

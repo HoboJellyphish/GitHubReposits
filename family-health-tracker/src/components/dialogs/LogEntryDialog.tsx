@@ -8,8 +8,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useAppData } from "@/state/AppDataContext";
 import { getTracker } from "@/lib/trackers";
 import { fromDatetimeLocalValue, nowIso, toDatetimeLocalValue } from "@/lib/format";
+import { NutritionScanDialog } from "@/components/dialogs/NutritionScanDialog";
+import type { ParsedNutrition } from "@/lib/nutritionParse";
+import { cn } from "@/lib/utils";
 import type { AnyLogEntry, TrackerId } from "@/types";
-import { Clock } from "lucide-react";
+import { Clock, ChevronDown, ScanLine } from "lucide-react";
 
 type LoggableTrackerId = Exclude<TrackerId, "medications" | "sleep">;
 
@@ -21,6 +24,20 @@ const MEAL_TYPES = [
   { value: "drink", label: "Drink" },
   { value: "other", label: "Other" },
 ];
+
+const NUTRITION_FIELDS: { key: keyof ParsedNutrition; label: string }[] = [
+  { key: "calories", label: "Calories" },
+  { key: "proteinG", label: "Protein (g)" },
+  { key: "carbsG", label: "Total Carbs (g)" },
+  { key: "fatG", label: "Total Fat (g)" },
+  { key: "fiberG", label: "Fiber (g)" },
+  { key: "sugarG", label: "Sugars (g)" },
+  { key: "sodiumMg", label: "Sodium (mg)" },
+];
+
+function hasAnyNutrition(data: Record<string, unknown>): boolean {
+  return NUTRITION_FIELDS.some((f) => data[f.key] !== undefined && data[f.key] !== null && data[f.key] !== "");
+}
 
 function buildDefaultData(trackerId: LoggableTrackerId): Record<string, unknown> {
   switch (trackerId) {
@@ -40,6 +57,8 @@ function buildDefaultData(trackerId: LoggableTrackerId): Record<string, unknown>
       return { description: "", severity: 2 };
     case "water":
       return { ml: 250 };
+    case "steps":
+      return { count: 1000 };
     default:
       return {};
   }
@@ -64,13 +83,18 @@ export function LogEntryDialog({
   const [note, setNote] = React.useState("");
   const [data, setData] = React.useState<Record<string, unknown>>(buildDefaultData(trackerId));
   const [showBackdate, setShowBackdate] = React.useState(false);
+  const [nutritionOpen, setNutritionOpen] = React.useState(false);
+  const [scanOpen, setScanOpen] = React.useState(false);
 
   React.useEffect(() => {
     if (open) {
       setTimestamp(existing?.timestamp ?? nowIso());
       setNote(existing?.note ?? "");
-      setData(existing ? { ...existing.data } : buildDefaultData(trackerId));
+      const initialData = existing ? { ...existing.data } : buildDefaultData(trackerId);
+      setData(initialData);
       setShowBackdate(false);
+      setNutritionOpen(hasAnyNutrition(initialData));
+      setScanOpen(false);
     }
   }, [open, existing, trackerId]);
 
@@ -186,6 +210,36 @@ export function LogEntryDialog({
                   <img src={data.photoDataUrl} alt="Meal" className="mt-1 h-28 w-full rounded-lg object-cover" />
                 )}
               </div>
+
+              <div className="flex flex-col gap-1.5">
+                <button
+                  type="button"
+                  onClick={() => setNutritionOpen((o) => !o)}
+                  className="flex items-center justify-between text-sm font-medium"
+                >
+                  <span>Nutrition facts (optional)</span>
+                  <ChevronDown className={cn("h-4 w-4 text-muted-foreground transition-transform", nutritionOpen && "rotate-180")} />
+                </button>
+                {nutritionOpen && (
+                  <div className="flex flex-col gap-3 rounded-lg border border-border p-3">
+                    <Button type="button" variant="outline" size="sm" onClick={() => setScanOpen(true)} className="self-start">
+                      <ScanLine className="h-3.5 w-3.5" /> Scan Nutrition Label
+                    </Button>
+                    <div className="grid grid-cols-2 gap-3">
+                      {NUTRITION_FIELDS.map((f) => (
+                        <div key={f.key} className="flex flex-col gap-1.5">
+                          <Label className="text-xs text-muted-foreground">{f.label}</Label>
+                          <Input
+                            type="number"
+                            value={data[f.key] === undefined ? "" : Number(data[f.key])}
+                            onChange={(e) => set(f.key, e.target.value === "" ? undefined : Number(e.target.value))}
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
             </>
           )}
 
@@ -263,6 +317,13 @@ export function LogEntryDialog({
             </div>
           )}
 
+          {trackerId === "steps" && (
+            <div className="flex flex-col gap-1.5">
+              <Label>Steps</Label>
+              <Input type="number" step="100" min={0} value={Number(data.count ?? 0)} onChange={(e) => set("count", Number(e.target.value))} />
+            </div>
+          )}
+
           <div className="flex flex-col gap-1.5">
             <Label>Note (optional)</Label>
             <Textarea value={note} onChange={(e) => setNote(e.target.value)} rows={2} />
@@ -310,6 +371,17 @@ export function LogEntryDialog({
           <Button onClick={handleSave}>{existing ? "Save Changes" : "Save Entry"}</Button>
         </DialogFooter>
       </DialogContent>
+
+      {trackerId === "meals" && (
+        <NutritionScanDialog
+          open={scanOpen}
+          onOpenChange={setScanOpen}
+          onApply={(parsed) => {
+            setData((d) => ({ ...d, ...parsed }));
+            setNutritionOpen(true);
+          }}
+        />
+      )}
     </Dialog>
   );
 }

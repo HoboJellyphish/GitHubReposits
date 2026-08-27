@@ -34,6 +34,7 @@
   --tracker-mood: oklch(0.65 0.15 95);
   --tracker-symptoms: oklch(0.55 0.15 40);
   --tracker-water: oklch(0.62 0.14 220);
+  --tracker-steps: oklch(0.62 0.17 165);
 }
 
 .dark {
@@ -89,6 +90,7 @@
   --color-tracker-mood: var(--tracker-mood);
   --color-tracker-symptoms: var(--tracker-symptoms);
   --color-tracker-water: var(--tracker-water);
+  --color-tracker-steps: var(--tracker-steps);
 
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);

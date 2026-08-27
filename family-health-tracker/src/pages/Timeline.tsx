@@ -34,6 +34,8 @@ function entrySummary(entry: AnyLogEntry): string {
       return `${d.description} · severity ${d.severity}/5`;
     case "water":
       return `${d.ml} mL`;
+    case "steps":
+      return `${d.count} steps`;
     default:
       return "Entry";
   }
@@ -183,8 +185,14 @@ export function Timeline() {
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2">
                       <span className="truncate text-sm font-medium">{entrySummary(entry)}</span>
-                      <Badge variant={entry.source === "wearable" ? "default" : "secondary"} className="shrink-0">
-                        {entry.source === "wearable" ? <Watch className="h-3 w-3" /> : <Hand className="h-3 w-3" />}
+                      <Badge variant={entry.source === "wearable" ? "default" : entry.source === "document" ? "outline" : "secondary"} className="shrink-0">
+                        {entry.source === "wearable" ? (
+                          <Watch className="h-3 w-3" />
+                        ) : entry.source === "document" ? (
+                          <FileText className="h-3 w-3" />
+                        ) : (
+                          <Hand className="h-3 w-3" />
+                        )}
                         {entry.source}
                       </Badge>
                     </div>

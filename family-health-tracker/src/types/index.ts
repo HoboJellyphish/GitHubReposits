@@ -11,11 +11,12 @@ export type TrackerId =
   | "glucose"
   | "mood"
   | "symptoms"
-  | "water";
+  | "water"
+  | "steps";
 
 export type ButtonDisplayMode = "icon" | "text" | "both";
 
-export type EntrySource = "manual" | "wearable";
+export type EntrySource = "manual" | "wearable" | "document" | "import";
 
 export type WearablePlatform =
   | "apple_health"
@@ -53,6 +54,16 @@ export interface MealData {
   category?: string;
   portion?: string;
   photoDataUrl?: string;
+  // Optional nutrition facts — filled in manually or via the nutrition-label
+  // photo scanner (which pre-fills these for review, never saves them
+  // unreviewed).
+  calories?: number;
+  proteinG?: number;
+  carbsG?: number;
+  fatG?: number;
+  fiberG?: number;
+  sugarG?: number;
+  sodiumMg?: number;
 }
 
 export interface WeightData {
@@ -81,6 +92,10 @@ export interface WaterData {
   ml: number;
 }
 
+export interface StepsData {
+  count: number;
+}
+
 export type TrackerDataMap = {
   heartRate: HeartRateData;
   sleep: SleepData;
@@ -92,6 +107,7 @@ export type TrackerDataMap = {
   mood: MoodData;
   symptoms: SymptomsData;
   water: WaterData;
+  steps: StepsData;
 };
 
 export interface LogEntry<T extends TrackerId = TrackerId> {
@@ -101,6 +117,7 @@ export interface LogEntry<T extends TrackerId = TrackerId> {
   timestamp: string;
   source: EntrySource;
   wearablePlatform?: WearablePlatform;
+  documentId?: string;
   note?: string;
   data: TrackerDataMap[T];
   createdAt: string;
@@ -146,7 +163,7 @@ export interface WearableConnection {
   lastSyncAt?: string;
 }
 
-export type PageId = "dashboard" | "log" | "trends" | "family" | "medications" | "documents" | "settings";
+export type PageId = "dashboard" | "log" | "trends" | "family" | "medications" | "labs" | "documents" | "tips" | "settings";
 
 export type DocumentCategory = "lab_result" | "imaging" | "visit_summary" | "prescription" | "immunization" | "other";
 
@@ -183,6 +200,35 @@ export interface ProfilePreferences {
   buttonStyle: ButtonDisplayMode;
   dashboardItems: DashboardItemPref[];
   navItems: NavItemPref[];
+  // Local reminder notifications — entirely opt-in and off by default. When
+  // enabled, scheduling happens with the OS's on-device notification APIs
+  // only (see src/lib/reminders.ts); nothing is ever sent anywhere.
+  medicationRemindersEnabled: boolean;
+  tipsReminderEnabled: boolean;
+  tipsReminderTime: string;
+}
+
+export type LabPanelType = "thyroid" | "vitamins" | "lipid" | "metabolic" | "cbc" | "hormone" | "other";
+
+export interface LabValue {
+  name: string;
+  value: number;
+  unit: string;
+  referenceLow?: number;
+  referenceHigh?: number;
+}
+
+export interface LabPanel {
+  id: string;
+  profileId: string;
+  panelType: LabPanelType;
+  title: string;
+  testDate: string;
+  values: LabValue[];
+  documentId?: string;
+  note?: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface AppDatabase {
@@ -193,5 +239,6 @@ export interface AppDatabase {
   wearableConnections: WearableConnection[];
   profilePreferences: ProfilePreferences[];
   documents: MedicalDocument[];
+  labPanels: LabPanel[];
   activeProfileId: string | null;
 }

@@ -4,6 +4,7 @@ import type {
   AppDatabase,
   ButtonDisplayMode,
   DashboardItemPref,
+  LabPanel,
   Medication,
   MedicalDocument,
   MedicationDose,
@@ -40,11 +41,15 @@ function mergePreferencesWithCatalog(prefs: ProfilePreferences): ProfilePreferen
     visible: true,
     order: prefs.navItems.length + i,
   }));
-  if (missingDashboard.length === 0 && missingNav.length === 0) return prefs;
   return {
     ...prefs,
-    dashboardItems: [...prefs.dashboardItems, ...missingDashboard],
-    navItems: [...prefs.navItems, ...missingNav],
+    dashboardItems: missingDashboard.length ? [...prefs.dashboardItems, ...missingDashboard] : prefs.dashboardItems,
+    navItems: missingNav.length ? [...prefs.navItems, ...missingNav] : prefs.navItems,
+    // Preferences saved before these existed won't have them in storage;
+    // default to off rather than leaving them `undefined` at runtime.
+    medicationRemindersEnabled: prefs.medicationRemindersEnabled ?? false,
+    tipsReminderEnabled: prefs.tipsReminderEnabled ?? false,
+    tipsReminderTime: prefs.tipsReminderTime ?? "09:00",
   };
 }
 
@@ -61,12 +66,22 @@ interface AppDataContextValue {
   setButtonStyle: (profileId: string, mode: ButtonDisplayMode) => void;
   setDashboardItems: (profileId: string, items: DashboardItemPref[]) => void;
   setNavItems: (profileId: string, items: NavItemPref[]) => void;
+  updatePreferences: (profileId: string, patch: Partial<ProfilePreferences>) => void;
 
   logEntries: AnyLogEntry[];
   listLogEntries: (profileId: string) => AnyLogEntry[];
   addLogEntry: <T extends TrackerId>(entry: Omit<AnyLogEntry, "id" | "createdAt" | "updatedAt"> & { trackerId: T }) => AnyLogEntry;
+  /** Adds many entries in a single state update — used by bulk imports so a
+   * few thousand records don't trigger a few thousand localStorage writes. */
+  addLogEntries: (entries: Omit<AnyLogEntry, "id" | "createdAt" | "updatedAt">[]) => number;
   updateLogEntry: (entryId: string, patch: Partial<AnyLogEntry>) => void;
   deleteLogEntry: (entryId: string) => void;
+
+  labPanels: LabPanel[];
+  listLabPanels: (profileId: string) => LabPanel[];
+  addLabPanel: (panel: Omit<LabPanel, "id" | "createdAt" | "updatedAt">) => LabPanel;
+  updateLabPanel: (panelId: string, patch: Partial<LabPanel>) => void;
+  deleteLabPanel: (panelId: string) => void;
 
   medications: Medication[];
   listMedications: (profileId: string) => Medication[];
@@ -152,6 +167,7 @@ export function AppDataProvider({ children }: { children: React.ReactNode }) {
         medicationDoses: prev.medicationDoses.filter((d) => d.profileId !== profileId),
         wearableConnections: prev.wearableConnections.filter((c) => c.profileId !== profileId),
         documents: prev.documents.filter((d) => d.profileId !== profileId),
+        labPanels: prev.labPanels.filter((l) => l.profileId !== profileId),
       };
     });
   };
@@ -181,6 +197,8 @@ export function AppDataProvider({ children }: { children: React.ReactNode }) {
     upsertPreferences(profileId, { dashboardItems: items });
   const setNavItems: AppDataContextValue["setNavItems"] = (profileId, items) =>
     upsertPreferences(profileId, { navItems: items });
+  const updatePreferences: AppDataContextValue["updatePreferences"] = (profileId, patch) =>
+    upsertPreferences(profileId, patch);
 
   const listLogEntries: AppDataContextValue["listLogEntries"] = (profileId) =>
     db.logEntries.filter((e) => e.profileId === profileId);
@@ -189,6 +207,13 @@ export function AppDataProvider({ children }: { children: React.ReactNode }) {
     const full: AnyLogEntry = { ...entry, id: id(), createdAt: nowIso(), updatedAt: nowIso() };
     setDb((prev) => ({ ...prev, logEntries: [...prev.logEntries, full] }));
     return full;
+  };
+
+  const addLogEntries: AppDataContextValue["addLogEntries"] = (entries) => {
+    const now = nowIso();
+    const full = entries.map((entry): AnyLogEntry => ({ ...entry, id: id(), createdAt: now, updatedAt: now }) as AnyLogEntry);
+    setDb((prev) => ({ ...prev, logEntries: [...prev.logEntries, ...full] }));
+    return full.length;
   };
 
   const updateLogEntry: AppDataContextValue["updateLogEntry"] = (entryId, patch) => {
@@ -290,6 +315,26 @@ export function AppDataProvider({ children }: { children: React.ReactNode }) {
     setDb((prev) => ({ ...prev, documents: prev.documents.filter((d) => d.id !== docId) }));
   };
 
+  const listLabPanels: AppDataContextValue["listLabPanels"] = (profileId) =>
+    db.labPanels.filter((l) => l.profileId === profileId);
+
+  const addLabPanel: AppDataContextValue["addLabPanel"] = (panel) => {
+    const full: LabPanel = { ...panel, id: id(), createdAt: nowIso(), updatedAt: nowIso() };
+    setDb((prev) => ({ ...prev, labPanels: [...prev.labPanels, full] }));
+    return full;
+  };
+
+  const updateLabPanel: AppDataContextValue["updateLabPanel"] = (panelId, patch) => {
+    setDb((prev) => ({
+      ...prev,
+      labPanels: prev.labPanels.map((l) => (l.id === panelId ? { ...l, ...patch, updatedAt: nowIso() } : l)),
+    }));
+  };
+
+  const deleteLabPanel: AppDataContextValue["deleteLabPanel"] = (panelId) => {
+    setDb((prev) => ({ ...prev, labPanels: prev.labPanels.filter((l) => l.id !== panelId) }));
+  };
+
   const exportBackup: AppDataContextValue["exportBackup"] = () => serializeBackup(db);
 
   const importBackup: AppDataContextValue["importBackup"] = (json) => {
@@ -309,9 +354,11 @@ export function AppDataProvider({ children }: { children: React.ReactNode }) {
     setButtonStyle,
     setDashboardItems,
     setNavItems,
+    updatePreferences,
     logEntries: db.logEntries,
     listLogEntries,
     addLogEntry,
+    addLogEntries,
     updateLogEntry,
     deleteLogEntry,
     medications: db.medications,
@@ -332,6 +379,11 @@ export function AppDataProvider({ children }: { children: React.ReactNode }) {
     addDocument,
     updateDocument,
     deleteDocument,
+    labPanels: db.labPanels,
+    listLabPanels,
+    addLabPanel,
+    updateLabPanel,
+    deleteLabPanel,
     storageError,
     exportBackup,
     importBackup,

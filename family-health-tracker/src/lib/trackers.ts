@@ -10,6 +10,7 @@ import {
   Smile,
   Stethoscope,
   GlassWater,
+  Footprints,
   type LucideIcon,
 } from "lucide-react";
 
@@ -130,6 +131,17 @@ export const TRACKER_CATALOG: Record<TrackerId, TrackerDefinition> = {
     quickLogLabel: "Log Water",
     isCore: false,
     description: "Hydration tracking",
+  },
+  steps: {
+    id: "steps",
+    label: "Steps",
+    shortLabel: "Steps",
+    icon: Footprints,
+    colorVar: "var(--color-tracker-steps)",
+    unit: "steps",
+    quickLogLabel: "Log Steps",
+    isCore: false,
+    description: "Daily step count, manual or wearable-synced",
   },
 };
 

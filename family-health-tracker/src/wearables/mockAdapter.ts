@@ -74,6 +74,29 @@ function simulateSleepSessions(profileId: string, platform: WearablePlatform, si
   return entries;
 }
 
+function simulateStepEntries(profileId: string, platform: WearablePlatform, since: Date, until: Date): AnyLogEntry[] {
+  const entries: AnyLogEntry[] = [];
+  const cursor = new Date(since);
+  cursor.setHours(23, 59, 0, 0);
+  while (cursor.getTime() <= until.getTime()) {
+    if (cursor.getTime() >= since.getTime()) {
+      entries.push({
+        id: id(),
+        profileId,
+        trackerId: "steps",
+        timestamp: cursor.toISOString(),
+        source: "wearable",
+        wearablePlatform: platform,
+        data: { count: randomBetween(3000, 12000) },
+        createdAt: nowIso(),
+        updatedAt: nowIso(),
+      });
+    }
+    cursor.setDate(cursor.getDate() + 1);
+  }
+  return entries;
+}
+
 export function createMockAdapter(platform: WearablePlatform): WearableAdapter {
   return {
     platform,
@@ -101,6 +124,7 @@ export function createMockAdapter(platform: WearablePlatform): WearableAdapter {
       return [
         ...simulateHeartRateEntries(profileId, platform, since, until),
         ...simulateSleepSessions(profileId, platform, since, until),
+        ...simulateStepEntries(profileId, platform, since, until),
       ];
     },
   };

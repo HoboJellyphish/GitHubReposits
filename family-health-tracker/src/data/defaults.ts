@@ -37,5 +37,8 @@ export function createDefaultPreferences(profileId: string): ProfilePreferences 
       visible: true,
       order: index,
     })),
+    medicationRemindersEnabled: false,
+    tipsReminderEnabled: false,
+    tipsReminderTime: "09:00",
   };
 }
