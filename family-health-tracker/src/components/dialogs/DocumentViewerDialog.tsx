@@ -6,6 +6,7 @@ import { getCategoryDef, formatFileSize } from "@/lib/documents";
 import { getTracker } from "@/lib/trackers";
 import { formatDate, formatDateTime } from "@/lib/format";
 import { DocumentReadingsDialog } from "@/components/dialogs/DocumentReadingsDialog";
+import { PdfViewer } from "@/components/PdfViewer";
 import type { AnyLogEntry, MedicalDocument } from "@/types";
 import { Trash2, ChartLine, X } from "lucide-react";
 
@@ -61,7 +62,7 @@ export function DocumentViewerDialog({
 
         <div className="flex flex-col gap-3">
           {isImage && <img src={doc.dataUrl} alt={doc.title} className="max-h-96 w-full rounded-lg border border-border object-contain" />}
-          {isPdf && <iframe src={doc.dataUrl} title={doc.title} className="h-96 w-full rounded-lg border border-border" />}
+          {isPdf && <PdfViewer dataUrl={doc.dataUrl} title={doc.title} />}
           {!isImage && !isPdf && (
             <a href={doc.dataUrl} download={doc.fileName} className="text-sm text-primary underline">
               Download {doc.fileName}

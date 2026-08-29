@@ -1,0 +1,80 @@
+import * as React from "react";
+import { Button } from "@/components/ui/button";
+import { loadPdf, renderPage } from "@/lib/pdf";
+import { Loader2, ChevronLeft, ChevronRight, AlertTriangle } from "lucide-react";
+import type { PDFDocumentProxy } from "pdfjs-dist";
+
+export function PdfViewer({ dataUrl, title }: { dataUrl: string; title: string }) {
+  const canvasRef = React.useRef<HTMLCanvasElement>(null);
+  const pdfRef = React.useRef<PDFDocumentProxy | null>(null);
+  const [numPages, setNumPages] = React.useState(0);
+  const [page, setPage] = React.useState(1);
+  const [loading, setLoading] = React.useState(true);
+  const [error, setError] = React.useState<string | null>(null);
+
+  React.useEffect(() => {
+    let cancelled = false;
+    setLoading(true);
+    setError(null);
+    setPage(1);
+    loadPdf(dataUrl)
+      .then((pdf) => {
+        if (cancelled) return;
+        pdfRef.current = pdf;
+        setNumPages(pdf.numPages);
+      })
+      .catch(() => {
+        if (!cancelled) setError("Couldn't open this PDF for preview.");
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => {
+      cancelled = true;
+      pdfRef.current?.cleanup();
+    };
+  }, [dataUrl]);
+
+  React.useEffect(() => {
+    if (!pdfRef.current || !canvasRef.current || loading) return;
+    const canvas = canvasRef.current;
+    const width = Math.min(canvas.parentElement?.clientWidth ?? 640, 640);
+    renderPage(pdfRef.current, page, canvas, width).catch(() => setError("Couldn't render this page."));
+  }, [page, loading, numPages]);
+
+  if (error) {
+    return (
+      <div className="flex h-64 flex-col items-center justify-center gap-2 rounded-lg border border-border text-sm text-muted-foreground">
+        <AlertTriangle className="h-5 w-5" />
+        {error}
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex flex-col items-center gap-2">
+      <div className="flex max-h-96 w-full items-center justify-center overflow-auto rounded-lg border border-border bg-muted/30 p-2">
+        {loading ? (
+          <div className="flex h-64 items-center justify-center text-muted-foreground">
+            <Loader2 className="h-5 w-5 animate-spin" />
+          </div>
+        ) : (
+          <canvas ref={canvasRef} aria-label={title} />
+        )}
+      </div>
+      {numPages > 1 && (
+        <div className="flex items-center gap-3">
+          <Button variant="outline" size="sm" disabled={page <= 1} onClick={() => setPage((p) => p - 1)}>
+            <ChevronLeft className="h-3.5 w-3.5" />
+          </Button>
+          <span className="text-xs text-muted-foreground">
+            Page {page} of {numPages}
+          </span>
+          <Button variant="outline" size="sm" disabled={page >= numPages} onClick={() => setPage((p) => p + 1)}>
+            <ChevronRight className="h-3.5 w-3.5" />
+          </Button>
+        </div>
+      )}
+    </div>
+  );
+}

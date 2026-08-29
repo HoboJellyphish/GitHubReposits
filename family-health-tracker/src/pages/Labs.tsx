@@ -2,12 +2,14 @@ import * as React from "react";
 import { useAppData } from "@/state/AppDataContext";
 import { getLabPanelType, flagFor, type LabFlag } from "@/lib/labs";
 import { formatDate } from "@/lib/format";
+import { formatFileSize } from "@/lib/documents";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { AppButton } from "@/components/AppButton";
 import { LabPanelDialog } from "@/components/dialogs/LabPanelDialog";
-import type { LabPanel } from "@/types";
-import { Plus, FlaskConical } from "lucide-react";
+import { DocumentViewerDialog } from "@/components/dialogs/DocumentViewerDialog";
+import type { LabPanel, MedicalDocument } from "@/types";
+import { Plus, FlaskConical, FileText } from "lucide-react";
 
 const FLAG_LABEL: Record<LabFlag, string> = { low: "Low", high: "High", normal: "In range", unknown: "No range set" };
 const FLAG_VARIANT: Record<LabFlag, "warning" | "destructive" | "success" | "secondary"> = {
@@ -18,13 +20,17 @@ const FLAG_VARIANT: Record<LabFlag, "warning" | "destructive" | "success" | "sec
 };
 
 export function Labs() {
-  const { activeProfile, listLabPanels } = useAppData();
+  const { activeProfile, listLabPanels, listDocuments } = useAppData();
   const [adding, setAdding] = React.useState(false);
   const [editing, setEditing] = React.useState<LabPanel | null>(null);
+  const [viewingDoc, setViewingDoc] = React.useState<MedicalDocument | null>(null);
 
   if (!activeProfile) return null;
 
   const panels = listLabPanels(activeProfile.id).sort((a, b) => new Date(b.testDate).getTime() - new Date(a.testDate).getTime());
+  const labDocuments = listDocuments(activeProfile.id)
+    .filter((d) => d.category === "lab_result")
+    .sort((a, b) => new Date(b.documentDate).getTime() - new Date(a.documentDate).getTime());
 
   return (
     <div className="flex flex-col gap-4 p-4 pb-24 sm:p-6">
@@ -87,8 +93,32 @@ export function Labs() {
         })}
       </div>
 
+      {labDocuments.length > 0 && (
+        <div className="flex flex-col gap-3">
+          <h2 className="text-sm font-medium text-muted-foreground">Lab Documents</h2>
+          <div className="flex flex-col gap-2">
+            {labDocuments.map((doc) => (
+              <Card key={doc.id} className="cursor-pointer transition-shadow hover:shadow-sm" onClick={() => setViewingDoc(doc)}>
+                <CardContent className="flex items-center gap-3 p-3">
+                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-secondary">
+                    <FileText className="h-4 w-4 text-muted-foreground" />
+                  </span>
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-sm font-medium">{doc.title}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {formatDate(doc.documentDate)} · {formatFileSize(doc.fileSize)}
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      )}
+
       <LabPanelDialog open={adding} onOpenChange={setAdding} profileId={activeProfile.id} />
       {editing && <LabPanelDialog open onOpenChange={(o) => !o && setEditing(null)} profileId={activeProfile.id} existing={editing} />}
+      {viewingDoc && <DocumentViewerDialog open onOpenChange={(o) => !o && setViewingDoc(null)} doc={viewingDoc} />}
     </div>
   );
 }
