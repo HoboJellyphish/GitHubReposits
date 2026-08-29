@@ -38,8 +38,41 @@ export function PdfViewer({ dataUrl, title }: { dataUrl: string; title: string }
   React.useEffect(() => {
     if (!pdfRef.current || !canvasRef.current || loading) return;
     const canvas = canvasRef.current;
-    const width = Math.min(canvas.parentElement?.clientWidth ?? 640, 640);
-    renderPage(pdfRef.current, page, canvas, width).catch(() => setError("Couldn't render this page."));
+    const container = canvas.parentElement;
+    if (!container) return;
+
+    let cancelled = false;
+    let rendering = false;
+    let pending = false;
+
+    const render = () => {
+      if (cancelled) return;
+      if (rendering) {
+        pending = true;
+        return;
+      }
+      rendering = true;
+      const width = Math.max(200, Math.min(container.getBoundingClientRect().width, 640));
+      renderPage(pdfRef.current!, page, canvas, width)
+        .catch(() => {
+          if (!cancelled) setError("Couldn't render this page.");
+        })
+        .finally(() => {
+          rendering = false;
+          if (pending && !cancelled) {
+            pending = false;
+            render();
+          }
+        });
+    };
+    render();
+
+    const observer = new ResizeObserver(() => render());
+    observer.observe(container);
+    return () => {
+      cancelled = true;
+      observer.disconnect();
+    };
   }, [page, loading, numPages]);
 
   if (error) {
@@ -52,14 +85,14 @@ export function PdfViewer({ dataUrl, title }: { dataUrl: string; title: string }
   }
 
   return (
-    <div className="flex flex-col items-center gap-2">
-      <div className="flex max-h-96 w-full items-center justify-center overflow-auto rounded-lg border border-border bg-muted/30 p-2">
+    <div className="flex w-full min-w-0 flex-col items-center gap-2">
+      <div className="flex max-h-96 w-full min-w-0 items-center justify-center overflow-auto rounded-lg border border-border bg-muted/30 p-2">
         {loading ? (
           <div className="flex h-64 items-center justify-center text-muted-foreground">
             <Loader2 className="h-5 w-5 animate-spin" />
           </div>
         ) : (
-          <canvas ref={canvasRef} aria-label={title} />
+          <canvas ref={canvasRef} aria-label={title} className="block max-w-full h-auto" />
         )}
       </div>
       {numPages > 1 && (

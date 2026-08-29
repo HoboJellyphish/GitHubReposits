@@ -60,7 +60,7 @@ export function DocumentViewerDialog({
           </DialogDescription>
         </DialogHeader>
 
-        <div className="flex flex-col gap-3">
+        <div className="flex min-w-0 flex-col gap-3">
           {isImage && <img src={doc.dataUrl} alt={doc.title} className="max-h-96 w-full rounded-lg border border-border object-contain" />}
           {isPdf && <PdfViewer dataUrl={doc.dataUrl} title={doc.title} />}
           {!isImage && !isPdf && (
