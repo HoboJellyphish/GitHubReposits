@@ -6,10 +6,11 @@ import { getCategoryDef, formatFileSize } from "@/lib/documents";
 import { getTracker } from "@/lib/trackers";
 import { formatDate, formatDateTime } from "@/lib/format";
 import { DocumentReadingsDialog } from "@/components/dialogs/DocumentReadingsDialog";
+import { LabPdfScanDialog } from "@/components/dialogs/LabPdfScanDialog";
 import { PdfViewer } from "@/components/PdfViewer";
 import { saveAndShareFile } from "@/lib/nativeSave";
 import type { AnyLogEntry, MedicalDocument } from "@/types";
-import { Trash2, ChartLine, X } from "lucide-react";
+import { Trash2, ChartLine, X, ScanLine } from "lucide-react";
 
 function readingSummary(entry: AnyLogEntry): string {
   const d = entry.data as Record<string, unknown>;
@@ -44,6 +45,7 @@ export function DocumentViewerDialog({
 }) {
   const { deleteDocument, listLogEntries, deleteLogEntry } = useAppData();
   const [loggingReadings, setLoggingReadings] = React.useState(false);
+  const [scanningLab, setScanningLab] = React.useState(false);
   const isImage = doc.mimeType.startsWith("image/");
   const isPdf = doc.mimeType === "application/pdf";
   const category = getCategoryDef(doc.category);
@@ -74,6 +76,12 @@ export function DocumentViewerDialog({
             </button>
           )}
           {doc.note && <p className="text-sm text-muted-foreground">{doc.note}</p>}
+
+          {isPdf && doc.category === "lab_result" && (
+            <Button variant="outline" size="sm" className="self-start" onClick={() => setScanningLab(true)}>
+              <ScanLine className="h-3.5 w-3.5" /> Extract lab values
+            </Button>
+          )}
 
           <div className="flex flex-col gap-2">
             <div className="flex items-center justify-between">
@@ -127,6 +135,7 @@ export function DocumentViewerDialog({
       </DialogContent>
 
       {loggingReadings && <DocumentReadingsDialog open onOpenChange={setLoggingReadings} doc={doc} />}
+      {scanningLab && <LabPdfScanDialog open onOpenChange={setScanningLab} profileId={doc.profileId} doc={doc} />}
     </Dialog>
   );
 }
