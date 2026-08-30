@@ -7,6 +7,7 @@ import { getTracker } from "@/lib/trackers";
 import { formatDate, formatDateTime } from "@/lib/format";
 import { DocumentReadingsDialog } from "@/components/dialogs/DocumentReadingsDialog";
 import { PdfViewer } from "@/components/PdfViewer";
+import { saveAndShareFile } from "@/lib/nativeSave";
 import type { AnyLogEntry, MedicalDocument } from "@/types";
 import { Trash2, ChartLine, X } from "lucide-react";
 
@@ -64,9 +65,13 @@ export function DocumentViewerDialog({
           {isImage && <img src={doc.dataUrl} alt={doc.title} className="max-h-96 w-full rounded-lg border border-border object-contain" />}
           {isPdf && <PdfViewer dataUrl={doc.dataUrl} title={doc.title} />}
           {!isImage && !isPdf && (
-            <a href={doc.dataUrl} download={doc.fileName} className="text-sm text-primary underline">
-              Download {doc.fileName}
-            </a>
+            <button
+              type="button"
+              onClick={() => saveAndShareFile(doc.dataUrl, doc.fileName)}
+              className="text-left text-sm text-primary underline"
+            >
+              Save {doc.fileName}
+            </button>
           )}
           {doc.note && <p className="text-sm text-muted-foreground">{doc.note}</p>}
 
@@ -115,11 +120,9 @@ export function DocumentViewerDialog({
           >
             <Trash2 className="h-3.5 w-3.5" /> Delete
           </Button>
-          <a href={doc.dataUrl} download={doc.fileName}>
-            <Button variant="outline" size="sm" type="button">
-              Download
-            </Button>
-          </a>
+          <Button variant="outline" size="sm" type="button" onClick={() => saveAndShareFile(doc.dataUrl, doc.fileName)}>
+            Save / Share
+          </Button>
         </DialogFooter>
       </DialogContent>
 

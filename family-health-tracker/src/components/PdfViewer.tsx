@@ -1,7 +1,8 @@
 import * as React from "react";
 import { Button } from "@/components/ui/button";
 import { loadPdf, renderPage } from "@/lib/pdf";
-import { Loader2, ChevronLeft, ChevronRight, AlertTriangle } from "lucide-react";
+import { saveAndShareFile } from "@/lib/nativeSave";
+import { Loader2, ChevronLeft, ChevronRight, AlertTriangle, Download } from "lucide-react";
 import type { PDFDocumentProxy } from "pdfjs-dist";
 
 export function PdfViewer({ dataUrl, title }: { dataUrl: string; title: string }) {
@@ -75,6 +76,13 @@ export function PdfViewer({ dataUrl, title }: { dataUrl: string; title: string }
     };
   }, [page, loading, numPages]);
 
+  const handleSavePage = () => {
+    if (!canvasRef.current) return;
+    const pageDataUrl = canvasRef.current.toDataURL("image/png");
+    const safeTitle = title.replace(/[^\w.-]+/g, "_");
+    saveAndShareFile(pageDataUrl, `${safeTitle}-page-${page}.png`);
+  };
+
   if (error) {
     return (
       <div className="flex h-64 flex-col items-center justify-center gap-2 rounded-lg border border-border text-sm text-muted-foreground">
@@ -95,16 +103,23 @@ export function PdfViewer({ dataUrl, title }: { dataUrl: string; title: string }
           <canvas ref={canvasRef} aria-label={title} className="block max-w-full h-auto" />
         )}
       </div>
-      {numPages > 1 && (
-        <div className="flex items-center gap-3">
-          <Button variant="outline" size="sm" disabled={page <= 1} onClick={() => setPage((p) => p - 1)}>
-            <ChevronLeft className="h-3.5 w-3.5" />
-          </Button>
-          <span className="text-xs text-muted-foreground">
-            Page {page} of {numPages}
-          </span>
-          <Button variant="outline" size="sm" disabled={page >= numPages} onClick={() => setPage((p) => p + 1)}>
-            <ChevronRight className="h-3.5 w-3.5" />
+      {!loading && !error && (
+        <div className="flex flex-wrap items-center justify-center gap-3">
+          {numPages > 1 && (
+            <div className="flex items-center gap-3">
+              <Button variant="outline" size="sm" disabled={page <= 1} onClick={() => setPage((p) => p - 1)}>
+                <ChevronLeft className="h-3.5 w-3.5" />
+              </Button>
+              <span className="whitespace-nowrap text-xs text-muted-foreground">
+                Page {page} of {numPages}
+              </span>
+              <Button variant="outline" size="sm" disabled={page >= numPages} onClick={() => setPage((p) => p + 1)}>
+                <ChevronRight className="h-3.5 w-3.5" />
+              </Button>
+            </div>
+          )}
+          <Button variant="outline" size="sm" onClick={handleSavePage}>
+            <Download className="h-3.5 w-3.5" /> Save page as image
           </Button>
         </div>
       )}

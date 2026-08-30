@@ -23,9 +23,15 @@ export async function renderPage(pdf: PDFDocumentProxy, pageNumber: number, canv
   const unscaled = page.getViewport({ scale: 1 });
   const scale = targetWidth / unscaled.width;
   const viewport = page.getViewport({ scale });
-  canvas.width = viewport.width;
-  canvas.height = viewport.height;
+  // Render at the device's real pixel density (not just CSS pixels) so text
+  // and chart lines stay sharp on high-DPI screens, then let CSS scale the
+  // canvas back down to its intended display size.
+  const dpr = window.devicePixelRatio || 1;
+  canvas.width = Math.round(viewport.width * dpr);
+  canvas.height = Math.round(viewport.height * dpr);
+  canvas.style.width = `${viewport.width}px`;
   const ctx = canvas.getContext("2d");
   if (!ctx) return;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   await page.render({ canvasContext: ctx, viewport }).promise;
 }
