@@ -8,7 +8,7 @@ import { formatDate, formatDateTime } from "@/lib/format";
 import { DocumentReadingsDialog } from "@/components/dialogs/DocumentReadingsDialog";
 import { LabPdfScanDialog } from "@/components/dialogs/LabPdfScanDialog";
 import { PdfViewer } from "@/components/PdfViewer";
-import { saveAndShareFile } from "@/lib/nativeSave";
+import { saveFile } from "@/lib/nativeSave";
 import type { AnyLogEntry, MedicalDocument } from "@/types";
 import { Trash2, ChartLine, X, ScanLine } from "lucide-react";
 
@@ -69,7 +69,7 @@ export function DocumentViewerDialog({
           {!isImage && !isPdf && (
             <button
               type="button"
-              onClick={() => saveAndShareFile(doc.dataUrl, doc.fileName)}
+              onClick={() => saveFile(doc.dataUrl, doc.fileName)}
               className="text-left text-sm text-primary underline"
             >
               Save {doc.fileName}
@@ -128,8 +128,8 @@ export function DocumentViewerDialog({
           >
             <Trash2 className="h-3.5 w-3.5" /> Delete
           </Button>
-          <Button variant="outline" size="sm" type="button" onClick={() => saveAndShareFile(doc.dataUrl, doc.fileName)}>
-            Save / Share
+          <Button variant="outline" size="sm" type="button" onClick={() => saveFile(doc.dataUrl, doc.fileName)}>
+            Save to device
           </Button>
         </DialogFooter>
       </DialogContent>

@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Button } from "@/components/ui/button";
 import { loadPdf, renderPage } from "@/lib/pdf";
-import { saveAndShareFile } from "@/lib/nativeSave";
+import { saveFile } from "@/lib/nativeSave";
 import { Loader2, ChevronLeft, ChevronRight, AlertTriangle, Download } from "lucide-react";
 import type { PDFDocumentProxy } from "pdfjs-dist";
 
@@ -80,7 +80,7 @@ export function PdfViewer({ dataUrl, title }: { dataUrl: string; title: string }
     if (!canvasRef.current) return;
     const pageDataUrl = canvasRef.current.toDataURL("image/png");
     const safeTitle = title.replace(/[^\w.-]+/g, "_");
-    saveAndShareFile(pageDataUrl, `${safeTitle}-page-${page}.png`);
+    saveFile(pageDataUrl, `${safeTitle}-page-${page}.png`);
   };
 
   if (error) {
