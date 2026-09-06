@@ -82,6 +82,15 @@ const SNAPSHOT_RANGE_TWO_SIDED_RE = /^normal range:\s*([\d.]+)\s*-\s*([\d.]+)\s*
 const SNAPSHOT_RANGE_ONE_SIDED_RE = /^normal range:\s*(?:above|below|over|under|[<>]=?)\s*([\d.]+)\s*(.*)$/i;
 const SNAPSHOT_VALUE_RE = /^([\d.]+)\s*(High|Low|Critical|Abnormal)?$/i;
 
+// Some results are qualitative rather than numeric ("Not Detected",
+// "Positive", "Negative") — a Result Trends table lays those out as
+// Name / Value / "Normal Range: ..." (value BEFORE the range line, the
+// opposite order from the numeric snapshot shape above). Only match when
+// the value line has no digits at all, so this never steals a row like
+// "Bristol Score 7" that the plain INLINE_RE below already parses cleanly.
+const NORMAL_RANGE_ANY_RE = /^normal range:\s*(.*)$/i;
+const HAS_DIGIT_RE = /\d/;
+
 let rowCounter = 0;
 function nextKey(): string {
   rowCounter += 1;
@@ -128,6 +137,29 @@ export function parseLabValues(text: string): ExtractedLabRow[] {
       // landed elsewhere in a two-column layout. Don't consume any lines
       // beyond this one; falling through (rather than skipping ahead) keeps
       // the next test's own name/range/value block intact.
+    }
+
+    const rangeAheadLine = lines[i + 2];
+    // A numeric range ("136 - 145 mmol/L") is already the two-sided/one-sided
+    // shape above, handled when the loop reaches the *actual* test name one
+    // line later — e.g. for a "Results" section header immediately preceding
+    // "Sodium", matching here would wrongly treat "Results" as the test name
+    // and consume "Sodium" as its value.
+    const rangeAheadIsNumeric =
+      !!rangeAheadLine && (SNAPSHOT_RANGE_TWO_SIDED_RE.test(rangeAheadLine) || SNAPSHOT_RANGE_ONE_SIDED_RE.test(rangeAheadLine));
+    const qualitativeRange = NAME_HEADER_RE.test(line) && !rangeAheadIsNumeric ? rangeAheadLine?.match(NORMAL_RANGE_ANY_RE) : null;
+    if (qualitativeRange && next && !HAS_DIGIT_RE.test(next) && !METADATA_NAME_RE.test(line)) {
+      rows.push({
+        key: nextKey(),
+        name: line,
+        value: next,
+        unit: "",
+        referenceLow: qualitativeRange[1].trim(),
+        referenceHigh: "",
+        date: "",
+      });
+      i += 2;
+      continue;
     }
 
     if (/^ratio$/i.test(next)) {
