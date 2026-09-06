@@ -121,9 +121,13 @@ export function parseLabValues(text: string): ExtractedLabRow[] {
           referenceHigh: twoSided?.[2] ?? "",
           date: "",
         });
+        i += 2;
+        continue;
       }
-      i += 2;
-      continue;
+      // No value line where we expected one — most often the true value
+      // landed elsewhere in a two-column layout. Don't consume any lines
+      // beyond this one; falling through (rather than skipping ahead) keeps
+      // the next test's own name/range/value block intact.
     }
 
     if (/^ratio$/i.test(next)) {
