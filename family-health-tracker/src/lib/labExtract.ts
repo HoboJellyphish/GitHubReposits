@@ -41,6 +41,17 @@ const MONTHS = "Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec";
 const MONTH_DATE_RE = new RegExp(`\\b(${MONTHS})[a-z]*\\.?\\s+(\\d{1,2}),?\\s+(\\d{4})\\b`, "i");
 const SLASH_DATE_RE = /\b(\d{1,2})\/(\d{1,2})\/(\d{2,4})\b/;
 
+// A "Result Trends" table with several visit dates lays its date-column
+// headers out as their own text line — no test name attached, just one or
+// more "Mon Day" tokens ("Oct 26", "Mar 27  Aug 28"). Every line-shape check
+// below expects a real name in front of a number, so left unguarded this
+// reads as bogus rows like name="Oct" value="26" / name="Mar 27 Aug"
+// value="28". A genuine trend row always carries a full date + value + unit
+// payload after the date (see TREND_ROW_RE below), which this stricter,
+// dates-and-nothing-else pattern can't match, so it's safe to drop whole
+// lines that match it before any other regex sees them.
+const DATE_LIST_LINE_RE = new RegExp(`^(?:(?:${MONTHS})[a-z]*\\.?\\s+\\d{1,2}\\s*,?\\s*(?:\\d{4})?\\s*)+$`, "i");
+
 function parseDateToIso(text: string): string | undefined {
   const m = text.match(MONTH_DATE_RE);
   if (m) {
@@ -59,10 +70,19 @@ function parseDateToIso(text: string): string | undefined {
 
 const NAME_HEADER_RE = /^[A-Z][A-Za-z0-9 /%-]{1,30}$/;
 const RANGE_HINT_RE = /normal range[:\s]*([\d.]+)\s*-\s*([\d.]+)\s*([A-Za-z%/0-9]*)/i;
-const TREND_ROW_RE = new RegExp(
-  `(${MONTHS})[a-z]*\\.?\\s+(\\d{1,2}),?\\s+(\\d{4})\\s+([\\d.]+)\\s*([A-Za-z%/0-9]*)\\s+([\\d.]+)\\s*-\\s*([\\d.]+)\\s*([A-Za-z%/0-9]*)`,
-  "gi",
-);
+const TREND_ROW_PATTERN = `(${MONTHS})[a-z]*\\.?\\s+(\\d{1,2}),?\\s+(\\d{4})\\s+([\\d.]+)\\s*([A-Za-z%/0-9]*)\\s+([\\d.]+)\\s*-\\s*([\\d.]+)\\s*([A-Za-z%/0-9]*)`;
+// Global so line.matchAll() (which internally clones the regex, so it's
+// safe to reuse) can pull out every dated visit on a line with several.
+const TREND_ROW_RE = new RegExp(TREND_ROW_PATTERN, "gi");
+// A .test()/.exec() call on a *global* regex advances its shared lastIndex,
+// so reusing TREND_ROW_RE directly for a plain yes/no check is stateful: a
+// match earlier in the document can leave lastIndex past the start of a
+// later, perfectly valid line, making that line's .test() wrongly return
+// false. That silently broke currentName tracking below, which in turn let
+// real dated rows fall through to the far looser INLINE_RE — producing
+// exactly the "date fragment mistaken for the test name" bug this file was
+// patched for. Use this non-global twin for every boolean check instead.
+const TREND_ROW_TEST_RE = new RegExp(TREND_ROW_PATTERN, "i");
 const INLINE_RE = /^([A-Za-z][A-Za-z0-9 /-]{1,40}?)[:\s]{1,3}([\d.]+)\s*([A-Za-z%/^0-9µ]{0,15})\b(?:.*?\(?\s*([\d.]+)\s*-\s*([\d.]+)\s*\)?)?$/;
 // Report metadata fields ("Collected: 03/14/2024", "DOB: ...") match the
 // inline shape but aren't lab values — filter them out by name.
@@ -114,6 +134,8 @@ export function parseLabValues(text: string): ExtractedLabRow[] {
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i];
     const next = lines[i + 1] ?? "";
+
+    if (DATE_LIST_LINE_RE.test(line)) continue;
 
     const twoSided = next.match(SNAPSHOT_RANGE_TWO_SIDED_RE);
     const oneSided = !twoSided ? next.match(SNAPSHOT_RANGE_ONE_SIDED_RE) : null;
@@ -214,13 +236,24 @@ export function parseLabValues(text: string): ExtractedLabRow[] {
       continue;
     }
 
-    if (NAME_HEADER_RE.test(line) && (RANGE_HINT_RE.test(next) || TREND_ROW_RE.test(next))) {
+    // A date-column-header line ("Oct 26  Mar 27  Aug 28") can sit between a
+    // test's name header and its first real trend row — skip over it when
+    // peeking ahead so the header/trend link survives that layout too.
+    const lookahead = DATE_LIST_LINE_RE.test(next) ? (lines[i + 2] ?? "") : next;
+    if (NAME_HEADER_RE.test(line) && (RANGE_HINT_RE.test(lookahead) || TREND_ROW_TEST_RE.test(lookahead))) {
       currentName = line;
       currentUnit = null;
       continue;
     }
 
-    const inline = /^normal range:/i.test(line) ? null : line.match(INLINE_RE);
+    // A line that's actually a full dated trend row ("Oct 26, 2023 7.2 K/uL
+    // 4.0 - 11.0") must never fall through to INLINE_RE: its lazy, lightly-
+    // anchored pattern will happily bind the date's month/day as name/value
+    // and skip the real payload — the same bogus-row shape this file was
+    // patched to stop producing. If currentName wasn't set (e.g. an
+    // unrecognized header line before it), drop the row rather than
+    // misparse it; a dropped row is safer than a wrong one.
+    const inline = /^normal range:/i.test(line) || TREND_ROW_TEST_RE.test(line) ? null : line.match(INLINE_RE);
     const looksLikeZip = ZIP_LIKE_RE.test(inline?.[2] ?? "") && !inline?.[3] && !inline?.[4] && !inline?.[5];
     if (inline && !METADATA_NAME_RE.test(inline[1].trim()) && !looksLikeZip) {
       rows.push({
