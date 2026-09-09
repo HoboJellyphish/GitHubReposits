@@ -12,6 +12,7 @@ import type { AnyLogEntry, MedicalDocument, TrackerId } from "@/types";
 import { LogEntryDialog } from "@/components/dialogs/LogEntryDialog";
 import { SleepDialog } from "@/components/dialogs/SleepDialog";
 import { DocumentViewerDialog } from "@/components/dialogs/DocumentViewerDialog";
+import { interactiveCard } from "@/lib/utils";
 
 function entrySummary(entry: AnyLogEntry): string {
   const d = entry.data as Record<string, unknown>;
@@ -143,7 +144,7 @@ export function Timeline() {
             const category = getCategoryDef(doc.category);
             return (
               <button key={`doc-${doc.id}`} type="button" onClick={() => setViewingDoc(doc)} className="text-left">
-                <Card className="transition-shadow hover:shadow-sm">
+                <Card className={interactiveCard}>
                   <CardContent className="flex items-center gap-3 p-3">
                     <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-secondary">
                       <category.icon className="h-4 w-4 text-muted-foreground" />
@@ -174,7 +175,7 @@ export function Timeline() {
               onClick={() => entry.trackerId !== "medications" && setEditEntry(entry)}
               className="text-left"
             >
-              <Card className="transition-shadow hover:shadow-sm">
+              <Card className={interactiveCard}>
                 <CardContent className="flex items-center gap-3 p-3">
                   <span
                     className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full"

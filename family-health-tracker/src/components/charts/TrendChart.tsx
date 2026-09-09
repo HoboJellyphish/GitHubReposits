@@ -11,10 +11,10 @@ import {
   Tooltip,
   Legend,
 } from "recharts";
-import { CHART_CONFIG, buildTrendPoints, filterByRange } from "@/lib/chartData";
+import { CHART_CONFIG, buildTrendPoints, estimateYAxisWidth, filterByRange } from "@/lib/chartData";
 import type { AnyLogEntry, TrackerId } from "@/types";
 import { formatDateTime } from "@/lib/format";
-import { YAxisTick, estimateYAxisWidth } from "./ChartAxisTick";
+import { YAxisTick } from "./ChartAxisTick";
 
 const PRIMARY_COLOR = "var(--color-primary)";
 const SECONDARY_COLOR = "oklch(0.65 0.16 30)";

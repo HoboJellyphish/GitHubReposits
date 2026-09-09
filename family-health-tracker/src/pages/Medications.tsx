@@ -7,6 +7,7 @@ import { MedicationEditDialog } from "@/components/dialogs/MedicationEditDialog"
 import { MedicationDoseDialog } from "@/components/dialogs/MedicationDoseDialog";
 import { Pill, Plus, Bell, Check, X as XIcon, MinusCircle } from "lucide-react";
 import { formatRelative } from "@/lib/format";
+import { cn, interactiveCard } from "@/lib/utils";
 import type { Medication } from "@/types";
 
 const STATUS_ICON = { taken: Check, missed: XIcon, skipped: MinusCircle } as const;
@@ -44,7 +45,7 @@ export function Medications() {
           </Card>
         )}
         {active.map((m) => (
-          <Card key={m.id} className="cursor-pointer" onClick={() => setEditMed(m)}>
+          <Card key={m.id} className={interactiveCard} onClick={() => setEditMed(m)}>
             <CardContent className="flex items-center gap-3 p-3">
               <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full" style={{ backgroundColor: m.color + "26" }}>
                 <Pill className="h-5 w-5" style={{ color: m.color }} />
@@ -69,7 +70,7 @@ export function Medications() {
         <div className="flex flex-col gap-3">
           <h2 className="text-sm font-semibold text-muted-foreground">Inactive</h2>
           {inactive.map((m) => (
-            <Card key={m.id} className="cursor-pointer opacity-70" onClick={() => setEditMed(m)}>
+            <Card key={m.id} className={cn(interactiveCard, "opacity-70")} onClick={() => setEditMed(m)}>
               <CardContent className="flex items-center gap-3 p-3">
                 <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full" style={{ backgroundColor: m.color + "1a" }}>
                   <Pill className="h-5 w-5" style={{ color: m.color }} />

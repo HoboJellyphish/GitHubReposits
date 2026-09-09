@@ -10,6 +10,7 @@ import { LabPanelDialog } from "@/components/dialogs/LabPanelDialog";
 import { DocumentViewerDialog } from "@/components/dialogs/DocumentViewerDialog";
 import type { LabPanel, MedicalDocument } from "@/types";
 import { Plus, FlaskConical, FileText } from "lucide-react";
+import { interactiveCard } from "@/lib/utils";
 
 const FLAG_LABEL: Record<LabFlag, string> = { low: "Low", high: "High", normal: "In range", unknown: "No range set" };
 const FLAG_VARIANT: Record<LabFlag, "warning" | "destructive" | "success" | "secondary"> = {
@@ -55,7 +56,7 @@ export function Labs() {
         {panels.map((panel) => {
           const def = getLabPanelType(panel.panelType);
           return (
-            <Card key={panel.id} className="cursor-pointer transition-shadow hover:shadow-sm" onClick={() => setEditing(panel)}>
+            <Card key={panel.id} className={interactiveCard} onClick={() => setEditing(panel)}>
               <CardContent className="flex flex-col gap-3 p-4">
                 <div className="flex items-center gap-3">
                   <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-secondary">
@@ -98,7 +99,7 @@ export function Labs() {
           <h2 className="text-sm font-medium text-muted-foreground">Lab Documents</h2>
           <div className="flex flex-col gap-2">
             {labDocuments.map((doc) => (
-              <Card key={doc.id} className="cursor-pointer transition-shadow hover:shadow-sm" onClick={() => setViewingDoc(doc)}>
+              <Card key={doc.id} className={interactiveCard} onClick={() => setViewingDoc(doc)}>
                 <CardContent className="flex items-center gap-3 p-3">
                   <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-secondary">
                     <FileText className="h-4 w-4 text-muted-foreground" />

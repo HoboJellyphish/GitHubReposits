@@ -9,7 +9,7 @@ import { SleepDialog } from "@/components/dialogs/SleepDialog";
 import { MedicationDoseDialog } from "@/components/dialogs/MedicationDoseDialog";
 import type { AnyLogEntry, TrackerId } from "@/types";
 import { Eye, EyeOff, Settings2, RefreshCw } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn, interactiveCard } from "@/lib/utils";
 import { AppButton } from "@/components/AppButton";
 import { calculateAge } from "@/lib/format";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
@@ -127,7 +127,7 @@ export function Dashboard({ onOpenSettings }: { onOpenSettings: () => void }) {
                 return (
                   <Card
                     key={item.id}
-                    className="cursor-pointer transition-shadow hover:shadow-md"
+                    className={interactiveCard}
                     onClick={() => setOpenTracker(item.trackerId)}
                   >
                     <CardContent className="flex flex-col items-center gap-2 p-4 text-center">

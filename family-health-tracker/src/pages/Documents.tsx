@@ -10,7 +10,7 @@ import { DOCUMENT_CATEGORIES, getCategoryDef, formatFileSize } from "@/lib/docum
 import { formatDate } from "@/lib/format";
 import { Upload, FileText, AlertTriangle, ChartLine } from "lucide-react";
 import type { DocumentCategory, MedicalDocument } from "@/types";
-import { cn } from "@/lib/utils";
+import { cn, interactiveCard } from "@/lib/utils";
 
 export function Documents() {
   const { activeProfile, listDocuments, listLogEntries, storageError } = useAppData();
@@ -92,7 +92,7 @@ export function Documents() {
           const category = getCategoryDef(doc.category);
           const isImage = doc.mimeType.startsWith("image/");
           return (
-            <Card key={doc.id} className="cursor-pointer transition-shadow hover:shadow-md" onClick={() => setViewing(doc)}>
+            <Card key={doc.id} className={interactiveCard} onClick={() => setViewing(doc)}>
               <CardContent className="flex items-center gap-3 p-3">
                 {isImage ? (
                   <img src={doc.dataUrl} alt="" className="h-11 w-11 shrink-0 rounded-lg object-cover" />
